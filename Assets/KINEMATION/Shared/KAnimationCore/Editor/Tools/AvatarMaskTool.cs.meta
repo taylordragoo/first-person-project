@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: bdad9af0d0f248378d9dc58e2c401b2c
+timeCreated: 1757309137
+AssetOrigin:
+  serializedVersion: 1
+  productId: 320309
+  packageName: Character Animation System
+  packageVersion: 2.1.2
+  assetPath: Assets/KINEMATION/Shared/KAnimationCore/Editor/Tools/AvatarMaskTool.cs
+  uploadId: 944384

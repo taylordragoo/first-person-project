@@ -1,0 +1,1878 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9066401725176555858
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27faf4367abf4a22b94a7ca23380b86e, type: 3}
+  m_Name: FPS Copy Bones
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides: []
+  showSceneGui: 0
+  sourceWeaponBone:
+    name: IK weapon_bone_r
+    index: 52
+    depth: -1
+  sourceRightHand:
+    name: hand_r
+    index: 36
+    depth: -1
+  sourceLeftHand:
+    name: hand_l
+    index: 15
+    depth: -1
+  ikWeaponBone:
+    name: IK weapon_bone
+    index: -1
+    depth: -1
+  ikWeaponBoneAim:
+    name: IK weapon_bone_aim
+    index: -1
+    depth: -1
+  ikHandRight:
+    name: IK hand_r
+    index: -1
+    depth: -1
+  ikHandLeft:
+    name: IK hand_l
+    index: -1
+    depth: -1
+  weaponBoneOffset:
+    objectType: 
+    propertyPath: 
+    defaultValue:
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
+      scale: {x: 1, y: 1, z: 1}
+    isBound: 0
+    friendlyObjectType: 
+--- !u!114 &-7540561329552188468
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc0a45d02df247d0a40143295e0023f4, type: 3}
+  m_Name: FP Offsets
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera.CharacterCamera,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: ViewWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: CharacterCamera
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  - weight:
+      objectType: UnityEngine.Animator, UnityEngine.AnimationModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      propertyPath: Gait
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: Animator
+    weightModifier:
+      isMask: 1
+      inRangeMin: 2
+      inRangeMax: 3
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.LayeredBlendingComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: Traversal_Weight.value
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: LayeredBlendingComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  ikWeaponBone:
+    name: IK weapon_bone
+    index: -1
+    depth: -1
+  ikWeaponBoneAim:
+    name: IK weapon_bone_aim
+    index: -1
+    depth: -1
+  ikHandRight:
+    name: IK hand_r
+    index: -1
+    depth: -1
+  ikHandLeft:
+    name: IK hand_l
+    index: -1
+    depth: -1
+  weaponBoneOffset:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.weaponPose
+    defaultValue:
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  rightHandOffset:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.rightHandOffset
+    defaultValue:
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  leftHandOffset:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.leftHandOffset
+    defaultValue:
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+--- !u!114 &-7470843906118550158
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b02a7b077009ba0478a0ba65123cb59f, type: 3}
+  m_Name: Pivot Modifier
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera.CharacterCamera,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: ViewWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: CharacterCamera
+    weightModifier:
+      isMask: 0
+      inRangeMin: 0
+      inRangeMax: 0
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.LayeredBlendingComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: Traversal_Weight.value
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: LayeredBlendingComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  moveInput:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: MoveInput
+    defaultValue: {x: 0, y: 0}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  pelvis:
+    name: pelvis
+    index: 8
+    depth: -1
+  spineBones:
+  - rigElement:
+      name: spine_01
+      index: 9
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  - rigElement:
+      name: spine_02
+      index: 10
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  - rigElement:
+      name: spine_03
+      index: 11
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  rotationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 4.9336405
+      outSlope: 4.9336405
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.36242604
+    - serializedVersion: 3
+      time: 0.1
+      value: 0.8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  translationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.32214186
+      outSlope: 0.32214186
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.3883136
+    - serializedVersion: 3
+      time: 0.12
+      value: 0.15
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  rotationSmoothing: 5
+  positionSmoothing: 5
+  playbackSpeed: 1
+  maxLeanAngle: 20
+  leanIntensity: 5
+--- !u!114 &-6812449227837274981
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ef67e36b8bb42669372754a0dc06a36, type: 3}
+  m_Name: Foot IK
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.LayeredBlendingComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: Traversal_Weight.value
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: LayeredBlendingComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  pelvis:
+    name: pelvis
+    index: 8
+    depth: -1
+  rightFootIk:
+    name: IK foot_r
+    index: -1
+    depth: -1
+  leftFootIk:
+    name: IK foot_l
+    index: -1
+    depth: -1
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  traceOffset: 0.4
+  traceRadius: 0.05
+  interpSpeed: 20
+  rootInterpSpeed: 8
+  isGrounded:
+    objectType: 
+    propertyPath: 
+    defaultValue: 1
+    isBound: 0
+    friendlyObjectType: 
+--- !u!114 &-6757359533927970185
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94ff56e2af124f8c92f0510c66763bb6, type: 3}
+  m_Name: Ads Modifier
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera.CharacterCamera,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: ViewWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: CharacterCamera
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  aimPoint:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.GetScopeData.aimPoint
+    defaultValue: {fileID: 0}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  isAiming:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: IsAiming
+    defaultValue: 0
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  weaponBone:
+    name: IK weapon_bone
+    index: -1
+    depth: -1
+  hipTargetBone:
+    name: IK weapon_bone_aim
+    index: -1
+    depth: -1
+  aimTargetBone:
+    name: aim_socket
+    index: 58
+    depth: -1
+  positionBlend:
+    x: 0.1
+    y: 0.1
+    z: 0.2
+  rotationBlend:
+    x: 0.1
+    y: 0.1
+    z: 0.1
+  aimingSpeed: 3
+  aimingEaseMode:
+    easeFunc: 1
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  aimPointSpeed: 3
+  aimPointEaseMode:
+    easeFunc: 1
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  cameraBlend: 0
+--- !u!114 &-5990796045205310181
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 414cc0ad11e54536b8b7fef331b582e7, type: 3}
+  m_Name: TP Rest Pose
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera.CharacterCamera,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: ViewWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: CharacterCamera
+    weightModifier:
+      isMask: 0
+      inRangeMin: 0
+      inRangeMax: 0
+  - weight:
+      objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      propertyPath: AimingWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: FPSExampleController
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  - weight:
+      objectType: UnityEngine.Animator, UnityEngine.AnimationModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      propertyPath: Gait
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: Animator
+    weightModifier:
+      isMask: 1
+      inRangeMin: 2
+      inRangeMax: 3
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.LayeredBlendingComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: Traversal_Weight.value
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: LayeredBlendingComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.CharacterAnimationComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: GetOverlaySlotWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: CharacterAnimationComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  boneToModify:
+    name: IK weapon_bone
+    index: 59
+    depth: -1
+  position:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.weaponPoseThirdPersonRest.position
+    defaultValue: {x: 0, y: 0, z: 0}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  positionSpace: 2
+  positionMode: 0
+  rotation:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.weaponPoseThirdPersonRest.rotation
+    defaultValue: {x: 0, y: 0, z: 0, w: 1}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  rotationSpace: 2
+  rotationMode: 0
+  scale:
+    objectType: 
+    propertyPath: 
+    defaultValue: {x: 1, y: 1, z: 1}
+    isBound: 0
+    friendlyObjectType: 
+  scaleMode: 2
+--- !u!114 &-5324213570901490542
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a16f8e09ea8c414b94add41dc511008c, type: 3}
+  m_Name: Attach Hand Modifier
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.LayeredBlendingComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: Mask_Attach_Hand.value
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: LayeredBlendingComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  defaultHandBone:
+    name: IK hand_l_right
+    index: 53
+    depth: -1
+  ikHandBone:
+    name: IK hand_l
+    index: -1
+    depth: -1
+  ikWeaponBone:
+    name: IK weapon_bone
+    index: -1
+    depth: -1
+  fingers:
+    chainName: 
+    elementChain:
+    - name: index_01_l
+      index: 16
+      depth: 0
+    - name: index_02_l
+      index: 17
+      depth: 0
+    - name: index_03_l
+      index: 18
+      depth: 0
+    - name: middle_01_l
+      index: 19
+      depth: 0
+    - name: middle_02_l
+      index: 20
+      depth: 0
+    - name: middle_03_l
+      index: 21
+      depth: 0
+    - name: pinky_01_l
+      index: 22
+      depth: 0
+    - name: pinky_02_l
+      index: 23
+      depth: 0
+    - name: pinky_03_l
+      index: 24
+      depth: 0
+    - name: ring_01_l
+      index: 25
+      depth: 0
+    - name: ring_02_l
+      index: 26
+      depth: 0
+    - name: ring_03_l
+      index: 27
+      depth: 0
+    - name: thumb_01_l
+      index: 28
+      depth: 0
+    - name: thumb_02_l
+      index: 29
+      depth: 0
+    - name: thumb_03_l
+      index: 30
+      depth: 0
+  handPose:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.GetGripData.pose
+    defaultValue: {fileID: 0}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  attachTransform:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.GetGripData.ikTarget
+    defaultValue: {fileID: 0}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+--- !u!114 &-2433975825701999001
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c19d2049e5e433590550dd51e09a14d, type: 3}
+  m_Name: Stride Modifier
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.LayeredBlendingComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: Traversal_Weight.value
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: LayeredBlendingComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  bones:
+    pelvis:
+      name: pelvis
+      index: 8
+      depth: -1
+    leftFoot:
+      name: foot_l
+      index: 60
+      depth: -1
+    rightFoot:
+      name: foot_r
+      index: 66
+      depth: -1
+    leftFootIkTarget:
+      name: IK foot_l
+      index: -1
+      depth: -1
+    rightFootIkTarget:
+      name: IK foot_r
+      index: -1
+      depth: -1
+  footWarping:
+    bones:
+      pelvis:
+        name: None
+        index: -1
+        depth: -1
+      leftFoot:
+        name: None
+        index: -1
+        depth: -1
+      rightFoot:
+        name: None
+        index: -1
+        depth: -1
+      leftFootIkTarget:
+        name: IK foot_l
+        index: -1
+        depth: -1
+      rightFootIkTarget:
+        name: IK foot_r
+        index: -1
+        depth: -1
+    isEnabled: 1
+    strideSmoothing: 8
+    minStrideScale: 0.3
+    maxYawAngle: 60
+    feetSmoothing: 8
+    leanSmoothing: 4
+    pelvisRollScale: 0.1
+    legHipRotation: 0.5
+  footPinning:
+    bones:
+      pelvis:
+        name: None
+        index: -1
+        depth: -1
+      leftFoot:
+        name: None
+        index: -1
+        depth: -1
+      rightFoot:
+        name: None
+        index: -1
+        depth: -1
+      leftFootIkTarget:
+        name: IK foot_l
+        index: -1
+        depth: -1
+      rightFootIkTarget:
+        name: IK foot_r
+        index: -1
+        depth: -1
+    isEnabled: 1
+    legStretchFactor: 0.98
+    pinYawThreshold: 30
+    angularPinThreshold: 5
+    pinSmoothing: 8
+    pinHeightOffset: 0.015
+--- !u!114 &-1465321184445118790
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 134c52960f6c499baf1775d46c46ecb0, type: 3}
+  m_Name: Copy Right Foot IK
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides: []
+  showSceneGui: 0
+  copyFrom:
+    name: foot_r
+    index: 65
+    depth: -1
+  copyTo:
+    name: IK foot_r
+    index: 76
+    depth: -1
+  copySpace: 2
+  copyMode: 1
+  copyPosition: 1
+  copyRotation: 1
+  copyScale: 0
+--- !u!114 &-1033747234861787912
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc0a45d02df247d0a40143295e0023f4, type: 3}
+  m_Name: TP Offsets
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera.CharacterCamera,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: ViewWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: CharacterCamera
+    weightModifier:
+      isMask: 0
+      inRangeMin: 0
+      inRangeMax: 0
+  - weight:
+      objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      propertyPath: AimingWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: FPSExampleController
+    weightModifier:
+      isMask: 0
+      inRangeMin: 0
+      inRangeMax: 0
+  - weight:
+      objectType: UnityEngine.Animator, UnityEngine.AnimationModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      propertyPath: Gait
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: Animator
+    weightModifier:
+      isMask: 1
+      inRangeMin: 2
+      inRangeMax: 3
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.LayeredBlendingComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: Traversal_Weight.value
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: LayeredBlendingComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  ikWeaponBone:
+    name: IK weapon_bone
+    index: -1
+    depth: -1
+  ikWeaponBoneAim:
+    name: IK weapon_bone_aim
+    index: -1
+    depth: -1
+  ikHandRight:
+    name: IK hand_r
+    index: -1
+    depth: -1
+  ikHandLeft:
+    name: IK hand_l
+    index: -1
+    depth: -1
+  weaponBoneOffset:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.weaponPoseThirdPerson
+    defaultValue:
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  rightHandOffset:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.rightHandOffset
+    defaultValue:
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  leftHandOffset:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.leftHandOffset
+    defaultValue:
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+--- !u!114 &-916511541490441095
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8eabb10c37f4ac88d893c930f7f0f7b, type: 3}
+  m_Name: Full Body IK
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides: []
+  showSceneGui: 0
+  rightHandIk:
+    tip:
+      name: hand_r
+      index: 36
+      depth: -1
+    target:
+      name: IK hand_r
+      index: -1
+      depth: -1
+    poleTarget:
+      name: 
+      index: -1
+      depth: -1
+    poleVector: {x: 0, y: 0, z: -1}
+    weight: 1
+    poleWeight: 1
+  leftHandIk:
+    tip:
+      name: hand_l
+      index: 15
+      depth: -1
+    target:
+      name: IK hand_l
+      index: -1
+      depth: -1
+    poleTarget:
+      name: 
+      index: -1
+      depth: -1
+    poleVector: {x: 0, y: 0, z: -1}
+    weight: 1
+    poleWeight: 1
+  rightFootIk:
+    tip:
+      name: foot_r
+      index: 72
+      depth: -1
+    target:
+      name: IK foot_r
+      index: 76
+      depth: -1
+    poleTarget:
+      name: 
+      index: -1
+      depth: -1
+    poleVector: {x: 0, y: 0, z: 1}
+    weight: 1
+    poleWeight: 1
+  leftFootIk:
+    tip:
+      name: foot_l
+      index: 66
+      depth: -1
+    target:
+      name: IK foot_l
+      index: 77
+      depth: -1
+    poleTarget:
+      name: 
+      index: -1
+      depth: -1
+    poleVector: {x: 0, y: 0, z: 1}
+    weight: 1
+    poleWeight: 1
+--- !u!114 &-829917862260822074
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aea2dd9ab0574ca0a085fb6f8f31bc6a, type: 3}
+  m_Name: Look Modifier
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Examples.Scripts.CharacterExampleController,
+        CAS.Examples.Scripts, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: AimingWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: CharacterExampleController
+    weightModifier:
+      isMask: 0
+      inRangeMin: 0
+      inRangeMax: 0
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.LayeredBlendingComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: Mask_Look_Rotation.value
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: LayeredBlendingComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  pitchInput:
+    objectType: KINEMATION.CharacterAnimationSystem.Examples.Scripts.CharacterExampleController,
+      CAS.Examples.Scripts, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    propertyPath: LookInput.y
+    defaultValue: 0
+    isBound: 1
+    friendlyObjectType: CharacterExampleController
+  yawInput:
+    objectType: KINEMATION.CharacterAnimationSystem.Examples.Scripts.CharacterExampleController,
+      CAS.Examples.Scripts, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    propertyPath: DeltaLookInput.x
+    defaultValue: 0
+    isBound: 1
+    friendlyObjectType: CharacterExampleController
+  useYawAsDelta: 1
+  rollInput:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: LookInput.z
+    defaultValue: 0
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  pitchOffsetElements:
+  - rigElement:
+      name: spine_01
+      index: 9
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  - rigElement:
+      name: spine_02
+      index: 10
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  - rigElement:
+      name: spine_03
+      index: 11
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  yawOffsetElements:
+  - rigElement:
+      name: spine_01
+      index: 9
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  - rigElement:
+      name: spine_02
+      index: 10
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  - rigElement:
+      name: spine_03
+      index: 11
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  rollOffsetElements:
+  - rigElement:
+      name: spine_01
+      index: 9
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  - rigElement:
+      name: spine_02
+      index: 10
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  - rigElement:
+      name: spine_03
+      index: 11
+      depth: 0
+    clampedAngle: {x: 30, y: 30}
+    cachedClampedAngle: {x: 30, y: 30}
+  enableTurnInPlace: 1
+  angleThreshold: 45
+  turnCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  turnSpeed: 1.7
+  turnRightState: TurnRight
+  turnLeftState: TurnLeft
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9e7be750ea64cb99d1929e5a83929ca, type: 3}
+  m_Name: PA_FPS_Generic_Mannequin
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  modifiers:
+  - {fileID: -9066401725176555858}
+  - {fileID: -5324213570901490542}
+  - {fileID: -1465321184445118790}
+  - {fileID: 6088372740108497066}
+  - {fileID: -7540561329552188468}
+  - {fileID: -1033747234861787912}
+  - {fileID: -5990796045205310181}
+  - {fileID: -6757359533927970185}
+  - {fileID: 5836487647567482303}
+  - {fileID: 5332064155279648448}
+  - {fileID: 2252761276031359164}
+  - {fileID: -7470843906118550158}
+  - {fileID: -829917862260822074}
+  - {fileID: 752735861951378792}
+  - {fileID: -2433975825701999001}
+  - {fileID: -6812449227837274981}
+  - {fileID: 2544272827026768217}
+  - {fileID: -916511541490441095}
+  - {fileID: 4948464519686134279}
+--- !u!114 &752735861951378792
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be4a96ddd92847e9a4e717b5b9fd6b30, type: 3}
+  m_Name: Weapon Collision
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides: []
+  showSceneGui: 0
+  weaponBone:
+    name: IK weapon_bone
+    index: -1
+    depth: -1
+  pitchInput:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: LookInput.y
+    defaultValue: 0
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  highReadyPose:
+    position: {x: 0, y: 0, z: -0.1}
+    rotation: {x: 0.642788, y: 0, z: 0, w: -0.76604414}
+    scale: {x: 1, y: 1, z: 1}
+  lowReadyPose:
+    position: {x: 0, y: -0.22, z: -0.16}
+    rotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433914}
+    scale: {x: 1, y: 1, z: 1}
+  targetSpace: 2
+  interpSpeed: 7
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  weaponLength:
+    objectType: 
+    propertyPath: 
+    defaultValue: 0.77
+    isBound: 0
+    friendlyObjectType: 
+  startOffset: -0.25
+  traceRadius: 0.1
+--- !u!114 &2252761276031359164
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270f9f49685c429685143ec023e0fe56, type: 3}
+  m_Name: Ik Motion
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera.CharacterCamera,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: ViewWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: CharacterCamera
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  boneToAnimate:
+    name: IK weapon_bone
+    index: 58
+    depth: -1
+  rotationCurves:
+    x:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    y:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    z:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  translationCurves:
+    x:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    y:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    z:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  rotationScale: {x: 1, y: 1, z: 1}
+  translationScale: {x: 1, y: 1, z: 1}
+  blendTime: 0
+  playRate: 1
+  autoBlendOut: 1
+--- !u!114 &2544272827026768217
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31960828877a4b8d8d35452bdbb689c9, type: 3}
+  m_Name: Step Modifier
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core.LayeredBlendingComponent,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: Traversal_Weight.value
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: LayeredBlendingComponent
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  pelvis:
+    name: pelvis
+    index: 8
+    depth: -1
+  rightFootIkTarget:
+    name: IK foot_r
+    index: 76
+    depth: -1
+  leftFootIkTarget:
+    name: IK foot_l
+    index: 77
+    depth: -1
+  rightFoot:
+    name: foot_r
+    index: 72
+    depth: -1
+  leftFoot:
+    name: foot_l
+    index: 66
+    depth: -1
+  legStretchFactor: 0.05
+  leadFootMotion:
+    x:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    y:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    z:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  followFootMotion:
+    x:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    y:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    z:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  pelvisMotion:
+    x:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    y:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    z:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  leadFootScale: {x: 1, y: 1, z: 1}
+  followFootScale: {x: 1, y: 1, z: 1}
+  pelvisScale: {x: 1, y: 1, z: 1}
+  playRate: 1
+  animatedLeadFoot: 0
+  forceLeadFoot: 0
+  maxAllowedStride: 1
+  maxAllowedOffsetAngle: 90
+  stepCooldownRate: 0
+  totalLeadFootMotion: {x: 0, y: 0, z: 0}
+  totalFollowFootMotion: {x: 0, y: 0, z: 0}
+  totalPelvisMotion: {x: 0, y: 0, z: 0}
+--- !u!114 &4948464519686134279
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4140da4a50a4f43b61d874baba77166, type: 3}
+  m_Name: Trigger Discipline
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      propertyPath: Gait
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: FPSExampleController
+    weightModifier:
+      isMask: 0
+      inRangeMin: 1
+      inRangeMax: 2
+  showSceneGui: 0
+  chainToModify:
+    chainName: 
+    elementChain:
+    - name: index_02_r
+      index: 38
+      depth: 0
+    - name: index_03_r
+      index: 39
+      depth: 0
+  position:
+    objectType: 
+    propertyPath: 
+    defaultValue: {x: 0, y: 0, z: 0}
+    isBound: 0
+    friendlyObjectType: 
+  rotation:
+    objectType: 
+    propertyPath: 
+    defaultValue: {x: 0, y: 0, z: 0.38268346, w: 0.9238795}
+    isBound: 0
+    friendlyObjectType: 
+  space: 1
+  mode: 0
+--- !u!114 &5332064155279648448
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 414cc0ad11e54536b8b7fef331b582e7, type: 3}
+  m_Name: Recoil
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides: []
+  showSceneGui: 0
+  boneToModify:
+    name: IK weapon_bone
+    index: 58
+    depth: -1
+  position:
+    objectType: KINEMATION.ProceduralRecoilAnimationSystem.Runtime.RecoilAnimation,
+      RecoilAnimation.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    propertyPath: OutLoc
+    defaultValue: {x: 0, y: 0, z: 0}
+    isBound: 1
+    friendlyObjectType: RecoilAnimation
+  positionSpace: 2
+  positionMode: 0
+  rotation:
+    objectType: KINEMATION.ProceduralRecoilAnimationSystem.Runtime.RecoilAnimation,
+      RecoilAnimation.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    propertyPath: OutRot
+    defaultValue: {x: 0, y: 0, z: 0, w: 1}
+    isBound: 1
+    friendlyObjectType: RecoilAnimation
+  rotationSpace: 2
+  rotationMode: 0
+  scale:
+    objectType: 
+    propertyPath: 
+    defaultValue: {x: 1, y: 1, z: 1}
+    isBound: 0
+    friendlyObjectType: 
+  scaleMode: 2
+--- !u!114 &5836487647567482303
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18c15a0fee944a44bde15c6372fdf947, type: 3}
+  m_Name: Sway Modifier
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides:
+  - weight:
+      objectType: KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera.CharacterCamera,
+        CAS.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      propertyPath: ViewWeight
+      defaultValue: 0
+      isBound: 1
+      friendlyObjectType: CharacterCamera
+    weightModifier:
+      isMask: 1
+      inRangeMin: 0
+      inRangeMax: 0
+  showSceneGui: 0
+  weaponBone:
+    name: IK weapon_bone
+    index: -1
+    depth: -1
+  weaponAdditiveBone:
+    name: weapon_bone_additive
+    index: 74
+    depth: -1
+  deltaLookInput:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: DeltaLookInput
+    defaultValue: {x: 0, y: 0}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  moveInput:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: MoveInput
+    defaultValue: {x: 0, y: 0}
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  isAiming:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: IsAiming
+    defaultValue: 0
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  aimingSway:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.aimingSway
+    defaultValue:
+      position:
+        damping: {x: 0.4, y: 0.4, z: 0.4}
+        stiffness: {x: 0.4, y: 0.4, z: 0.8}
+        speed: {x: 7, y: 7, z: 7}
+        scale: {x: 1, y: 1, z: 1}
+        clamp: {x: 0, y: 0, z: 0}
+      rotation:
+        damping: {x: 0.4, y: 0.4, z: 0.3}
+        stiffness: {x: 0.8, y: 0.8, z: 0.8}
+        speed: {x: 15, y: 20, z: 15}
+        scale: {x: -2, y: 2, z: -2}
+        clamp: {x: 0, y: 0, z: 0}
+      dampingFactor: 8
+      space: 2
+      adsScale: 0
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  movementSway:
+    objectType: CAS_Demo.Scripts.FPS.FPSExampleController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    propertyPath: GetWeaponItem.weaponSettings.movementSway
+    defaultValue:
+      position:
+        damping: {x: 0.4, y: 0.4, z: 0.4}
+        stiffness: {x: 0.8, y: 0.8, z: 0.8}
+        speed: {x: 7, y: 7, z: 7}
+        scale: {x: 1, y: 0, z: 1}
+        clamp: {x: 0, y: 0, z: 0}
+      rotation:
+        damping: {x: 0.4, y: 0.4, z: 0.4}
+        stiffness: {x: 0.8, y: 0.8, z: 0.8}
+        speed: {x: 12, y: 12, z: 12}
+        scale: {x: 2, y: 2, z: -2}
+        clamp: {x: 0, y: 0, z: 0}
+      dampingFactor: 8
+      space: 2
+      adsScale: 0
+    isBound: 1
+    friendlyObjectType: FPSExampleController
+  spaceOffset: {x: 0, y: 0, z: 0, w: 1}
+  adsCurveScale: 0.3
+  adsCurveSmoothing: 10
+--- !u!114 &6088372740108497066
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 134c52960f6c499baf1775d46c46ecb0, type: 3}
+  m_Name: Copy Left Foot IK
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 1310458970646569404, guid: 0328d1f4bc342d34c8064f42e388dfc6,
+    type: 3}
+  alpha: 1
+  weightOverrides: []
+  showSceneGui: 0
+  copyFrom:
+    name: foot_l
+    index: 59
+    depth: -1
+  copyTo:
+    name: IK foot_l
+    index: 77
+    depth: -1
+  copySpace: 2
+  copyMode: 1
+  copyPosition: 1
+  copyRotation: 1
+  copyScale: 0

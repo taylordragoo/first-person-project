@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3f5fc7d223544bf8d93b7a51c17d2b0, type: 3}
+  m_Name: WS_Pistol
+  m_EditorClassIdentifier: 
+  weaponPose:
+    position: {x: -0.03, y: -0.05, z: 0.12}
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+    scale: {x: 1, y: 1, z: 1}
+  weaponPoseThirdPerson:
+    position: {x: 0, y: -0.05, z: 0.08}
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+    scale: {x: 1, y: 1, z: 1}
+  weaponPoseThirdPersonRest:
+    position: {x: 0.05, y: -0.14, z: 0.01}
+    rotation: {x: -0.21643962, y: 0, z: 0, w: 0.976296}
+    scale: {x: 1, y: 1, z: 1}
+  rightHandOffset:
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+    scale: {x: 1, y: 1, z: 1}
+  leftHandOffset:
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+    scale: {x: 1, y: 1, z: 1}
+  aimingSway:
+    position:
+      damping: {x: 0.4, y: 0.4, z: 0.4}
+      stiffness: {x: 0.4, y: 0.4, z: 0.8}
+      speed: {x: 7, y: 7, z: 7}
+      scale: {x: 2, y: 3, z: 3}
+      clamp: {x: 3, y: 3, z: 3}
+    rotation:
+      damping: {x: 0.4, y: 0.4, z: 0.3}
+      stiffness: {x: 0.8, y: 0.8, z: 0.8}
+      speed: {x: 12, y: 10, z: 15}
+      scale: {x: -4, y: 4, z: -4}
+      clamp: {x: 35, y: 35, z: 35}
+    dampingFactor: 8
+    space: 2
+    adsScale: 0.5
+  movementSway:
+    position:
+      damping: {x: 0.4, y: 0.4, z: 0.4}
+      stiffness: {x: 0.8, y: 0.8, z: 0.8}
+      speed: {x: 7, y: 7, z: 7}
+      scale: {x: 1, y: 0, z: 1}
+      clamp: {x: 1, y: 1, z: 1}
+    rotation:
+      damping: {x: 0.4, y: 0.4, z: 0.4}
+      stiffness: {x: 0.8, y: 0.8, z: 0.8}
+      speed: {x: 12, y: 12, z: 12}
+      scale: {x: 2, y: 2, z: -2}
+      clamp: {x: 1, y: 1, z: 1}
+    dampingFactor: 8
+    space: 2
+    adsScale: 0.4
+  fireRate: 400
+  recoilData: {fileID: 11400000, guid: 2c844a366fdbb904ba08f92aa427b572, type: 2}
+  recoilShake: {fileID: 11400000, guid: ed140d7b109f58f46875763585689d49, type: 2}
+  supportsBurst: 0
+  supportsAuto: 0
+  burstRounds: 0
+  reload:
+    character: {fileID: 11400000, guid: 034ace70a8644c248af91296af366f6f, type: 2}
+    weapon: {fileID: 11400000, guid: 13f8152441f3a7740ba2878473d387a0, type: 2}
+  fire:
+    character: {fileID: 0}
+    weapon: {fileID: 11400000, guid: 043040d95b01045428541b078d7724b0, type: 2}
+  equip:
+    character: {fileID: 0}
+    weapon: {fileID: 0}
+  unEquip:
+    character: {fileID: 0}
+    weapon: {fileID: 0}
+  equipMotion: {fileID: 11400000, guid: 925be0711b2c2c84c900c0c2c64938e0, type: 2}
+  unEquipMotion: {fileID: 11400000, guid: 3aaa2aebedd2b814289aad483975bfe9, type: 2}
+  fireSounds:
+  - {fileID: 8300000, guid: ba5ce05ea06a5c24ca97c9f557c81db3, type: 3}
+  - {fileID: 8300000, guid: 16e9f15099056404086a1fdb89930e1f, type: 3}
+  animEventSounds:
+  - {fileID: 8300000, guid: c40cc5984d8ee1e48a9826242affa98b, type: 3}

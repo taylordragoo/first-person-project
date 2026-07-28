@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 18c15a0fee944a44bde15c6372fdf947
+timeCreated: 1745931631
+AssetOrigin:
+  serializedVersion: 1
+  productId: 321490
+  packageName: FPS Addon for CAS
+  packageVersion: 1.3.0
+  assetPath: Assets/KINEMATION/CharacterAnimationSystem/Addons/FPS/Scripts/Modifiers/SwayModifierSettings.cs
+  uploadId: 931268

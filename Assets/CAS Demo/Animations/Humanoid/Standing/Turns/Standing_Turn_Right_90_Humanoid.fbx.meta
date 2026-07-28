@@ -1,0 +1,938 @@
+fileFormatVersion: 2
+guid: 7d57134bb753d754ebf1eeaa7d7ba68c
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 1
+    importConstraints: 0
+    animationCompression: 0
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties:
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":-0.1358184963464737,"inSlope":-0.0040662288665771488,"outSlope":-0.0040662288665771488,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":-0.13595403730869294,"inSlope":0.03281906247138977,"outSlope":0.03281906247138977,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":-0.13363055884838105,"inSlope":0.05987003073096275,"outSlope":0.05987003073096275,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":-0.13196270167827607,"inSlope":0.020308565348386766,"outSlope":0.020308565348386766,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":-0.13227665424346925,"inSlope":-0.017253534868359567,"outSlope":-0.017253534868359567,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":-0.13311293721199037,"inSlope":-0.014716164208948613,"outSlope":-0.014716164208948613,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":-0.13325773179531098,"inSlope":0.0070343175902962688,"outSlope":0.0070343175902962688,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":-0.13264398276805879,"inSlope":0.02819693833589554,"outSlope":0.02819693833589554,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":-0.1313779354095459,"inSlope":0.041401006281375888,"outSlope":0.041401006281375888,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":-0.12988391518592835,"inSlope":0.04729360714554787,"outSlope":0.04729360714554787,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":-0.12822502851486207,"inSlope":0.05211353674530983,"outSlope":0.05211353674530983,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":-0.12640967965126038,"inSlope":0.0797145888209343,"outSlope":0.0797145888209343,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":-0.12291072309017182,"inSlope":0.19461417198181153,"outSlope":0.19461417198181153,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":-0.11343540251255036,"inSlope":0.2929326891899109,"outSlope":0.2929326891899109,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":-0.10338187962770462,"inSlope":0.3480657935142517,"outSlope":0.3480657935142517,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":-0.0902310162782669,"inSlope":0.33624476194381716,"outSlope":0.33624476194381716,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":-0.080965556204319,"inSlope":0.26963865756988528,"outSlope":0.26963865756988528,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":-0.07225508987903595,"inSlope":0.18833573162555695,"outSlope":0.18833573162555695,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":-0.06840983033180237,"inSlope":-0.009808044880628586,"outSlope":-0.009808044880628586,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":-0.07290896028280258,"inSlope":-0.28050318360328677,"outSlope":-0.28050318360328677,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":-0.08711005747318268,"inSlope":-0.35798150300979617,"outSlope":-0.35798150300979617,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":-0.09677441418170929,"inSlope":-0.26741689443588259,"outSlope":-0.26741689443588259,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":-0.10493786633014679,"inSlope":-0.397307813167572,"outSlope":-0.397307813167572,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":-0.12326162308454514,"inSlope":-0.25578171014785769,"outSlope":-0.25578171014785769,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":-0.12198999524116516,"inSlope":-0.04032217711210251,"outSlope":-0.04032217711210251,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":-0.12594977021217347,"inSlope":-0.12496490776538849,"outSlope":-0.12496490776538849,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":-0.13032099604606629,"inSlope":-0.14088201522827149,"outSlope":-0.14088201522827149,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":-0.13534191250801087,"inSlope":-0.15062737464904786,"outSlope":-0.15062737464904786,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_l","propertyName":"localPosition.x","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":-0.09788371622562409,"inSlope":0.280255526304245,"outSlope":0.280255526304245,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":-0.08854186534881592,"inSlope":0.27305489778518679,"outSlope":0.27305489778518679,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":-0.07968005537986756,"inSlope":0.25605908036231997,"outSlope":0.25605908036231997,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":-0.07147125899791718,"inSlope":0.2439095675945282,"outSlope":0.2439095675945282,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":-0.0634194165468216,"inSlope":0.24520421028137208,"outSlope":0.24520421028137208,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":-0.05512431263923645,"inSlope":0.2550709545612335,"outSlope":0.2550709545612335,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":-0.04641468822956085,"inSlope":0.26656869053840639,"outSlope":0.26656869053840639,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":-0.037353068590164188,"inSlope":0.2738523781299591,"outSlope":0.2738523781299591,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":-0.028157860040664674,"inSlope":0.28552311658859255,"outSlope":0.28552311658859255,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":-0.018318191170692445,"inSlope":0.3372334837913513,"outSlope":0.3372334837913513,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":-0.0056756287813186649,"inSlope":0.3782145380973816,"outSlope":0.3782145380973816,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.006896108388900757,"inSlope":0.33800798654556277,"outSlope":0.33800798654556277,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.016858235001564027,"inSlope":0.19728073477745057,"outSlope":0.19728073477745057,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.02004815638065338,"inSlope":0.06315217167139054,"outSlope":0.06315217167139054,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.021068379282951356,"inSlope":0.054312948137521747,"outSlope":0.054312948137521747,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.02366901934146881,"inSlope":0.07937435805797577,"outSlope":0.07937435805797577,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.026360005140304567,"inSlope":0.012101670727133751,"outSlope":0.012101670727133751,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.02447579801082611,"inSlope":-0.136513814330101,"outSlope":-0.136513814330101,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.017259076237678529,"inSlope":-0.33933091163635256,"outSlope":-0.33933091163635256,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.0018537193536758423,"inSlope":-0.6552025675773621,"outSlope":-0.6552025675773621,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":-0.02642112970352173,"inSlope":-1.0007275342941285,"outSlope":-1.0007275342941285,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":-0.06486150622367859,"inSlope":-1.0485551357269288,"outSlope":-1.0485551357269288,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":-0.0963248610496521,"inSlope":-0.801987886428833,"outSlope":-0.801987886428833,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":-0.11832740902900696,"inSlope":-0.3476005792617798,"outSlope":-0.3476005792617798,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":-0.11949825286865235,"inSlope":-0.020998772233724595,"outSlope":-0.020998772233724595,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":-0.11972732841968537,"inSlope":0.11128207296133042,"outSlope":0.11128207296133042,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":-0.1120794415473938,"inSlope":0.28288230299949648,"outSlope":0.28288230299949648,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":-0.10086849331855774,"inSlope":0.3363281786441803,"outSlope":0.3363281786441803,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_l","propertyName":"localPosition.y","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":0.13545113801956178,"inSlope":-0.013781188987195492,"outSlope":-0.013781188987195492,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":0.13499176502227784,"inSlope":-0.001443028450012207,"outSlope":-0.001443028450012207,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":0.1353549361228943,"inSlope":0.019628403708338739,"outSlope":0.019628403708338739,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":0.13630032539367677,"inSlope":0.03431886434555054,"outSlope":0.03431886434555054,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.13764286041259767,"inSlope":0.037761036306619647,"outSlope":0.037761036306619647,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.13881772756576539,"inSlope":0.029117170721292497,"outSlope":0.029117170721292497,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":0.1395840048789978,"inSlope":0.019669311121106149,"outSlope":0.019669311121106149,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":0.14012901484966279,"inSlope":0.014084277674555779,"outSlope":0.014084277674555779,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":0.14052295684814454,"inSlope":0.00913671962916851,"outSlope":0.00913671962916851,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":0.1407381296157837,"inSlope":0.001562833902426064,"outSlope":0.001562833902426064,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":0.14062714576721192,"inSlope":-0.008330048061907292,"outSlope":-0.008330048061907292,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.14018279314041139,"inSlope":0.0025615100748836996,"outSlope":0.0025615100748836996,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.1407979130744934,"inSlope":0.13544531166553498,"outSlope":0.13544531166553498,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.14921247959136964,"inSlope":0.3195427656173706,"outSlope":0.3195427656173706,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.16210076212882996,"inSlope":0.4893444776535034,"outSlope":0.4893444776535034,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.18183544278144837,"inSlope":0.4575773775577545,"outSlope":0.4575773775577545,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.19260592758655549,"inSlope":0.15333236753940583,"outSlope":0.15333236753940583,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.19205760955810548,"inSlope":-0.10631731152534485,"outSlope":-0.10631731152534485,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.18551810085773469,"inSlope":-0.23771795630455018,"outSlope":-0.23771795630455018,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.1762097328901291,"inSlope":-0.30029919743537905,"outSlope":-0.30029919743537905,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.16549813747406007,"inSlope":-0.2747301757335663,"outSlope":-0.2747301757335663,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.15789437294006349,"inSlope":-0.172954723238945,"outSlope":-0.172954723238945,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.15396781265735627,"inSlope":-0.16455785930156709,"outSlope":-0.16455785930156709,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.14692384004592896,"inSlope":-0.16839230060577393,"outSlope":-0.16839230060577393,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.14274165034294129,"inSlope":-0.15032830834388734,"outSlope":-0.15032830834388734,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.13690194487571717,"inSlope":-0.09652882069349289,"outSlope":-0.09652882069349289,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.13630639016628266,"inSlope":-0.01874460279941559,"outSlope":-0.01874460279941559,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":0.1356523036956787,"inSlope":-0.019622577354311944,"outSlope":-0.019622577354311944,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_l","propertyName":"localPosition.z","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":0.16766315698623658,"inSlope":0.5370068550109863,"outSlope":0.5370068550109863,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":0.18556338548660279,"inSlope":0.5136955380439758,"outSlope":0.5136955380439758,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":0.20190952718257905,"inSlope":0.47223615646362307,"outSlope":0.47223615646362307,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":0.21704579889774323,"inSlope":0.4510158896446228,"outSlope":0.4510158896446228,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.23197725415229798,"inSlope":0.4704800546169281,"outSlope":0.4704800546169281,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.2484111338853836,"inSlope":0.5019835233688355,"outSlope":0.5019835233688355,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":0.265442818403244,"inSlope":0.5141725540161133,"outSlope":0.5141725540161133,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":0.28268930315971377,"inSlope":0.510810136795044,"outSlope":0.510810136795044,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":0.2994968295097351,"inSlope":0.5319360494613648,"outSlope":0.5319360494613648,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":0.31815171241760256,"inSlope":0.6358574628829956,"outSlope":0.6358574628829956,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":0.34188732504844668,"inSlope":0.7190452814102173,"outSlope":0.7190452814102173,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.36608806252479555,"inSlope":0.6018461585044861,"outSlope":0.6018461585044861,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.38201040029525759,"inSlope":0.30780228972435,"outSlope":0.30780228972435,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.38660821318626406,"inSlope":0.09837091714143753,"outSlope":0.09837091714143753,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.3885684609413147,"inSlope":0.15074820816516877,"outSlope":0.15074820816516877,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.3966580927371979,"inSlope":-0.08086306601762772,"outSlope":-0.08086306601762772,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.38317757844924929,"inSlope":-0.47714269161224368,"outSlope":-0.47714269161224368,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.3648485541343689,"inSlope":-0.658186674118042,"outSlope":-0.658186674118042,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.33929842710494997,"inSlope":-0.6076168417930603,"outSlope":-0.6076168417930603,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.32434073090553286,"inSlope":-0.8630505204200745,"outSlope":-0.8630505204200745,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.28176167607307436,"inSlope":-1.3049702644348145,"outSlope":-1.3049702644348145,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.23734264075756074,"inSlope":-1.2980103492736817,"outSlope":-1.2980103492736817,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.19522757828235627,"inSlope":-1.9804710149765015,"outSlope":-1.9804710149765015,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.10531113296747208,"inSlope":-1.6519380807876588,"outSlope":-1.6519380807876588,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.0850982815027237,"inSlope":0.23940202593803407,"outSlope":0.23940202593803407,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.1212712824344635,"inSlope":0.7961299419403076,"outSlope":0.7961299419403076,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.1381736546754837,"inSlope":0.6200282573699951,"outSlope":0.6200282573699951,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":0.16260653734207154,"inSlope":0.7329858541488648,"outSlope":0.7329858541488648,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_l","propertyName":"localRotation.x","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":0.7161712646484375,"inSlope":-0.1637488454580307,"outSlope":-0.1637488454580307,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":0.7107129693031311,"inSlope":-0.17370788753032685,"outSlope":-0.17370788753032685,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":0.7045907378196716,"inSlope":-0.1779743731021881,"outSlope":-0.1779743731021881,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":0.6988480091094971,"inSlope":-0.16387134790420533,"outSlope":-0.16387134790420533,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.6936659812927246,"inSlope":-0.1657310277223587,"outSlope":-0.1657310277223587,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.6877992749214172,"inSlope":-0.1893085390329361,"outSlope":-0.1893085390329361,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":0.681045413017273,"inSlope":-0.21283508837223054,"outSlope":-0.21283508837223054,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":0.673610270023346,"inSlope":-0.22708293795585633,"outSlope":-0.22708293795585633,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":0.665906548500061,"inSlope":-0.24948742985725404,"outSlope":-0.24948742985725404,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":0.6569777727127075,"inSlope":-0.3112095892429352,"outSlope":-0.3112095892429352,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":0.6451592445373535,"inSlope":-0.3717997968196869,"outSlope":-0.3717997968196869,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.6321911215782166,"inSlope":-0.3241834342479706,"outSlope":-0.3241834342479706,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.6235470175743103,"inSlope":0.11817187070846558,"outSlope":0.11817187070846558,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.6400692462921143,"inSlope":0.6564894914627075,"outSlope":0.6564894914627075,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.6673129796981812,"inSlope":0.6689474582672119,"outSlope":0.6689474582672119,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.6846657395362854,"inSlope":0.24894212186336518,"outSlope":0.24894212186336518,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.6839091181755066,"inSlope":-0.15309230983257295,"outSlope":-0.15309230983257295,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.6744595766067505,"inSlope":-0.08737199008464813,"outSlope":-0.08737199008464813,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.6780843138694763,"inSlope":0.19652797281742097,"outSlope":0.19652797281742097,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.6875614523887634,"inSlope":0.4184644818305969,"outSlope":0.4184644818305969,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.705981969833374,"inSlope":0.14592097699642182,"outSlope":0.14592097699642182,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.6972895264625549,"inSlope":-0.43133461475372317,"outSlope":-0.43133461475372317,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.6772263050079346,"inSlope":-0.05510327219963074,"outSlope":-0.05510327219963074,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.6936159729957581,"inSlope":0.5995715856552124,"outSlope":0.5995715856552124,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.7171977758407593,"inSlope":0.49598294496536257,"outSlope":0.49598294496536257,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.7266815304756165,"inSlope":0.09167693555355072,"outSlope":0.09167693555355072,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.7233095765113831,"inSlope":-0.1361541748046875,"outSlope":-0.1361541748046875,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":0.7176045775413513,"inSlope":-0.1711498200893402,"outSlope":-0.1711498200893402,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_l","propertyName":"localRotation.y","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":-0.14687460660934449,"inSlope":-0.3686061203479767,"outSlope":-0.3686061203479767,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":-0.15916147828102113,"inSlope":-0.3372519910335541,"outSlope":-0.3372519910335541,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":-0.16935807466506959,"inSlope":-0.31250882148742678,"outSlope":-0.31250882148742678,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":-0.17999540269374848,"inSlope":-0.33425039052963259,"outSlope":-0.33425039052963259,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":-0.1916414350271225,"inSlope":-0.37454479932785036,"outSlope":-0.37454479932785036,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":-0.20496505498886109,"inSlope":-0.4095838665962219,"outSlope":-0.4095838665962219,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":-0.21894702315330506,"inSlope":-0.4210742115974426,"outSlope":-0.4210742115974426,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":-0.23303666710853578,"inSlope":-0.4125341773033142,"outSlope":-0.4125341773033142,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":-0.2464493066072464,"inSlope":-0.42649710178375246,"outSlope":-0.42649710178375246,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":-0.2614698112010956,"inSlope":-0.51828932762146,"outSlope":-0.51828932762146,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":-0.2810019254684448,"inSlope":-0.6019226312637329,"outSlope":-0.6019226312637329,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":-0.3015979826450348,"inSlope":-0.5011444091796875,"outSlope":-0.5011444091796875,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":-0.31441155076026919,"inSlope":0.23121313750743867,"outSlope":0.23121313750743867,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":-0.28618377447128298,"inSlope":1.2755305767059327,"outSlope":1.2755305767059327,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":-0.2293761819601059,"inSlope":1.9575120210647584,"outSlope":1.9575120210647584,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":-0.1556829810142517,"inSlope":2.070887804031372,"outSlope":2.070887804031372,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":-0.09131694585084915,"inSlope":1.3302457332611085,"outSlope":1.3302457332611085,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":-0.06699986010789871,"inSlope":0.33320844173431399,"outSlope":0.33320844173431399,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":-0.06910303235054016,"inSlope":-0.48802247643470766,"outSlope":-0.48802247643470766,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":-0.09953472018241883,"inSlope":-0.6993474960327148,"outSlope":-0.6993474960327148,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":-0.11572623997926712,"inSlope":-0.34750548005104067,"outSlope":-0.34750548005104067,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":-0.12270177155733109,"inSlope":-0.3721652328968048,"outSlope":-0.3721652328968048,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":-0.14053727686405183,"inSlope":0.026355713605880739,"outSlope":0.026355713605880739,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":-0.12094472348690033,"inSlope":0.424344003200531,"outSlope":0.424344003200531,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":-0.11224765330553055,"inSlope":0.3220326900482178,"outSlope":0.3220326900482178,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":-0.09947586059570313,"inSlope":-0.08900164067745209,"outSlope":-0.08900164067745209,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":-0.11818110197782517,"inSlope":-0.6345524787902832,"outSlope":-0.6345524787902832,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":-0.14177939295768739,"inSlope":-0.7079481482505798,"outSlope":-0.7079481482505798,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_l","propertyName":"localRotation.z","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":0.661374568939209,"inSlope":-0.052115317434072497,"outSlope":-0.052115317434072497,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":0.6596373915672302,"inSlope":-0.037643905729055408,"outSlope":-0.037643905729055408,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":0.6588649749755859,"inSlope":-0.034357305616140369,"outSlope":-0.034357305616140369,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":0.6573469042778015,"inSlope":-0.06641685962677002,"outSlope":-0.06641685962677002,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.6544371843338013,"inSlope":-0.10197312384843826,"outSlope":-0.10197312384843826,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.6505486965179443,"inSlope":-0.12117595970630646,"outSlope":-0.12117595970630646,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":0.6463587880134583,"inSlope":-0.12979300320148469,"outSlope":-0.12979300320148469,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":0.6418958306312561,"inSlope":-0.13609078526496888,"outSlope":-0.13609078526496888,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":0.6372860670089722,"inSlope":-0.1559230387210846,"outSlope":-0.1559230387210846,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":0.6315009593963623,"inSlope":-0.2167949378490448,"outSlope":-0.2167949378490448,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":0.6228330731391907,"inSlope":-0.28261008858680727,"outSlope":-0.28261008858680727,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.61266028881073,"inSlope":-0.2628118097782135,"outSlope":-0.2628118097782135,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.6053122878074646,"inSlope":-0.20310761034488679,"outSlope":-0.20310761034488679,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.5991197824478149,"inSlope":-0.1916957050561905,"outSlope":-0.1916957050561905,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.5925325751304627,"inSlope":-0.1170077994465828,"outSlope":-0.1170077994465828,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.5913192629814148,"inSlope":0.3233426809310913,"outSlope":0.3233426809310913,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.614088773727417,"inSlope":0.7055822014808655,"outSlope":0.7055822014808655,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.6383581161499023,"inSlope":0.5132930278778076,"outSlope":0.5132930278778076,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.6483083367347717,"inSlope":0.054526589810848239,"outSlope":0.054526589810848239,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.6419932246208191,"inSlope":-0.1339145302772522,"outSlope":-0.1339145302772522,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.639380693435669,"inSlope":0.34708380699157717,"outSlope":0.34708380699157717,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.6651321649551392,"inSlope":0.8394261002540588,"outSlope":0.8394261002540588,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.695342481136322,"inSlope":0.5570263862609863,"outSlope":0.5570263862609863,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.7022672891616821,"inSlope":-0.19285067915916444,"outSlope":-0.19285067915916444,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.6824857592582703,"inSlope":-0.5015690922737122,"outSlope":-0.5015690922737122,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.6688293218612671,"inSlope":-0.24493645131587983,"outSlope":-0.24493645131587983,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.6661566495895386,"inSlope":-0.09951881319284439,"outSlope":-0.09951881319284439,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":0.6621947288513184,"inSlope":-0.11885752528905869,"outSlope":-0.11885752528905869,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_l","propertyName":"localRotation.w","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":0.056183986365795138,"inSlope":-0.051674652844667438,"outSlope":-0.051674652844667438,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":0.05446149781346321,"inSlope":-0.021504832431674005,"outSlope":-0.021504832431674005,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":0.05475033074617386,"inSlope":-0.08191145956516266,"outSlope":-0.08191145956516266,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":0.049000732600688937,"inSlope":-0.24146273732185365,"outSlope":-0.24146273732185365,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.03865281492471695,"inSlope":-0.3823802173137665,"outSlope":-0.3823802173137665,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.023508720099925996,"inSlope":-0.7786957025527954,"outSlope":-0.7786957025527954,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":-0.013260230422019959,"inSlope":-0.9877104759216309,"outSlope":-0.9877104759216309,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":-0.042338643223047259,"inSlope":-0.6130817532539368,"outSlope":-0.6130817532539368,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":-0.05413234978914261,"inSlope":-0.23228991031646729,"outSlope":-0.23228991031646729,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":-0.05782464146614075,"inSlope":-0.07402070611715317,"outSlope":-0.07402070611715317,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":-0.05906706303358078,"inSlope":0.019511843100190164,"outSlope":0.019511843100190164,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":-0.05652385205030441,"inSlope":0.030441176146268846,"outSlope":0.030441176146268846,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":-0.05703765153884888,"inSlope":0.08521322906017304,"outSlope":0.08521322906017304,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":-0.05084297060966492,"inSlope":0.23840245604515077,"outSlope":0.23840245604515077,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":-0.04114415496587753,"inSlope":0.32857707142829897,"outSlope":0.32857707142829897,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":-0.02893783338367939,"inSlope":0.35956627130508425,"outSlope":0.35956627130508425,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":-0.017173059284687043,"inSlope":0.373480886220932,"outSlope":0.373480886220932,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":-0.004039085935801268,"inSlope":0.4105655252933502,"outSlope":0.4105655252933502,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.010197998955845833,"inSlope":0.3799031376838684,"outSlope":0.3799031376838684,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.021287810057401658,"inSlope":0.28001105785369875,"outSlope":0.28001105785369875,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.028865419328212739,"inSlope":0.19214078783988954,"outSlope":0.19214078783988954,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.034097205847501758,"inSlope":0.15350252389907838,"outSlope":0.15350252389907838,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.03909892961382866,"inSlope":0.09971204400062561,"outSlope":0.09971204400062561,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.040744680911302569,"inSlope":0.04096584767103195,"outSlope":0.04096584767103195,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.04182998836040497,"inSlope":0.05852089077234268,"outSlope":0.05852089077234268,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.04464607685804367,"inSlope":0.10234642028808594,"outSlope":0.10234642028808594,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.04865308851003647,"inSlope":0.13171562552452088,"outSlope":0.13171562552452088,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":0.05342712625861168,"inSlope":0.14322100579738618,"outSlope":0.14322100579738618,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_r","propertyName":"localPosition.x","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":-0.0073260217905044559,"inSlope":-0.0797581598162651,"outSlope":-0.0797581598162651,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":-0.009984627366065979,"inSlope":-0.06895444542169571,"outSlope":-0.06895444542169571,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":-0.011922985315322876,"inSlope":0.08155500888824463,"outSlope":0.08155500888824463,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":-0.004547625780105591,"inSlope":0.26703381538391116,"outSlope":0.26703381538391116,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.005879268050193787,"inSlope":0.3346869647502899,"outSlope":0.3346869647502899,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.01776483654975891,"inSlope":0.4397658705711365,"outSlope":0.4397658705711365,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":0.03519698977470398,"inSlope":0.5840544104576111,"outSlope":0.5840544104576111,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":0.056701794266700748,"inSlope":0.6637934446334839,"outSlope":0.6637934446334839,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":0.07944989204406738,"inSlope":0.5884413123130798,"outSlope":0.5884413123130798,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":0.09593122452497482,"inSlope":0.5034273862838745,"outSlope":0.5034273862838745,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":0.11301171779632569,"inSlope":0.3203878700733185,"outSlope":0.3203878700733185,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.11729041486978531,"inSlope":-0.11617809534072876,"outSlope":-0.11617809534072876,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.1052665114402771,"inSlope":-0.2746492624282837,"outSlope":-0.2746492624282837,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.09898046404123306,"inSlope":-0.21860060095787049,"outSlope":-0.21860060095787049,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.09069313853979111,"inSlope":-0.2353787124156952,"outSlope":-0.2353787124156952,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.08328855037689209,"inSlope":-0.23452924191951753,"outSlope":-0.23452924191951753,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.07505784928798676,"inSlope":-0.25202226638793948,"outSlope":-0.25202226638793948,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.06648705154657364,"inSlope":-0.259493887424469,"outSlope":-0.259493887424469,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.05775824189186096,"inSlope":-0.2822801470756531,"outSlope":-0.2822801470756531,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.04766836017370224,"inSlope":-0.26773586869239809,"outSlope":-0.26773586869239809,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.03990916907787323,"inSlope":-0.21063894033432008,"outSlope":-0.21063894033432008,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.03362575173377991,"inSlope":-0.1851850301027298,"outSlope":-0.1851850301027298,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.027563489973545076,"inSlope":-0.1871115267276764,"outSlope":-0.1871115267276764,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.02115163952112198,"inSlope":-0.17886149883270265,"outSlope":-0.17886149883270265,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.015639379620552064,"inSlope":-0.15648195147514344,"outSlope":-0.15648195147514344,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.010719500482082367,"inSlope":-0.16493582725524903,"outSlope":-0.16493582725524903,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.004643648862838745,"inSlope":-0.21583417057991029,"outSlope":-0.21583417057991029,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":-0.003669455647468567,"inSlope":-0.24939292669296266,"outSlope":-0.24939292669296266,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_r","propertyName":"localPosition.y","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":0.133053719997406,"inSlope":0.006973742973059416,"outSlope":0.006973742973059416,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":0.13328617811203004,"inSlope":0.050952132791280749,"outSlope":0.050952132791280749,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":0.13645052909851075,"inSlope":0.15743224322795869,"outSlope":0.15743224322795869,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":0.1437816619873047,"inSlope":0.16438542306423188,"outSlope":0.16438542306423188,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.1474095582962036,"inSlope":0.08680880814790726,"outSlope":0.08680880814790726,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.14956891536712647,"inSlope":0.06732255965471268,"outSlope":0.06732255965471268,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":0.15189772844314576,"inSlope":0.06948911398649216,"outSlope":0.06948911398649216,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":0.15420152246952058,"inSlope":0.07275669276714325,"outSlope":0.07275669276714325,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":0.15674817562103272,"inSlope":0.0444144606590271,"outSlope":0.0444144606590271,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":0.15716248750686646,"inSlope":-0.017033817246556283,"outSlope":-0.017033817246556283,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":0.15561258792877198,"inSlope":-0.0956091359257698,"outSlope":-0.0956091359257698,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.1507885456085205,"inSlope":-0.11097373068332672,"outSlope":-0.11097373068332672,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.14821434020996095,"inSlope":-0.06066799908876419,"outSlope":-0.06066799908876419,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.1467440128326416,"inSlope":-0.045118335634469989,"outSlope":-0.045118335634469989,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.14520645141601563,"inSlope":-0.030848534777760507,"outSlope":-0.030848534777760507,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.1446874439716339,"inSlope":-0.010889319702982903,"outSlope":-0.010889319702982903,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.14448049664497376,"inSlope":-0.013130296021699906,"outSlope":-0.013130296021699906,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.14381209015846253,"inSlope":-0.031889427453279498,"outSlope":-0.031889427453279498,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.14235453307628632,"inSlope":-0.02408040501177311,"outSlope":-0.02408040501177311,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.14220672845840455,"inSlope":-0.007079908158630133,"outSlope":-0.007079908158630133,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.1418825387954712,"inSlope":-0.02940145693719387,"outSlope":-0.02940145693719387,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.14024662971496583,"inSlope":-0.05461330711841583,"outSlope":-0.05461330711841583,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.13824164867401124,"inSlope":-0.041829463094472888,"outSlope":-0.041829463094472888,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.13745799660682679,"inSlope":-0.024297887459397317,"outSlope":-0.024297887459397317,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.13662178814411164,"inSlope":-0.02766428142786026,"outSlope":-0.02766428142786026,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.13561370968818665,"inSlope":-0.033400848507881168,"outSlope":-0.033400848507881168,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.1343950629234314,"inSlope":-0.03254366293549538,"outSlope":-0.03254366293549538,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":0.13344413042068482,"inSlope":-0.02852795086801052,"outSlope":-0.02852795086801052,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_r","propertyName":"localPosition.z","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":0.6531247496604919,"inSlope":0.12118398398160935,"outSlope":0.12118398398160935,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":0.6571642160415649,"inSlope":0.1289820671081543,"outSlope":0.1289820671081543,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":0.6617235541343689,"inSlope":-0.060307666659355167,"outSlope":-0.060307666659355167,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":0.6531437039375305,"inSlope":-0.4318106174468994,"outSlope":-0.4318106174468994,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.6329361796379089,"inSlope":-0.5649009943008423,"outSlope":-0.5649009943008423,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.6154836416244507,"inSlope":-0.3879789113998413,"outSlope":-0.3879789113998413,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":0.6070709228515625,"inSlope":-0.22155675292015077,"outSlope":-0.22155675292015077,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":0.6007131934165955,"inSlope":-0.024691559374332429,"outSlope":-0.024691559374332429,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":0.6054248213768005,"inSlope":0.2292841523885727,"outSlope":0.2292841523885727,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":0.6159988045692444,"inSlope":0.12031050026416779,"outSlope":0.12031050026416779,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":0.613445520401001,"inSlope":-0.20700396597385407,"outSlope":-0.20700396597385407,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.6021985411643982,"inSlope":-0.3750774562358856,"outSlope":-0.3750774562358856,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.5884403586387634,"inSlope":-0.352721244096756,"outSlope":-0.352721244096756,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.5786837935447693,"inSlope":-0.15898706018924714,"outSlope":-0.15898706018924714,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.5778412222862244,"inSlope":0.06904900819063187,"outSlope":0.06904900819063187,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.5832870602607727,"inSlope":0.14099206030368806,"outSlope":0.14099206030368806,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.5872406959533691,"inSlope":0.18370524048805238,"outSlope":0.18370524048805238,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.595534086227417,"inSlope":0.35711705684661868,"outSlope":0.35711705684661868,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.6110485196113586,"inSlope":0.3716742992401123,"outSlope":0.3716742992401123,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.6203123927116394,"inSlope":0.22967736423015595,"outSlope":0.22967736423015595,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.6263603568077087,"inSlope":0.14803189039230348,"outSlope":0.14803189039230348,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.6301811933517456,"inSlope":0.17476364970207215,"outSlope":0.17476364970207215,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.6380112767219544,"inSlope":0.1909865438938141,"outSlope":0.1909865438938141,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.6429136395454407,"inSlope":0.11322131752967835,"outSlope":0.11322131752967835,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.6455593705177307,"inSlope":0.060241468250751498,"outSlope":0.060241468250751498,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.6469297409057617,"inSlope":0.05775059759616852,"outSlope":0.05775059759616852,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.6494094133377075,"inSlope":0.09236447513103485,"outSlope":0.09236447513103485,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":0.6530873775482178,"inSlope":0.11033883690834046,"outSlope":0.11033883690834046,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_r","propertyName":"localRotation.x","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":0.15409016609191895,"inSlope":-0.47800135612487795,"outSlope":-0.47800135612487795,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":0.13815678656101228,"inSlope":-0.4216787815093994,"outSlope":-0.4216787815093994,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":0.1259782463312149,"inSlope":-0.08282259106636048,"outSlope":-0.08282259106636048,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":0.13263528048992158,"inSlope":0.4574304223060608,"outSlope":0.4574304223060608,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.15647360682487489,"inSlope":0.7405614852905273,"outSlope":0.7405614852905273,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.18200604617595673,"inSlope":0.7527215480804443,"outSlope":0.7527215480804443,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":0.20665504038333894,"inSlope":0.8358246684074402,"outSlope":0.8358246684074402,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":0.23772768676280976,"inSlope":0.7309173345565796,"outSlope":0.7309173345565796,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":0.25538286566734316,"inSlope":0.41111528873443606,"outSlope":0.41111528873443606,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":0.26513537764549258,"inSlope":0.36744657158851626,"outSlope":0.36744657158851626,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":0.27987930178642275,"inSlope":0.5283648371696472,"outSlope":0.5283648371696472,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.30035969614982607,"inSlope":0.5524130463600159,"outSlope":0.5524130463600159,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.3167068362236023,"inSlope":0.382691353559494,"outSlope":0.382691353559494,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.3258724510669708,"inSlope":0.1628306657075882,"outSlope":0.1628306657075882,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.32756221294403078,"inSlope":-0.017416926100850107,"outSlope":-0.017416926100850107,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.32471132278442385,"inSlope":-0.18253493309020997,"outSlope":-0.18253493309020997,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.31539320945739748,"inSlope":-0.3880867063999176,"outSlope":-0.3880867063999176,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.29883885383605959,"inSlope":-0.6616266369819641,"outSlope":-0.6616266369819641,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.27128472924232485,"inSlope":-0.7902386784553528,"outSlope":-0.7902386784553528,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.2461562305688858,"inSlope":-0.595703125,"outSlope":-0.595703125,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.23157115280628205,"inSlope":-0.3620838522911072,"outSlope":-0.3620838522911072,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.2220172882080078,"inSlope":-0.289761483669281,"outSlope":-0.289761483669281,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.21225370466709138,"inSlope":-0.3051133155822754,"outSlope":-0.3051133155822754,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.2016763836145401,"inSlope":-0.27172228693962099,"outSlope":-0.27172228693962099,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.19413886964321137,"inSlope":-0.21812710165977479,"outSlope":-0.21812710165977479,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.18713456392288209,"inSlope":-0.2939761281013489,"outSlope":-0.2939761281013489,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.1745404452085495,"inSlope":-0.4606493413448334,"outSlope":-0.4606493413448334,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":0.15642458200454713,"inSlope":-0.5434754490852356,"outSlope":-0.5434754490852356,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_r","propertyName":"localRotation.y","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":0.7195742130279541,"inSlope":0.09110390394926071,"outSlope":0.09110390394926071,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":0.7226110100746155,"inSlope":-0.009797215461730957,"outSlope":-0.009797215461730957,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":0.7189210653305054,"inSlope":-0.11620311439037323,"outSlope":-0.11620311439037323,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":0.7148641347885132,"inSlope":-0.07658689469099045,"outSlope":-0.07658689469099045,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":0.7138152718544006,"inSlope":-0.1367962509393692,"outSlope":-0.1367962509393692,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":0.7057443857192993,"inSlope":-0.42431387305259707,"outSlope":-0.42431387305259707,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":0.6855276823043823,"inSlope":-0.7854983806610107,"outSlope":-0.7854983806610107,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":0.6533778309822083,"inSlope":-0.9746975898742676,"outSlope":-0.9746975898742676,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":0.6205478310585022,"inSlope":-0.864992618560791,"outSlope":-0.864992618560791,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":0.5957116484642029,"inSlope":-0.5456427335739136,"outSlope":-0.5456427335739136,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":0.5841716527938843,"inSlope":-0.15722574293613435,"outSlope":-0.15722574293613435,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":0.5852299332618713,"inSlope":0.1277303844690323,"outSlope":0.1277303844690323,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":0.5926870107650757,"inSlope":0.1848006397485733,"outSlope":0.1848006397485733,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":0.5975499749183655,"inSlope":0.06646067649126053,"outSlope":0.06646067649126053,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":0.5971177220344544,"inSlope":0.033558908849954608,"outSlope":0.033558908849954608,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":0.5997872352600098,"inSlope":0.22672876715660096,"outSlope":0.22672876715660096,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":0.6122329831123352,"inSlope":0.44298702478408816,"outSlope":0.44298702478408816,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":0.6293197274208069,"inSlope":0.5789722204208374,"outSlope":0.5789722204208374,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":0.6508311629295349,"inSlope":0.5934722423553467,"outSlope":0.5934722423553467,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":0.6688845753669739,"inSlope":0.4002755284309387,"outSlope":0.4002755284309387,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":0.6775162220001221,"inSlope":0.24652698636054994,"outSlope":0.24652698636054994,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":0.685319721698761,"inSlope":0.16940459609031678,"outSlope":0.16940459609031678,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":0.688809871673584,"inSlope":0.11969973146915436,"outSlope":0.11969973146915436,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":0.6932997107505798,"inSlope":0.12563277781009675,"outSlope":0.12563277781009675,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":0.6971853971481323,"inSlope":0.12734045088291169,"outSlope":0.12734045088291169,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":0.7017890810966492,"inSlope":0.17570868134498597,"outSlope":0.17570868134498597,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":0.7088993191719055,"inSlope":0.23310254514217378,"outSlope":0.23310254514217378,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":0.7173292636871338,"inSlope":0.25289812684059145,"outSlope":0.25289812684059145,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_r","propertyName":"localRotation.z","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    - Curve~Standing_Turn_Right_90_Humanoid~{"curve":{"serializedVersion":"2","m_Curve":[{"serializedVersion":"3","time":0.0,"value":-0.1785992830991745,"inSlope":0.4392765164375305,"outSlope":0.4392765164375305,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.03333333507180214,"value":-0.16395673155784608,"inSlope":0.10681740194559097,"outSlope":0.10681740194559097,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.06666667014360428,"value":-0.17147812247276307,"inSlope":-0.7148734331130981,"outSlope":-0.7148734331130981,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.10000000894069672,"value":-0.2116149663925171,"inSlope":-1.2631397247314454,"outSlope":-1.2631397247314454,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.13333334028720857,"value":-0.2556874454021454,"inSlope":-1.3252477645874024,"outSlope":-1.3252477645874024,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.1666666716337204,"value":-0.2999648153781891,"inSlope":-1.3350307941436768,"outSlope":-1.3350307941436768,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.20000000298023225,"value":-0.3446894884109497,"inSlope":-1.4198708534240723,"outSlope":-1.4198708534240723,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.23333333432674409,"value":-0.3946228623390198,"inSlope":-1.2492619752883912,"outSlope":-1.2492619752883912,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.2666666805744171,"value":-0.4279736280441284,"inSlope":-0.7108759880065918,"outSlope":-0.7108759880065918,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.30000001192092898,"value":-0.4420146048069,"inSlope":-0.3569461703300476,"outSlope":-0.3569461703300476,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.3333333432674408,"value":-0.45177003741264346,"inSlope":-0.1554747074842453,"outSlope":-0.1554747074842453,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.36666667461395266,"value":-0.45237958431243899,"inSlope":0.03226563706994057,"outSlope":0.03226563706994057,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4000000059604645,"value":-0.44961899518966677,"inSlope":0.046252910047769549,"outSlope":0.046252910047769549,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.4333333373069763,"value":-0.4492960572242737,"inSlope":-0.0016070902347564698,"outSlope":-0.0016070902347564698,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.46666666865348818,"value":-0.4497261345386505,"inSlope":0.12251482903957367,"outSlope":0.12251482903957367,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5,"value":-0.4411284029483795,"inSlope":0.36698010563850405,"outSlope":0.36698010563850405,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5333333611488342,"value":-0.4252607822418213,"inSlope":0.6170850396156311,"outSlope":0.6170850396156311,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.5666667222976685,"value":-0.39998936653137209,"inSlope":0.9821704626083374,"outSlope":0.9821704626083374,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6000000834465027,"value":-0.35978269577026369,"inSlope":1.0883219242095948,"outSlope":1.0883219242095948,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6333334445953369,"value":-0.3274345099925995,"inSlope":0.7729431390762329,"outSlope":0.7729431390762329,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.6666668057441711,"value":-0.30825310945510867,"inSlope":0.5662397742271423,"outSlope":0.5662397742271423,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7000001668930054,"value":-0.2896851599216461,"inSlope":0.5590550303459168,"outSlope":0.5590550303459168,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7333335280418396,"value":-0.2709827423095703,"inSlope":0.5114713311195374,"outSlope":0.5114713311195374,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.7666668891906738,"value":-0.25558704137802126,"inSlope":0.4059649705886841,"outSlope":0.4059649705886841,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8000002503395081,"value":-0.24391838908195496,"inSlope":0.3495626151561737,"outSlope":0.3495626151561737,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8333336114883423,"value":-0.2322828471660614,"inSlope":0.46744516491889956,"outSlope":0.46744516491889956,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.8666669726371765,"value":-0.21275535225868226,"inSlope":0.7002367973327637,"outSlope":0.7002367973327637,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408},{"serializedVersion":"3","time":0.9000003337860107,"value":-0.18560035526752473,"inSlope":0.814649224281311,"outSlope":0.814649224281311,"tangentMode":0,"weightedMode":0,"inWeight":0.3333333432674408,"outWeight":0.3333333432674408}],"m_PreInfinity":2,"m_PostInfinity":2,"m_RotationOrder":4},"relativePath":"root/ik_foot_root/ik_foot_r","propertyName":"localRotation.w","targetTypeName":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}
+    clipAnimations:
+    - serializedVersion: 16
+      name: Standing_Turn_Right_90_Humanoid
+      takeName: mixamo.com
+      internalID: -203655887218126122
+      firstFrame: 0
+      lastFrame: 28
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human:
+    - boneName: pelvis
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thigh_l
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thigh_r
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: calf_l
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: calf_r
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: foot_l
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: foot_r
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: spine_01
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: spine_02
+      humanName: Chest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: neck_01
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: head
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: clavicle_l
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: clavicle_r
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: upperarm_l
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: upperarm_r
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: lowerarm_l
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: lowerarm_r
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: hand_l
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: hand_r
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ball_l
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ball_r
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_01_l
+      humanName: Left Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_02_l
+      humanName: Left Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_03_l
+      humanName: Left Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_01_l
+      humanName: Left Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_02_l
+      humanName: Left Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_03_l
+      humanName: Left Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_01_l
+      humanName: Left Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_02_l
+      humanName: Left Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_03_l
+      humanName: Left Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_01_l
+      humanName: Left Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_02_l
+      humanName: Left Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_03_l
+      humanName: Left Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_01_l
+      humanName: Left Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_02_l
+      humanName: Left Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_03_l
+      humanName: Left Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_01_r
+      humanName: Right Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_02_r
+      humanName: Right Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_03_r
+      humanName: Right Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_01_r
+      humanName: Right Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_02_r
+      humanName: Right Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_03_r
+      humanName: Right Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_01_r
+      humanName: Right Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_02_r
+      humanName: Right Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_03_r
+      humanName: Right Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_01_r
+      humanName: Right Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_02_r
+      humanName: Right Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_03_r
+      humanName: Right Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_01_r
+      humanName: Right Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_02_r
+      humanName: Right Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_03_r
+      humanName: Right Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: spine_03
+      humanName: UpperChest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: SK_Kinemation_Mannequin_Humanoid(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: root
+      parentName: SK_Kinemation_Mannequin_Humanoid(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071069, y: 0, z: 0, w: 0.7071067}
+      scale: {x: 1, y: 1, z: 1}
+    - name: pelvis
+      parentName: root
+      position: {x: -1.3536842e-30, y: 0.010561531, z: 0.967506}
+      rotation: {x: 0.0012951143, y: 0.70710576, z: 0.0012951143, w: 0.70710546}
+      scale: {x: 1, y: 1, z: 1}
+    - name: spine_01
+      parentName: pelvis
+      position: {x: -0.10808874, y: -0.008514175, z: -0.000000015879099}
+      rotation: {x: -0.0000000090813455, y: -9.519384e-10, z: 0.062388398, w: 0.99805194}
+      scale: {x: 1, y: 1, z: 1}
+    - name: spine_02
+      parentName: spine_01
+      position: {x: -0.18875395, y: 0.038011592, z: -0.000000026765115}
+      rotation: {x: 0.000000017848745, y: 8.3330104e-10, z: -0.12241919, w: 0.9924785}
+      scale: {x: 1, y: 1, z: 1}
+    - name: spine_03
+      parentName: spine_02
+      position: {x: -0.13407382, y: 0.004204776, z: -0.000000019660444}
+      rotation: {x: 0.0000000035832026, y: 0.0000000011057261, z: -0.024253014, w: 0.99970585}
+      scale: {x: 1, y: 1, z: 1}
+    - name: clavicle_l
+      parentName: spine_03
+      position: {x: -0.11883693, y: -0.027320907, z: -0.037819862}
+      rotation: {x: 0.15407151, y: -0.7262783, z: -0.0667051, w: 0.6665826}
+      scale: {x: 0.9999998, y: 0.99999976, z: 1}
+    - name: upperarm_l
+      parentName: clavicle_l
+      position: {x: -0.15784885, y: -0.0000000034971162, z: 0.0000007605552}
+      rotation: {x: 0.05995854, y: 0.03741344, z: 0.15131669, w: 0.9859556}
+      scale: {x: 1, y: 1.0000001, z: 0.99999994}
+    - name: lowerarm_l
+      parentName: upperarm_l
+      position: {x: -0.30340037, y: -0.000000057220458, z: -0.0000008222461}
+      rotation: {x: -0.06196443, y: 0.029635586, z: 0.027704937, w: 0.99725354}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: hand_l
+      parentName: lowerarm_l
+      position: {x: -0.2697518, y: -0.0000003477931, z: -0.00000038478524}
+      rotation: {x: -0.617895, y: -0.019371707, z: -0.010653018, w: 0.7859497}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: index_01_l
+      parentName: hand_l
+      position: {x: -0.12068129, y: 0.017634874, z: -0.021094196}
+      rotation: {x: 0.13733786, y: 0.009897522, z: -0.13344988, w: 0.9814436}
+      scale: {x: 1, y: 1, z: 1}
+    - name: index_02_l
+      parentName: index_01_l
+      position: {x: -0.04287543, y: -0.00000011205673, z: -0.00000011920929}
+      rotation: {x: 0.01210135, y: 0.0010633048, z: -0.03835892, w: 0.9991902}
+      scale: {x: 1.0000001, y: 1, z: 1}
+    - name: index_03_l
+      parentName: index_02_l
+      position: {x: -0.033938058, y: 0.00000019550323, z: 0.00000027418136}
+      rotation: {x: 0.010610982, y: -0.007850795, z: 0.082855426, w: 0.99647415}
+      scale: {x: 1, y: 1, z: 1.0000001}
+    - name: middle_01_l
+      parentName: hand_l
+      position: {x: -0.12244279, y: 0.012936433, z: 0.005711415}
+      rotation: {x: 0.029486004, y: 0.040344153, z: -0.13032977, w: 0.9902106}
+      scale: {x: 0.9999999, y: 0.99999994, z: 1}
+    - name: middle_02_l
+      parentName: middle_01_l
+      position: {x: -0.046404257, y: -0.000000067949294, z: -0.000000038146972}
+      rotation: {x: -0.018723397, y: -0.0028397997, z: -0.038129333, w: 0.9990934}
+      scale: {x: 1.0000001, y: 0.99999994, z: 1}
+    - name: middle_03_l
+      parentName: middle_02_l
+      position: {x: -0.03648824, y: -0.00000024199485, z: 0.00000018835067}
+      rotation: {x: 0.0016215888, y: 0.03886793, z: 0.13362321, w: 0.9902684}
+      scale: {x: 0.9999999, y: 0.99999994, z: 0.99999994}
+    - name: pinky_01_l
+      parentName: hand_l
+      position: {x: -0.10140665, y: 0.022631697, z: 0.04643137}
+      rotation: {x: -0.13504893, y: 0.09653394, z: -0.08907398, w: 0.98209417}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: pinky_02_l
+      parentName: pinky_01_l
+      position: {x: -0.035709817, y: 0.00000013670883, z: 0.000000044703484}
+      rotation: {x: 0.01040261, y: 0.0041379244, z: -0.03847894, w: 0.99919665}
+      scale: {x: 0.9999999, y: 0.99999994, z: 0.99999994}
+    - name: pinky_03_l
+      parentName: pinky_02_l
+      position: {x: -0.029856747, y: -0.0000004763901, z: 0.000000118613244}
+      rotation: {x: 0.0035807076, y: -0.033794876, z: -0.008932091, w: 0.9993825}
+      scale: {x: 0.9999999, y: 1, z: 0.99999994}
+    - name: ring_01_l
+      parentName: hand_l
+      position: {x: -0.11497875, y: 0.017535497, z: 0.028468942}
+      rotation: {x: -0.097284645, y: 0.07056088, z: -0.116223246, w: 0.98592544}
+      scale: {x: 1, y: 1, z: 1.0000001}
+    - name: ring_02_l
+      parentName: ring_01_l
+      position: {x: -0.044301942, y: 0.00000022873282, z: -0.0000000500679}
+      rotation: {x: 0.0043277284, y: 0.004578552, z: -0.037480347, w: 0.99927753}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: ring_03_l
+      parentName: ring_02_l
+      position: {x: -0.03476624, y: -0.00000038981437, z: -0.00000013113022}
+      rotation: {x: -0.00019839442, y: -0.026259279, z: 0.112214655, w: 0.993337}
+      scale: {x: 0.99999994, y: 1.0000001, z: 1}
+    - name: thumb_01_l
+      parentName: hand_l
+      position: {x: -0.04762064, y: 0.023749901, z: -0.02537832}
+      rotation: {x: 0.60051626, y: -0.2997078, z: 0.18535914, w: 0.71777266}
+      scale: {x: 1, y: 1, z: 1.0000001}
+    - name: thumb_02_l
+      parentName: thumb_01_l
+      position: {x: -0.038696777, y: -0.00000022649765, z: 0.00000012636184}
+      rotation: {x: 0.0026342263, y: -0.019809343, z: -0.02970821, w: 0.99935883}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    - name: thumb_03_l
+      parentName: thumb_02_l
+      position: {x: -0.040622022, y: -0.00000028610228, z: -0.00000025749205}
+      rotation: {x: 0.021399366, y: -0.0018838545, z: 0.10793736, w: 0.9939256}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: lowerarm_twist_01_l
+      parentName: lowerarm_l
+      position: {x: -0.14, y: -0.00000023841858, z: -0.00000031292439}
+      rotation: {x: 0.000000026077036, y: -0.0000000037252894, z: -0.00000014156103,
+        w: 1}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+    - name: upperarm_twist_01_l
+      parentName: upperarm_l
+      position: {x: -0.005001002, y: -0.0000000667572, z: -0.00000049620866}
+      rotation: {x: 0.00000006891787, y: 0.00000014202669, z: 0.000000045169145, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: clavicle_r
+      parentName: spine_03
+      position: {x: -0.11883819, y: -0.027320994, z: 0.037819978}
+      rotation: {x: 0.7262763, y: 0.15406956, z: 0.6665854, w: 0.06670373}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    - name: upperarm_r
+      parentName: clavicle_r
+      position: {x: 0.15784802, y: -0.00000018018065, z: 0.0000009620189}
+      rotation: {x: 0.05995777, y: 0.037420966, z: 0.15131631, w: 0.9859555}
+      scale: {x: 1, y: 0.9999998, z: 0.9999999}
+    - name: lowerarm_r
+      parentName: upperarm_r
+      position: {x: 0.30340096, y: -0.00000013113022, z: 0.0000075447556}
+      rotation: {x: -0.061965663, y: 0.029623434, z: 0.027704047, w: 0.9972539}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: hand_r
+      parentName: lowerarm_r
+      position: {x: 0.26975295, y: 0.00000030219553, z: -0.00000040590763}
+      rotation: {x: -0.6178945, y: -0.019370893, z: -0.01065235, w: 0.78595024}
+      scale: {x: 0.9999999, y: 0.99999994, z: 1}
+    - name: index_01_r
+      parentName: hand_r
+      position: {x: 0.120679684, y: -0.017637422, z: 0.02109441}
+      rotation: {x: 0.13733685, y: 0.009890038, z: -0.13346612, w: 0.98144156}
+      scale: {x: 1, y: 0.9999999, z: 1}
+    - name: index_02_r
+      parentName: index_01_r
+      position: {x: 0.042877577, y: 0.0000008869171, z: -0.0000008916855}
+      rotation: {x: 0.012102, y: 0.001073711, z: -0.03835573, w: 0.9991903}
+      scale: {x: 0.99999994, y: 0.9999999, z: 1}
+    - name: index_03_r
+      parentName: index_02_r
+      position: {x: 0.033937972, y: 0.0000003814697, z: -0.000000021457671}
+      rotation: {x: 0.0106108645, y: -0.007851225, z: 0.082854874, w: 0.9964742}
+      scale: {x: 0.99999994, y: 0.99999976, z: 0.9999999}
+    - name: middle_01_r
+      parentName: hand_r
+      position: {x: 0.12244126, y: -0.012936983, z: -0.005711152}
+      rotation: {x: 0.029485125, y: 0.040341217, z: -0.13031633, w: 0.99021256}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: middle_02_r
+      parentName: middle_01_r
+      position: {x: 0.04640626, y: -0.0000014948845, z: 0.000000009536743}
+      rotation: {x: -0.018723775, y: -0.0028382307, z: -0.038142007, w: 0.99909294}
+      scale: {x: 0.9999998, y: 0.9999999, z: 0.99999994}
+    - name: middle_03_r
+      parentName: middle_02_r
+      position: {x: 0.03648971, y: 0.0000000834465, z: -0.00000014305114}
+      rotation: {x: 0.0016221897, y: 0.038868386, z: 0.13362515, w: 0.9902681}
+      scale: {x: 1.0000001, y: 1, z: 1.0000001}
+    - name: pinky_01_r
+      parentName: hand_r
+      position: {x: 0.10140587, y: -0.022633547, z: -0.046430845}
+      rotation: {x: -0.13505046, y: 0.09653134, z: -0.08906654, w: 0.9820948}
+      scale: {x: 1, y: 0.9999999, z: 0.99999994}
+    - name: pinky_02_r
+      parentName: pinky_01_r
+      position: {x: 0.035710663, y: -0.0000010811444, z: -0.000000092089174}
+      rotation: {x: 0.010402892, y: 0.0041403756, z: -0.038538065, w: 0.9991944}
+      scale: {x: 0.9999999, y: 1.0000001, z: 0.99999994}
+    - name: pinky_03_r
+      parentName: pinky_02_r
+      position: {x: 0.029855026, y: 0.0000030477158, z: -0.00000037282703}
+      rotation: {x: 0.0035810075, y: -0.033795655, z: -0.008929831, w: 0.9993825}
+      scale: {x: 0.9999999, y: 1, z: 1}
+    - name: ring_01_r
+      parentName: hand_r
+      position: {x: 0.11497976, y: -0.017537594, z: -0.028468952}
+      rotation: {x: -0.09728415, y: 0.07055885, z: -0.11622722, w: 0.9859252}
+      scale: {x: 1, y: 0.99999994, z: 0.9999999}
+    - name: ring_02_r
+      parentName: ring_01_r
+      position: {x: 0.044298954, y: 0.00000012625009, z: -0.00000025987626}
+      rotation: {x: 0.004327497, y: 0.004579737, z: -0.03747203, w: 0.9992779}
+      scale: {x: 1, y: 1, z: 0.9999999}
+    - name: ring_03_r
+      parentName: ring_02_r
+      position: {x: 0.03476734, y: 0.00000032499432, z: -0.000000038146972}
+      rotation: {x: -0.0001984059, y: -0.026256563, z: 0.11221396, w: 0.9933371}
+      scale: {x: 1, y: 1, z: 1}
+    - name: thumb_01_r
+      parentName: hand_r
+      position: {x: 0.047621254, y: -0.023750987, z: 0.025378248}
+      rotation: {x: 0.60051185, y: -0.29970127, z: 0.18536672, w: 0.717777}
+      scale: {x: 0.9999999, y: 0.9999999, z: 0.9999999}
+    - name: thumb_02_r
+      parentName: thumb_01_r
+      position: {x: 0.038696297, y: 0.0000003361702, z: 0.00000082969666}
+      rotation: {x: 0.002634584, y: -0.019824408, z: -0.02971043, w: 0.99935853}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: thumb_03_r
+      parentName: thumb_02_r
+      position: {x: 0.040621947, y: 0.00000029563904, z: -0.0000001001358}
+      rotation: {x: 0.021398973, y: -0.001883669, z: 0.10793774, w: 0.9939256}
+      scale: {x: 1, y: 0.9999999, z: 0.9999999}
+    - name: lowerarm_twist_01_r
+      parentName: lowerarm_r
+      position: {x: 0.14000027, y: 0.0000003004074, z: -0.00000023722649}
+      rotation: {x: -0.11762687, y: 0.0000008046609, z: -0.00000005064298, w: 0.99305785}
+      scale: {x: 1, y: 0.99999994, z: 0.9999999}
+    - name: upperarm_twist_01_r
+      parentName: upperarm_r
+      position: {x: 0.005000041, y: -0.00000004053116, z: 0.00000012278556}
+      rotation: {x: -0.1732347, y: -0.000011424803, z: -0.0000020255186, w: 0.98488057}
+      scale: {x: 1, y: 0.99999994, z: 0.9999999}
+    - name: neck_01
+      parentName: spine_03
+      position: {x: -0.16558827, y: -0.0035532569, z: -0.000000025244658}
+      rotation: {x: -0.00000003014831, y: -8.378926e-10, z: 0.20371124, w: 0.979031}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: head
+      parentName: neck_01
+      position: {x: -0.09283539, y: 0.003641324, z: -0.000000013659808}
+      rotation: {x: 0.000000019634793, y: -1.0817177e-10, z: -0.13354257, w: 0.9910431}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: thigh_l
+      parentName: pelvis
+      position: {x: 0.014488283, y: -0.005314178, z: -0.090058096}
+      rotation: {x: 0.07370486, y: 0.062138624, z: 0.0085843345, w: 0.99530536}
+      scale: {x: 0.99999994, y: 0.9999998, z: 0.99999994}
+    - name: calf_l
+      parentName: thigh_l
+      position: {x: 0.42572138, y: -0.00000011980534, z: -0.0000000077486035}
+      rotation: {x: -0.04888436, y: -0.0188638, z: 0.065522335, w: 0.99647444}
+      scale: {x: 1.0000001, y: 0.9999999, z: 1.0000001}
+    - name: calf_twist_01_l
+      parentName: calf_l
+      position: {x: 0.20476675, y: -0.00000011801719, z: -0.00000007599592}
+      rotation: {x: 0.0028090607, y: 0.0019333753, z: 0.007612665, w: 0.99996525}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: foot_l
+      parentName: calf_l
+      position: {x: 0.4019661, y: -0.00000007987022, z: -0.00000006139278}
+      rotation: {x: -0.00588568, y: -0.031991296, z: -0.07035472, w: 0.9969916}
+      scale: {x: 0.9999999, y: 0.9999999, z: 1}
+    - name: ball_l
+      parentName: foot_l
+      position: {x: 0.10453849, y: -0.16577873, z: 0.0008014889}
+      rotation: {x: 0.00008008265, y: -0.000029540328, z: 0.71863383, w: 0.6953887}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    - name: thigh_twist_01_l
+      parentName: thigh_l
+      position: {x: 0.22094335, y: -0.00000015676021, z: -0.000000021755694}
+      rotation: {x: -0.047443584, y: -0.000021373979, z: 0.000491132, w: 0.99887383}
+      scale: {x: 1, y: 1, z: 1.0000001}
+    - name: thigh_r
+      parentName: pelvis
+      position: {x: 0.0144864, y: -0.005314216, z: 0.09005803}
+      rotation: {x: -0.062144257, y: 0.07370415, z: 0.99530506, w: -0.008584726}
+      scale: {x: 0.9999999, y: 0.99999964, z: 0.9999842}
+    - name: calf_r
+      parentName: thigh_r
+      position: {x: -0.4257231, y: -0.0000003027916, z: -0.0000051304696}
+      rotation: {x: -0.0488872, y: -0.018869052, z: 0.06552201, w: 0.9964742}
+      scale: {x: 1.0000001, y: 1, z: 0.99999994}
+    - name: calf_twist_01_r
+      parentName: calf_r
+      position: {x: -0.20476927, y: 0.00000031769275, z: -0.00000064671036}
+      rotation: {x: 0.0028073892, y: 0.0019325679, z: 0.0076125166, w: 0.99996525}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    - name: foot_r
+      parentName: calf_r
+      position: {x: -0.4019687, y: 0.00000034213065, z: -0.000001437962}
+      rotation: {x: -0.0058855508, y: -0.031988908, z: -0.07035482, w: 0.99699163}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: ball_r
+      parentName: foot_r
+      position: {x: -0.104538426, y: 0.1657786, z: -0.00080276997}
+      rotation: {x: 0.00008157461, y: -0.000038925948, z: 0.7186332, w: 0.69538945}
+      scale: {x: 0.9999999, y: 0.99999994, z: 0.99999994}
+    - name: thigh_twist_01_r
+      parentName: thigh_r
+      position: {x: -0.22094278, y: -0.00000034034252, z: -0.0000027269125}
+      rotation: {x: -0.04744756, y: -0.000024774474, z: 0.0004907011, w: 0.99887365}
+      scale: {x: 1, y: 1.0000001, z: 0.99999994}
+    - name: ik_foot_root
+      parentName: root
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ik_foot_l
+      parentName: ik_foot_root
+      position: {x: -0.1707627, y: 0.080721274, z: 0.1346573}
+      rotation: {x: 0.020529753, y: 0.7122329, z: -0.011723879, w: 0.701545}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: ik_foot_r
+      parentName: ik_foot_root
+      position: {x: 0.17076288, y: 0.08072148, z: 0.13465568}
+      rotation: {x: 0.70154375, y: 0.0117234625, z: 0.71223414, w: -0.020529475}
+      scale: {x: 1.0000012, y: 1, z: 1.0000001}
+    - name: ik_hand_root
+      parentName: root
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ik_hand_gun
+      parentName: ik_hand_root
+      position: {x: 0.5664608, y: 0.0033539964, z: 1.1167963}
+      rotation: {x: 0.61884993, y: 0.06954101, z: -0.38913608, w: 0.67879456}
+      scale: {x: 1.0000001, y: 0.99999994, z: 0.9999997}
+    - name: ik_hand_l
+      parentName: ik_hand_gun
+      position: {x: -0.7788544, y: -0.6960189, z: 0.4386955}
+      rotation: {x: 0.68747425, y: 0.6143579, z: -0.38722548, w: -0.000000017149912}
+      scale: {x: 0.99999976, y: 1.0000001, z: 0.99999976}
+    - name: ik_hand_r
+      parentName: ik_hand_gun
+      position: {x: 0.00000004380941, y: -0.00000016599893, z: 0.000000096559525}
+      rotation: {x: -0.000000063329935, y: 0.00000014156103, z: 0.000000050757087,
+        w: 1}
+      scale: {x: 0.9999998, y: 1, z: 1.0000001}
+    - name: Mannequin_Body
+      parentName: SK_Kinemation_Mannequin_Humanoid(Clone)
+      position: {x: 0.000000017881398, y: -0.000000033378594, z: -0.000000012814995}
+      rotation: {x: -0.7071069, y: 0.000000013486988, z: 0.00000002023048, w: 0.7071067}
+      scale: {x: 100, y: 99.99998, z: 100}
+    - name: Mannequin_Logo_Low.003
+      parentName: SK_Kinemation_Mannequin_Humanoid(Clone)
+      position: {x: -0.00000008463859, y: -0.00000008642673, z: -0.00000001519918}
+      rotation: {x: -0.7071068, y: -0.0000000101152455, z: 0.000000025288113, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: pelvis
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 34445f3a00e818d4d9bf20b74bdd6ca8,
+    type: 3}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 3
+  humanoidOversampling: 1
+  avatarSetup: 2
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

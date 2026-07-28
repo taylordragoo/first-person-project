@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 27faf4367abf4a22b94a7ca23380b86e
+timeCreated: 1760787210
+AssetOrigin:
+  serializedVersion: 1
+  productId: 321490
+  packageName: FPS Addon for CAS
+  packageVersion: 1.3.0
+  assetPath: Assets/KINEMATION/CharacterAnimationSystem/Addons/FPS/Scripts/Modifiers/FPSCopyBonesSettings.cs
+  uploadId: 931268

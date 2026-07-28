@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: a16f8e09ea8c414b94add41dc511008c
+timeCreated: 1752327486
+AssetOrigin:
+  serializedVersion: 1
+  productId: 321490
+  packageName: FPS Addon for CAS
+  packageVersion: 1.3.0
+  assetPath: Assets/KINEMATION/CharacterAnimationSystem/Addons/FPS/Scripts/Modifiers/AttachHandModifierSettings.cs
+  uploadId: 931268

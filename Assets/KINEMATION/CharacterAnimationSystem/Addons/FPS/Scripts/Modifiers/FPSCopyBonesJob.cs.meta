@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 581411b0e6224d069d8e73341ccd9416
+timeCreated: 1760787221
+AssetOrigin:
+  serializedVersion: 1
+  productId: 321490
+  packageName: FPS Addon for CAS
+  packageVersion: 1.3.0
+  assetPath: Assets/KINEMATION/CharacterAnimationSystem/Addons/FPS/Scripts/Modifiers/FPSCopyBonesJob.cs
+  uploadId: 931268

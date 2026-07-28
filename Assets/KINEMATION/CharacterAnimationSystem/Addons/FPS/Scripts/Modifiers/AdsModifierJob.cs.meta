@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: f2464e58c29d443ca7f04c3f1b453655
+timeCreated: 1745927820
+AssetOrigin:
+  serializedVersion: 1
+  productId: 321490
+  packageName: FPS Addon for CAS
+  packageVersion: 1.3.0
+  assetPath: Assets/KINEMATION/CharacterAnimationSystem/Addons/FPS/Scripts/Modifiers/AdsModifierJob.cs
+  uploadId: 931268

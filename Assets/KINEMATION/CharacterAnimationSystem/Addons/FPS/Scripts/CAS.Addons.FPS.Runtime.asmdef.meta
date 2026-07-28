@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fc86b500fdf9bed47bae1978dd7a9a0e
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 321490
+  packageName: FPS Addon for CAS
+  packageVersion: 1.3.0
+  assetPath: Assets/KINEMATION/CharacterAnimationSystem/Addons/FPS/Scripts/CAS.Addons.FPS.Runtime.asmdef
+  uploadId: 931268

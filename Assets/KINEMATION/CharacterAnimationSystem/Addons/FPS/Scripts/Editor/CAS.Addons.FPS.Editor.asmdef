@@ -1,0 +1,19 @@
+{
+    "name": "CAS.Addons.FPS.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:47d503a212c7a414484a2b5d14e0ad1e",
+        "GUID:3b9c1e777897a454ab8f17fb7264c2af"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

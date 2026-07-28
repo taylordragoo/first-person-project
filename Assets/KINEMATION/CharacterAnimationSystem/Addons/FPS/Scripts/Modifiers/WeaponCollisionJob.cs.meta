@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 016f3ffc3e6a4aa58523d84ca2b34532
+timeCreated: 1745926113
+AssetOrigin:
+  serializedVersion: 1
+  productId: 321490
+  packageName: FPS Addon for CAS
+  packageVersion: 1.3.0
+  assetPath: Assets/KINEMATION/CharacterAnimationSystem/Addons/FPS/Scripts/Modifiers/WeaponCollisionJob.cs
+  uploadId: 931268

@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: c15b0e5f1a0e458b82fb3f396d6b55be
+timeCreated: 1756377409
+AssetOrigin:
+  serializedVersion: 1
+  productId: 320309
+  packageName: Character Animation System
+  packageVersion: 2.1.2
+  assetPath: Assets/KINEMATION/Shared/KAnimationCore/Editor/Tools/KEditorToolWindow.cs
+  uploadId: 944384

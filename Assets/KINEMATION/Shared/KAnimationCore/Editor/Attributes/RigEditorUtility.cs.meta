@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: fa2c3b5e5c3a4334a4d0ac853266c22f
+timeCreated: 1722195056
+AssetOrigin:
+  serializedVersion: 1
+  productId: 320309
+  packageName: Character Animation System
+  packageVersion: 2.1.2
+  assetPath: Assets/KINEMATION/Shared/KAnimationCore/Editor/Attributes/RigEditorUtility.cs
+  uploadId: 944384
