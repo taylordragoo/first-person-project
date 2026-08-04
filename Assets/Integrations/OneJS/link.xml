@@ -1,0 +1,6 @@
+<linker>
+  <assembly fullname="Assembly-CSharp">
+    <type fullname="FirstPersonProject.UI.ProjectSapphireBridge" preserve="all" />
+  </assembly>
+</linker>
+

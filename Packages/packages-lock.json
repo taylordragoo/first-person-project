@@ -17,6 +17,13 @@
       },
       "hash": "c14de1e6dc01ab42d2bb358730cff954bce0ce6b"
     },
+    "com.singtaa.onejs": {
+      "version": "https://github.com/Singtaa/OneJS.git#onejs-v3",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f131aade4a3144c6234a0782d85d0a677cb33606"
+    },
     "com.singularitygroup.hotreload": {
       "version": "file:com.singularitygroup.hotreload",
       "depth": 0,

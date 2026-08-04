@@ -152,7 +152,11 @@ namespace KINEMATION.TacticalShooterPack.Scripts.Animation
             _animator = animator;
 
             Transform root = animator.transform.root;
-            _recoilAnimation = root.GetComponentInChildren<RecoilAnimation>();
+            // Prefer the recoil component owned by the nearest character/presentation root. A
+            // nested Tactical rig can share a scene root with another controller that has its own
+            // RecoilAnimation; searching the scene root first binds the job to the wrong weapon.
+            _recoilAnimation = animator.GetComponentInParent<RecoilAnimation>();
+            if (_recoilAnimation == null) _recoilAnimation = root.GetComponentInChildren<RecoilAnimation>();
             _recoil = KTransform.Identity;
             
             _ikHandGunRootHandle = _animator.BindStreamTransform(bones.ikHandGun.parent);

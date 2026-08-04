@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 270f9f49685c429685143ec023e0fe56, type: 3}
   m_Name: CAS_IKMotion_Aiming
   m_EditorClassIdentifier: 
-  characterPrefab: {fileID: 6422293674387699055, guid: e7234c7631021c547a5aa4be9380a835,
-    type: 3}
+  characterPrefab: {fileID: 6422293674387699055, guid: e7234c7631021c547a5aa4be9380a835, type: 3}
   alpha: 1
   weightOverrides: []
   showSceneGui: 0
@@ -286,6 +285,6 @@ MonoBehaviour:
       m_RotationOrder: 4
   rotationScale: {x: 0.8, y: 0.3, z: 1.1}
   translationScale: {x: 0, y: 1.3, z: 0.6}
-  blendTime: 0.33
+  blendTime: 0.1
   playRate: 1.2
   autoBlendOut: 1

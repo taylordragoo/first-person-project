@@ -20,6 +20,7 @@ namespace CAS_Demo.Scripts.FPS
 
         protected RecoilAnimation _recoilAnimation;
         protected float _defaultMouseSensitivity;
+        private Vector2 _rawMoveInput;
         
         protected override void Start()
         {
@@ -57,6 +58,13 @@ namespace CAS_Demo.Scripts.FPS
         }
 
 #if ENABLE_INPUT_SYSTEM
+        public override void OnMove(InputValue value)
+        {
+            base.OnMove(value);
+            _rawMoveInput = _moveInput;
+            ApplySprintMovementFilter();
+        }
+
         public override void OnUseItem(InputValue value)
         {
             if (IsSprinting)
@@ -72,10 +80,19 @@ namespace CAS_Demo.Scripts.FPS
         public override void OnSprint(InputValue value)
         {
             base.OnSprint(value);
+            ApplySprintMovementFilter();
             if (!value.isPressed) return;
 
             GetActiveItem()?.StopUsingItem();
             CancelAimForSprint();
+        }
+
+        private void ApplySprintMovementFilter()
+        {
+            bool isForwardSprint = _isSprintPressed && _rawMoveInput.y > 0f;
+            _moveInput = isForwardSprint
+                ? new Vector2(0f, _rawMoveInput.y)
+                : _rawMoveInput;
         }
 
         public virtual void OnChangeFiremode()
