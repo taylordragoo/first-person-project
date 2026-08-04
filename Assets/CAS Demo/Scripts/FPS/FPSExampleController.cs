@@ -10,6 +10,9 @@ namespace CAS_Demo.Scripts.FPS
     [AddComponentMenu(CasNames.Path_ComponentMenu + "FPS Example Controller")]
     public class FPSExampleController : CharacterExampleController
     {
+        public bool IsCrouching => _isCrouching;
+        public bool IsSprinting => _movementState == CharacterMovementState.Sprint;
+
         [Header("IK Motions")]
         [SerializeField] protected IkMotionSettings aimingMotion;
         [SerializeField] protected IkMotionSettings fireModeMotion;
@@ -56,8 +59,23 @@ namespace CAS_Demo.Scripts.FPS
 #if ENABLE_INPUT_SYSTEM
         public override void OnUseItem(InputValue value)
         {
+            if (IsSprinting)
+            {
+                GetActiveItem()?.StopUsingItem();
+                return;
+            }
+
             if (!isFirstPerson && !_isAiming) return;
             base.OnUseItem(value);
+        }
+
+        public override void OnSprint(InputValue value)
+        {
+            base.OnSprint(value);
+            if (!value.isPressed) return;
+
+            GetActiveItem()?.StopUsingItem();
+            CancelAimForSprint();
         }
 
         public virtual void OnChangeFiremode()
@@ -89,11 +107,25 @@ namespace CAS_Demo.Scripts.FPS
         
         public override void OnAim(InputValue value)
         {
+            if (value.isPressed && IsSprinting) return;
+
             base.OnAim(value);
             _proceduralAnimation.UpdateAnimationModifier(aimingMotion);
             mouseSensitivity = _isAiming ? _defaultMouseSensitivity * 0.7f : _defaultMouseSensitivity;
 
             if (!isFirstPerson && !_isAiming) GetActiveItem().StopUsingItem();
+        }
+
+        private void CancelAimForSprint()
+        {
+            if (!_isAiming) return;
+
+            _isAiming = false;
+            if (_characterCamera != null) _characterCamera.isAiming = false;
+
+            GetActiveItem()?.OnAim(false);
+            if (_proceduralAnimation != null) _proceduralAnimation.UpdateAnimationModifier(aimingMotion);
+            mouseSensitivity = _defaultMouseSensitivity;
         }
         
         public virtual void OnReload()

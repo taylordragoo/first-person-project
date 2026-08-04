@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9e6286f2889a61143a5d375ce5200bf5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
+  assetPath: Assets/KINEMATION/TacticalShooterPack/Animations/General/Character/A_FP_Pistol_Quick_Holster.anim
+  uploadId: 952492

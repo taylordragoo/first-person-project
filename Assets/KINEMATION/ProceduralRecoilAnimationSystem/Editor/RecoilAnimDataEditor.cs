@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 KINEMATION.
 // All rights reserved.
 
+using KINEMATION.Shared.KAnimationCore.Editor.Tools;
 using KINEMATION.Shared.KAnimationCore.Editor.Widgets;
 using KINEMATION.ProceduralRecoilAnimationSystem.Runtime;
 using UnityEditor;

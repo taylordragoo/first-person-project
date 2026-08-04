@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f613dc3e8be75454bb09d8dceb03fb16
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
+  assetPath: Assets/KINEMATION/TacticalShooterPack/Animations/General/Character/A_FP_Jump_Loop.anim
+  uploadId: 952492

@@ -3,8 +3,8 @@ guid: e87dfbc612cd40d7ad17a79a3f028405
 timeCreated: 1781082304
 AssetOrigin:
   serializedVersion: 1
-  productId: 320309
-  packageName: Character Animation System
-  packageVersion: 2.1.2
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
   assetPath: Assets/KINEMATION/Shared/KAnimationCore/Editor/CurveImporter/CurveProcessorUtility.cs
-  uploadId: 944384
+  uploadId: 952492

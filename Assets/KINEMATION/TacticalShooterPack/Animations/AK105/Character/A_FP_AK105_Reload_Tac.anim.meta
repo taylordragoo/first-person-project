@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1f15618ea5f5c434693cea1a3eca6377
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
+  assetPath: Assets/KINEMATION/TacticalShooterPack/Animations/AK105/Character/A_FP_AK105_Reload_Tac.anim
+  uploadId: 952492

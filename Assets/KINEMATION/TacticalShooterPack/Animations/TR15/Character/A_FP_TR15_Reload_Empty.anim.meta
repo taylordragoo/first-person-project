@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b3431ef99a6ab9647bd8c2dbde1ef996
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
+  assetPath: Assets/KINEMATION/TacticalShooterPack/Animations/TR15/Character/A_FP_TR15_Reload_Empty.anim
+  uploadId: 952492

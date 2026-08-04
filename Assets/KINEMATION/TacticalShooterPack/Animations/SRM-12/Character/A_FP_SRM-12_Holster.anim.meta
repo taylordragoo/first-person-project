@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 18530b46d71fbcb4fb16be2ccb11df90
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
+  assetPath: Assets/KINEMATION/TacticalShooterPack/Animations/SRM-12/Character/A_FP_SRM-12_Holster.anim
+  uploadId: 952492

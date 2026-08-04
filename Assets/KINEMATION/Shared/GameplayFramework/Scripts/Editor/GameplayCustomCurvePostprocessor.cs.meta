@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 0219d87f9e70498db6c1ad7b3bde2142
+AssetOrigin:
+  serializedVersion: 1
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
+  assetPath: Assets/KINEMATION/Shared/GameplayFramework/Scripts/Editor/GameplayCustomCurvePostprocessor.cs
+  uploadId: 952492

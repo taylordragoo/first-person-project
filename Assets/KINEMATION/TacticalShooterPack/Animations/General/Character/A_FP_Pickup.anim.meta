@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d352cd0cf59f35442bbc3afda591106c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
+  assetPath: Assets/KINEMATION/TacticalShooterPack/Animations/General/Character/A_FP_Pickup.anim
+  uploadId: 952492

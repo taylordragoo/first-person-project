@@ -11,8 +11,8 @@ MonoImporter:
   assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 321490
-  packageName: FPS Addon for CAS
-  packageVersion: 1.3.0
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
   assetPath: Assets/KINEMATION/ProceduralRecoilAnimationSystem/Runtime/RecoilAnimData.cs
-  uploadId: 931268
+  uploadId: 952492

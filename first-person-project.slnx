@@ -1,8 +1,11 @@
 ﻿<Solution>
+  <Project Path="SingularityGroup.HotReload.Editor.csproj" />
   <Project Path="CAS.Runtime.csproj" />
   <Project Path="KAnimationCore.Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="MotionWarping.Runtime.csproj" />
+  <Project Path="SingularityGroup.HotReload.Runtime.csproj" />
   <Project Path="PropertyBindings.Runtime.csproj" />
   <Project Path="MotionWarping.Editor.csproj" />
   <Project Path="CAS.Addons.FPS.Runtime.csproj" />
@@ -10,9 +13,11 @@
   <Project Path="CAS.Editor.csproj" />
   <Project Path="CAS.Examples.Editor.csproj" />
   <Project Path="ScriptableWidget.Editor.csproj" />
+  <Project Path="SingularityGroup.HotReload.Runtime.Public.csproj" />
   <Project Path="PropertyBindings.Editor.csproj" />
   <Project Path="CAS.Examples.Scripts.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="FbxExporter.Editor.csproj" />
   <Project Path="ScriptableWidget.Runtime.csproj" />
   <Project Path="CAS.Addons.FPS.Editor.csproj" />
+  <Project Path="RecoilAnimation.Runtime.csproj" />
 </Solution>

@@ -517,7 +517,7 @@ namespace KINEMATION.ProceduralRecoilAnimationSystem.Runtime
         
         private void SetupStateMachine()
         {
-            _stateMachine ??= new List<AnimState>();
+            _stateMachine = new List<AnimState>();
 
             AnimState semiState;
             AnimState autoState;

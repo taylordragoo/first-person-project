@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8fd292e378d33c249a622c09adf7c0b3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 311410
+  packageName: Tactical FPS Animations
+  packageVersion: 3.1.1
+  assetPath: Assets/KINEMATION/TacticalShooterPack/Animations/SRM-12/Character/A_FP_SRM-12_Bipod_Stow.anim
+  uploadId: 952492
