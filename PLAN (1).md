@@ -6,6 +6,8 @@ Adapt the useful parts of Cowsins’ shooting and impact design into the existin
 
 This pass intentionally targets `CAS_Player_Example_FPS` and its `WeaponProp` weapons. The fortress-based `OperationsDemo` scene currently runs `TAC_Player_Example_FPS` and keeps the CAS player inactive; integrating the active Tactical Shooter weapon stack is outside this pass. Manual CAS validation will temporarily switch the active player in the scene and will not save that activation change.
 
+Cowsins located at /Users/tdragoo/Documents/GitHub/fps-prototype/Assets/Cowsins/
+
 The implementation improves on Cowsins in four areas:
 
 - Route hitscan and physical projectiles through one damage, surface, impact, decal, and tracer pipeline.
