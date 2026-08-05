@@ -524,6 +524,7 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
             }
 
             _characterCamera = GetComponentInChildren<CharacterCamera>();
+            if (_characterCamera != null) _characterCamera.isFirstPerson = isFirstPerson;
             
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Confined;
