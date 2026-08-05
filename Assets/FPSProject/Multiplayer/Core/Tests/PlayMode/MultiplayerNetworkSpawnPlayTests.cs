@@ -65,7 +65,7 @@ namespace FPSProject.Multiplayer.PlayModeTests
             INetworkSessionBootstrap bootstrap = Object
                 .FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include,
                     FindObjectsSortMode.None)
-                .OfType<INetworkSessionBootstrap>()
+                .OfType<DirectNetworkSessionBootstrap>()
                 .FirstOrDefault();
             Assert.IsNotNull(bootstrap);
             Assert.IsTrue(bootstrap.StartHost());
@@ -84,6 +84,32 @@ namespace FPSProject.Multiplayer.PlayModeTests
 
             AssertFiniteHierarchy(tacticalPresentation);
             AssertOwnerSystems(player, tacticalPresentation.gameObject);
+        }
+
+        [UnityTest]
+        public IEnumerator MultiplayerScene_ContainsDirectServicesAndProfilingBackends()
+        {
+            yield return null;
+
+            GameObject managerObject = GameObject.Find("NetworkManager");
+            Assert.IsNotNull(managerObject);
+            Assert.IsNotNull(FindBehaviour(managerObject,
+                "DirectNetworkSessionBootstrap", rootOnly: true));
+            Assert.IsNotNull(FindBehaviour(managerObject,
+                "UnityServicesSessionBootstrap", rootOnly: true));
+            Assert.IsNotNull(FindBehaviour(managerObject,
+                "NetworkPerformanceHarness", rootOnly: true));
+            Assert.IsNotNull(FindBehaviour(managerObject,
+                "NetworkSimulator", rootOnly: true));
+
+            Behaviour launcher = FindBehaviour(managerObject,
+                "DevSessionLauncher", rootOnly: true);
+            Assert.IsNotNull(launcher);
+
+            GameObject spawnRoot = GameObject.Find("Network Spawn Points");
+            Assert.IsNotNull(spawnRoot);
+            Assert.AreEqual(8, spawnRoot.GetComponentsInChildren<Behaviour>(true)
+                .Count(component => component.GetType().Name == "NetworkSpawnPoint"));
         }
 
         private static void AssertFiniteHierarchy(Transform root)
@@ -118,6 +144,9 @@ namespace FPSProject.Multiplayer.PlayModeTests
 
             Assert.IsTrue(player.GetComponent<CharacterController>().enabled);
 
+            Assert.IsNotNull(FindBehaviour(player, "NetworkHealth", rootOnly: true));
+            Assert.IsNotNull(FindBehaviour(player, "NetworkPlayerLifecycle", rootOnly: true));
+
             Behaviour characterCamera = FindBehaviour(player, "CharacterCamera", rootOnly: false);
             Assert.IsNotNull(characterCamera);
             Assert.IsTrue(characterCamera.GetComponent<Camera>().enabled);
@@ -145,7 +174,19 @@ namespace FPSProject.Multiplayer.PlayModeTests
             Behaviour[] behaviours = rootOnly
                 ? root.GetComponents<Behaviour>()
                 : root.GetComponentsInChildren<Behaviour>(true);
-            return behaviours.FirstOrDefault(component => component.GetType().Name == typeName);
+            return behaviours.FirstOrDefault(component => HasTypeNameInHierarchy(
+                component.GetType(), typeName));
+        }
+
+        private static bool HasTypeNameInHierarchy(System.Type type, string typeName)
+        {
+            while (type != null)
+            {
+                if (type.Name == typeName) return true;
+                type = type.BaseType;
+            }
+
+            return false;
         }
 
         private static object GetProperty(object target, string propertyName)

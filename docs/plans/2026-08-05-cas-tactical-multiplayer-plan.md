@@ -13,7 +13,9 @@
 | 7 | DONE | `IWeaponShotRouter` + `OfflineWeaponShotRouter` + `NetworkWeaponShotRouter`. `WeaponProp.SubmitCombatShot()` routed through the router. `WeaponCombatRuntime.ResolveAuthoritativeShot`/`PlayShotResult` split. `NetworkShotCommand`/`NetworkShotResult` structs. Host validates ownership, sequence, life state, equipped weapon, cadence, and ammunition; resolves damage exactly once. Owner never applies local damage. `NetworkWeaponPropBridge` wires CAS weapon props to the router. |
 | 8 | DONE | `DeterministicShotRandom` xorshift64 PRNG seeded by shooter/weapon/sequence (never mutates Unity Random). Per-pellet deterministic cone spread. Herrington Police: 8 pellets, 12 dmg/pellet, 96 cap, single-pellet-per-target rule. `NetworkShotResult` fixed-capacity 8-impact collection. Owner predicted one-frame presentation (recoil/muzzle/casing/audio) with dedup by shot sequence; non-owners play third-person fire + tracer/impact. |
 | 9 | DONE | `NetworkHitboxHistory` 250 ms rolling pose history per player. Analytical ray-vs-capsule intersection. Host records accepted poses; shot resolver maps client tick to host time, interpolates each target's historical capsule, tests ray against capsules, resolves environment obstruction at current time. Rejects shots older than 250 ms. No self-damage this milestone. |
-| 10-12 | PENDING | See Implementation Order below. |
+| 10 | DONE | `NetworkHealth : NetworkBehaviour, IDamageable` with 100 max health. `NetworkSpawnPoint` with clearance-based selection preferring distance from living players. `NetworkPlayerLifecycle` coordinates death (cancel firing, disable simulation/collision/presentation) and respawn (3s delay, spawn point selection, full state reset). `NetworkCasPlayer` updated to use `NetworkHealth` for damage application and skip dead players in hitbox history. |
+| 11 | DONE | Repeatable `NetworkSimulator` + `NetworkPerformanceHarness` coverage, F8/F10 and unattended CLI controls, JSON reports, and an eight-standalone-player adverse-network run. Host reached 8/8 players at ~150 ms RTT, 20 ms jitter, and 5% loss with no NaN/AABB/sorting/runtime exceptions. |
+| 12 | DONE | Multiplayer Services 2.3.0, anonymous authentication, private Relay-backed Sessions, join-by-code, clean leave, and direct/Services selection through the bootstrap boundary. A real two-process Relay host/client join completed at 2/2 players. |
 
 ## Summary
 
@@ -526,11 +528,62 @@ After acceptance, the host decrements ammunition, records cadence, resolves the 
 
 **Tests:** `NetworkHitboxHistoryTests` (14 tests) — empty history, record/retrieve, pruning, window rejection, interpolation, clear, analytical ray-vs-capsule hits (center/degenerate, cylinder, top/bottom sphere), miss when off-axis, max-distance respect, origin-inside returns zero. All 65 EditMode tests pass.
 
-### 10. [PENDING] Add health, death, spawn selection, and respawn.
+### 10. [DONE] Add health, death, spawn selection, and respawn.
 
-### 11. [PENDING] Run latency/loss and eight-player performance tests.
+**Core health and spawn (in `Assets/FPSProject/Multiplayer/Core/Health/`, core assembly):**
 
-### 12. [PENDING] Add Sessions and Relay through the bootstrap interface.
+- `NetworkHealth.cs` — `NetworkBehaviour, IDamageable`. 100 max health. `NetworkVariable<float> CurrentHealth` (Server-write, Everyone-read). `ApplyDamage(in DamageInfo)` ignores self-damage and dead targets, clamps to 0, fires `OnDeath`/`OnHealthChanged` events. `ServerRespawn()` resets to max health and fires `OnRespawn`.
+- `NetworkSpawnPoint.cs` — `MonoBehaviour` with `clearanceRadius` and gizmo. `SelectSpawnPoint(candidates, livingPlayerPositions)` scores each spawn point by minimum squared distance to living players, preferring the farthest. Falls back to the first candidate when no living players exist.
+
+**Lifecycle adapter (Assembly-CSharp, under `Assets/Integrations/KINEMATION/Multiplayer/`):**
+
+- `NetworkPlayerLifecycle.cs` — `NetworkBehaviour` that coordinates death and respawn across all player systems. Wires `NetworkHealth.OnDeath`/`OnRespawn` events.
+  - **Death path (host):** Sets `ReloadState.None` and `LifeState.Dead` on `NetworkWeaponState`. Sends `CancelFiringClientRpc` (clears predicted shots, stops network firing) and `DisablePlayerClientRpc` (disables `CharacterController`, all `Collider`s, and hides Tactical presentation root). Starts 3-second `RespawnSequence` coroutine.
+  - **Respawn path (host):** After 3s delay, selects a spawn point via `NetworkSpawnPoint.SelectSpawnPoint` (farthest from living players), calls `ServerResetForRespawn` (refills ammo, resets weapon/fire-mode/reload/life state), calls `ServerRespawn` on health, clears predicted shots, and sends `RespawnAtPositionClientRpc` with the spawn position.
+  - **Respawn client RPC:** Calls `NetworkCasPlayer.NotifyRespawn(spawnPosition)` (sets simulation mode, clears proxy buffer, resets proxy state) and `EnablePlayerClientRpc` (re-enables colliders, CharacterController, and Tactical presentation).
+
+**NetworkCasPlayer updates:**
+
+- Added `NetworkHealth networkHealth` serialized field (auto-resolved in `OnNetworkSpawn`).
+- `ApplyDamageToHistoricalTarget` now uses `NetworkHealth` instead of raw `IDamageable`, and skips dead targets.
+- `TryHitHistoricalPlayer` skips dead players by checking `NetworkHealth.IsDead` on each target.
+- `NotifyDeath` now also clears the proxy interpolation buffer.
+- `NotifyRespawn` unchanged (already implemented in Step 3).
+
+**Tests:** `NetworkHealthTests` (4 tests) — max health default, IsDead true/false at zero/positive/full health. `NetworkSpawnPointTests` (5 tests) — null/empty list, single candidate, prefers farthest from living players, returns first when no living players, skips null entries. All 75 EditMode tests pass.
+
+### 11. [DONE] Run latency/loss and eight-player performance tests.
+
+**Implementation:**
+
+- `NetworkPerformanceHarness` attaches the Multiplayer Tools `NetworkSimulator`, toggles the target adverse profile with F8, and starts/stops captures with F10.
+- Unattended flags cover automated host/client launch, expected-player gating, capture duration, report directory, and exit-after-report. Reports include frame average/p95/max, main-thread CPU, animation update time, GC allocations/collections, managed-memory deltas, and NGO byte counters.
+- The adverse preset is 75 ms one-way packet delay (approximately 150 ms RTT), 20 ms jitter, and 5% packet loss.
+- Eight authored `NetworkSpawnPoint`s were added to `MultiplayerTest`, and initial network spawn now uses the same owner/proxy-safe placement path as respawn.
+
+**Measured standalone run (Windows development build, one host + seven clients, 20 seconds):**
+
+- Host connected players: 8/8.
+- Host frame time: 8.50 ms average, 9.06 ms p95, 44.72 ms maximum.
+- Host main thread: 8.49 ms average, 44.46 ms maximum.
+- Host animation: 1.66 ms average, 15.14 ms maximum.
+- Host traffic: 58.2 KB/s sent, 10.7 KB/s received.
+- Host allocation counters: 9.69 MB allocated during capture, 15 generation-0 collections; total allocated memory ended 2.56 MB below its starting value and Mono used memory grew by 0.59 MB.
+- All eight reports had valid CPU, animation, network, and allocation counters. Logs contained no NaN transform errors, invalid AABB messages, finite/sorting assertions, or runtime exceptions.
+- Evidence is retained under `Builds/MultiplayerPerf/run-step11-20260805-02/`.
+
+The standalone build also exposes one pre-existing vendor warning: `Assets/CAS Demo/Prefabs/CAS_Player_Example.prefab` has a missing MonoBehaviour on its `Camera`. The composed multiplayer prefab has no missing scripts, and the vendor/offline prefab was intentionally not modified.
+
+### 12. [DONE] Add Sessions and Relay through the bootstrap interface.
+
+**Implementation:**
+
+- Installed `com.unity.services.multiplayer` 2.3.0, including Authentication, Core, Lobby, and Relay dependencies.
+- `UnityServicesSessionBootstrap` implements `INetworkSessionBootstrap` and the join-code extension `IJoinCodeSessionBootstrap`. It initializes Unity Services with a unique process profile, signs in anonymously, creates a private 2-8-player Session with `.WithRelayNetwork(...)`, joins by code, and leaves through `ISession.LeaveAsync()`.
+- `DevSessionLauncher` keeps direct H/C/X as the default and supports Services through `-fpsSessionBackend=services`, `-fpsSessionCode=...`, `-fpsServicesProfile=...`, `-fpsAutoHost`, and `-fpsAutoClient`.
+- `MultiplayerTest` contains both direct and Services bootstrap components; gameplay systems continue to depend only on `INetworkSessionBootstrap`.
+- A real cloud-backed smoke test created a Relay Session and returned a join code. A final two-standalone-process test then joined a second anonymous profile through that code and reached 2/2 connected players with no NaN/AABB/assertion/runtime errors.
+- The final staggered-shutdown run also verified client-first and host-second `LeaveAsync()` completion without the package dispose-order warning. Evidence is retained under `Builds/MultiplayerPerf/run-step12-relay-20260805-03/`.
 
 ## Test Plan and Acceptance Criteria
 

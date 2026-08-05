@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FPSProject.Multiplayer.Core.Health;
 using FPSProject.Multiplayer.Core.Weapons;
 using KINEMATION.TacticalShooterPack.Scripts.Player;
 using UnityEditor;
@@ -19,6 +20,9 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer.Editor
 
         private const string CatalogPath =
             "Assets/FPSProject/Multiplayer/Core/Resources/NetworkWeaponCatalog.asset";
+
+        private const string VendorTacticalCharacterPath =
+            "Assets/KINEMATION/TacticalShooterPack/Prefabs/TacticalShooterCharacter.prefab";
 
         // Networked weapon prefab variants, in the same order as the vendor TacticalShooterCharacter
         // weaponPrefabs array. The catalog maps weapon IDs to these indices. We swap every entry
@@ -100,11 +104,24 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer.Editor
             }
 
             // Capture the vendor player's serialized fields (weaponPrefabs, camera, sounds, etc.)
-            // before removing it, then restore them on the networked subclass.
-            var fields = CaptureSerializedFields(new SerializedObject(vendorPlayer));
+            // before removing it, then restore them on the networked subclass. Older Step 6
+            // builds used a shallow property copy that lost arrays. Recover those prefabs from
+            // the known-good vendor character when rebuilding an affected network prefab.
+            var sourcePlayer = ResolveSerializedSource(vendorPlayer);
+            var fields = CaptureSerializedFields(new SerializedObject(sourcePlayer));
 
-            Object.DestroyImmediate(vendorPlayer, true);
-            var netPlayer = tacticalChild.gameObject.AddComponent<NetworkTacticalShooterPlayer>();
+            var netPlayer = vendorPlayer as NetworkTacticalShooterPlayer;
+            if (netPlayer == null)
+            {
+                Object.DestroyImmediate(vendorPlayer, true);
+                netPlayer = tacticalChild.gameObject.AddComponent<NetworkTacticalShooterPlayer>();
+            }
+
+            if (netPlayer == null)
+            {
+                Debug.LogError("Could not add NetworkTacticalShooterPlayer to the multiplayer prefab.");
+                return;
+            }
             RestoreSerializedFields(new SerializedObject(netPlayer), fields);
 
             // Swap the weaponPrefabs array entries that have networked variants.
@@ -135,6 +152,36 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer.Editor
                 root.AddComponent<NetworkWeaponShotRouter>();
             if (root.GetComponent<NetworkWeaponPropBridge>() == null)
                 root.AddComponent<NetworkWeaponPropBridge>();
+
+            // Step 10 lifecycle components are part of the generated multiplayer prefab. Keep
+            // this builder idempotent so rebuilding weapon state cannot silently remove health.
+            var networkHealth = root.GetComponent<NetworkHealth>();
+            if (networkHealth == null) networkHealth = root.AddComponent<NetworkHealth>();
+            if (root.GetComponent<NetworkPlayerLifecycle>() == null)
+                root.AddComponent<NetworkPlayerLifecycle>();
+
+            if (netCas != null)
+            {
+                var ncpSo = new SerializedObject(netCas);
+                ncpSo.FindProperty("networkHealth").objectReferenceValue = networkHealth;
+                ncpSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+
+        private static TacticalShooterPlayer ResolveSerializedSource(
+            TacticalShooterPlayer currentPlayer)
+        {
+            var current = new SerializedObject(currentPlayer);
+            var weapons = current.FindProperty("weaponPrefabs");
+            if (weapons != null && weapons.isArray && weapons.arraySize > 0)
+                return currentPlayer;
+
+            var vendorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                VendorTacticalCharacterPath);
+            var vendorPlayer = vendorPrefab != null
+                ? vendorPrefab.GetComponent<TacticalShooterPlayer>()
+                : null;
+            return vendorPlayer != null ? vendorPlayer : currentPlayer;
         }
 
         private static void SwapWeaponPrefabs(NetworkTacticalShooterPlayer netPlayer)
@@ -169,29 +216,47 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer.Editor
         {
             var map = new Dictionary<string, object>();
             var prop = so.GetIterator();
-            prop.NextVisible(true);
-            while (prop.NextVisible(false))
+            while (prop.NextVisible(true))
             {
-                if (prop.depth == 0) CaptureProperty(prop, map);
+                CaptureProperty(prop, map);
             }
             return map;
         }
 
         private static void RestoreSerializedFields(SerializedObject so, Dictionary<string, object> map)
         {
-            var prop = so.GetIterator();
-            prop.NextVisible(true);
-            while (prop.NextVisible(false))
+            // Arrays must be sized before their element property paths can be restored.
+            foreach (var entry in map)
             {
-                if (prop.depth == 0 && map.TryGetValue(prop.propertyPath, out object value))
+                var arrayProp = so.FindProperty(entry.Key);
+                if (arrayProp != null && arrayProp.isArray && entry.Value is int arraySize)
+                    arrayProp.arraySize = arraySize;
+            }
+            so.ApplyModifiedPropertiesWithoutUndo();
+            so.Update();
+
+            var prop = so.GetIterator();
+            while (prop.NextVisible(true))
+            {
+                if (map.TryGetValue(prop.propertyPath, out object value))
                 {
                     RestoreProperty(prop, value);
                 }
             }
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void CaptureProperty(SerializedProperty prop, Dictionary<string, object> map)
         {
+            // Never copy the vendor MonoScript reference onto the networked subclass.
+            if (prop.propertyPath == "m_Script") return;
+
+            if (prop.isArray && prop.propertyType != SerializedPropertyType.String)
+            {
+                map[prop.propertyPath] = prop.arraySize;
+                return;
+            }
+
             switch (prop.propertyType)
             {
                 case SerializedPropertyType.Boolean:
@@ -232,6 +297,9 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer.Editor
 
         private static void RestoreProperty(SerializedProperty prop, object value)
         {
+            if (prop.propertyPath == "m_Script") return;
+            if (prop.isArray && prop.propertyType != SerializedPropertyType.String) return;
+
             switch (prop.propertyType)
             {
                 case SerializedPropertyType.Boolean:

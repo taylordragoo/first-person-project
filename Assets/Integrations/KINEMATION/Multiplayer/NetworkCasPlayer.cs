@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FPSProject.Multiplayer.Core.Health;
 using FPSProject.Multiplayer.Core.Movement;
 using FPSProject.Multiplayer.Core.Weapons;
 using KINEMATION.TacticalShooterPack.Scripts.Animation;
@@ -24,6 +25,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         [SerializeField] private NetworkFPSExampleController controller;
         [SerializeField] private NetworkTacticalShooterPlayer tacticalPlayer;
         [SerializeField] private NetworkWeaponState weaponState;
+        [SerializeField] private NetworkHealth networkHealth;
 
         [Header("Tuning")]
         [Tooltip("Project-owned tuning asset. If unset, the component tries to load a " +
@@ -72,12 +74,14 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         public NetworkFPSExampleController Controller => controller;
         public NetworkWeaponState WeaponState => weaponState;
         public NetworkTacticalShooterPlayer TacticalPlayer => tacticalPlayer;
+        public NetworkHealth NetworkHealth => networkHealth;
 
         public override void OnNetworkSpawn()
         {
             if (controller == null) controller = GetComponent<NetworkFPSExampleController>();
             if (tacticalPlayer == null) tacticalPlayer = GetComponentInChildren<NetworkTacticalShooterPlayer>(true);
             if (weaponState == null) weaponState = GetComponent<NetworkWeaponState>();
+            if (networkHealth == null) networkHealth = GetComponent<NetworkHealth>();
             if (tuning == null) tuning = ResolveTuning();
 
             ResolveCapsuleDimensions();
@@ -758,11 +762,22 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
             float closestPlayerDist = float.MaxValue;
             ulong closestClientId = ulong.MaxValue;
+            ulong closestNetId = ulong.MaxValue;
 
             foreach (var kvp in _hostHitboxHistories)
             {
                 ulong targetClientId = kvp.Key;
                 if (targetClientId == shooterClientId) continue; // No self-damage this milestone.
+
+                // Skip dead players. The host disables collision on death; dead players cannot
+                // be hit. Check the target's NetworkHealth via the spawned NetworkObject.
+                ulong targetNetId = ResolveNetworkObjectIdForClient(targetClientId);
+                if (targetNetId == ulong.MaxValue) continue;
+                if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(targetNetId, out var targetNetObj))
+                {
+                    var targetHealth = targetNetObj.GetComponentInChildren<NetworkHealth>();
+                    if (targetHealth != null && targetHealth.IsDead) continue;
+                }
 
                 var history = kvp.Value;
                 if (!history.TryGetCapsule(hostTime, out var capsule)) continue;
@@ -774,6 +789,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                     {
                         closestPlayerDist = playerHitDist;
                         closestClientId = targetClientId;
+                        closestNetId = targetNetId;
                     }
                 }
             }
@@ -797,11 +813,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 }
             }
 
-            // Map the target client ID to its spawned NetworkObject's NetworkObjectId.
-            ulong targetNetId = ResolveNetworkObjectIdForClient(closestClientId);
-            if (targetNetId == ulong.MaxValue) return false;
-
-            hitNetworkObjectId = targetNetId;
+            hitNetworkObjectId = closestNetId;
             hitDistance = closestPlayerDist;
             hitPoint = rayOrigin + rayDirection * closestPlayerDist;
             return true;
@@ -845,27 +857,25 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
         /// <summary>
         /// Host-only: apply damage to a historical target identified by its NetworkObjectId.
-        /// Looks up the target's <see cref="FPSProject.Combat.Runtime.IDamageable"/> via the
-        /// spawned NetworkObject and applies the damage exactly once. Step 10 adds NetworkHealth;
-        /// for now this finds the IDamageable on the target root.
+        /// Looks up the target's <see cref="NetworkHealth"/> via the spawned NetworkObject and
+        /// applies the damage exactly once. The host owns all damage application.
         /// </summary>
         private void ApplyDamageToHistoricalTarget(ulong targetNetworkObjectId, float damage,
             Vector3 hitPoint, Vector3 travelDirection)
         {
             if (!IsServer || NetworkManager == null) return;
-            // Find the spawned NetworkObject by ID. The host owns all spawned objects.
             if (!NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(targetNetworkObjectId,
                 out var netObj))
             {
                 return;
             }
 
-            var damageable = netObj.GetComponentInChildren<FPSProject.Combat.Runtime.IDamageable>();
-            if (damageable == null) return;
+            var health = netObj.GetComponentInChildren<NetworkHealth>();
+            if (health == null || health.IsDead) return;
 
             var damageInfo = new FPSProject.Combat.Runtime.DamageInfo(
                 damage, hitPoint, -travelDirection, travelDirection, gameObject, gameObject);
-            damageable.ApplyDamage(damageInfo);
+            health.ApplyDamage(damageInfo);
         }
         // owner submits a NetworkShotCommand. The host validates the command against the
         // catalog, accepted pose, cadence, and ammunition, then resolves damage exactly once
@@ -1150,6 +1160,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         {
             _isAlive = false;
             controller?.SetSimulationMode(PlayerSimulationMode.Disabled);
+            _proxyBuffer?.Clear(ProxyInterpolationBuffer.ClearReason.ManualReset);
         }
 
         /// <summary>Called by the health/respawn system when the player respawns.</summary>

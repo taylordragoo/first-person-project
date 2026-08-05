@@ -4,7 +4,11 @@
     "references": [
         "GUID:b805ca460311543e89ca46007f995c22",
         "Unity.Netcode.Runtime",
-        "Unity.Networking.Transport"
+        "Unity.Networking.Transport",
+        "Unity.Multiplayer.Tools.NetworkSimulator.Runtime",
+        "Unity.Services.Authentication",
+        "Unity.Services.Core",
+        "Unity.Services.Multiplayer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
