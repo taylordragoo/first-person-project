@@ -16,6 +16,7 @@ namespace FPSProject.Combat.PlayModeTests
         private GameObject _targetObject;
         private GameObject _decalPrefab;
         private GameObject _spawnedDecal;
+        private GameObject _tracerPrefab;
         private ImpactEffectLibrary _effectLibrary;
 
         [SetUp]
@@ -59,6 +60,7 @@ namespace FPSProject.Combat.PlayModeTests
         {
             if (_spawnedDecal != null) Object.DestroyImmediate(_spawnedDecal);
             if (_decalPrefab != null) Object.DestroyImmediate(_decalPrefab);
+            if (_tracerPrefab != null) Object.DestroyImmediate(_tracerPrefab);
             Object.DestroyImmediate(_runtimeGo);
             Object.DestroyImmediate(_camera.gameObject);
             Object.DestroyImmediate(_ownerRoot);
@@ -187,6 +189,49 @@ namespace FPSProject.Combat.PlayModeTests
         }
 
         [UnityTest]
+        public IEnumerator Tracer_RemainsActiveForItsConfiguredTravelTime()
+        {
+            _tracerPrefab = new GameObject("TestTracerPrefab");
+            _tracerPrefab.AddComponent<TrailRenderer>().time = 0.1f;
+            _tracerPrefab.SetActive(false);
+
+            var ballistics = new WeaponBallisticsSettings
+            {
+                combatEnabled = true,
+                shotType = WeaponShotType.Hitscan,
+                damage = 1f,
+                maxRange = 100f,
+                hitMask = ~0,
+                triggerInteraction = QueryTriggerInteraction.Ignore,
+                spreadDegrees = 0f,
+                tracerPrefab = _tracerPrefab,
+                tracerSpeed = 40f,
+                tracerLifetime = 0.05f,
+                impactEffectLibrary = _effectLibrary
+            };
+
+            var request = new WeaponShotRequest(
+                ballistics,
+                _ownerRoot,
+                _weaponObject,
+                new Vector3(0, 0, 0.5f),
+                Quaternion.identity,
+                Vector3.zero,
+                Vector3.forward);
+
+            Physics.SyncTransforms();
+            _runtime.SubmitShot(request);
+
+            yield return new WaitForSeconds(0.1f);
+
+            var activeTracer = GameObject.Find(_tracerPrefab.name);
+            Assert.IsNotNull(activeTracer,
+                "The tracer must remain active while it is still travelling to the hit point.");
+            Assert.Greater(activeTracer.transform.position.z, 0.5f);
+            Assert.Less(activeTracer.transform.position.z, 9.5f);
+        }
+
+        [UnityTest]
         public IEnumerator OwnerCollider_IsRejected()
         {
             // Add a collider to the owner that's in front of the target
@@ -268,6 +313,53 @@ namespace FPSProject.Combat.PlayModeTests
             Assert.AreEqual(0, targetDamageable.ApplyDamageCallCount);
 
             Object.DestroyImmediate(obstruction);
+        }
+
+        [UnityTest]
+        public IEnumerator CameraHit_IsRetainedWhenMuzzleStartsInsideHitSurface()
+        {
+            _decalPrefab = new GameObject("TestInsideSurfaceDecalPrefab");
+            _decalPrefab.SetActive(false);
+            _effectLibrary.defaultPair = new SurfaceEffectPair
+            {
+                decalPrefab = _decalPrefab,
+                impactPrefab = null
+            };
+
+            var ballistics = new WeaponBallisticsSettings
+            {
+                combatEnabled = true,
+                shotType = WeaponShotType.Hitscan,
+                damage = 10f,
+                maxRange = 100f,
+                hitMask = ~0,
+                triggerInteraction = QueryTriggerInteraction.Ignore,
+                spreadDegrees = 0f,
+                impactEffectLibrary = _effectLibrary
+            };
+
+            // Simulate recoil/weapon animation pushing the muzzle just inside the
+            // wall while the camera still has a valid hit on its front surface.
+            var request = new WeaponShotRequest(
+                ballistics,
+                _ownerRoot,
+                _weaponObject,
+                _targetObject.transform.position,
+                Quaternion.identity,
+                Vector3.zero,
+                Vector3.forward);
+
+            Physics.SyncTransforms();
+            _runtime.SubmitShot(request);
+
+            yield return null;
+
+            var damageable = _targetObject.GetComponent<TestDamageable>();
+            Assert.AreEqual(1, damageable.ApplyDamageCallCount);
+
+            _spawnedDecal = GameObject.Find(_decalPrefab.name);
+            Assert.IsNotNull(_spawnedDecal,
+                "A valid camera hit must still spawn its decal when the muzzle starts inside the surface.");
         }
 
         [UnityTest]

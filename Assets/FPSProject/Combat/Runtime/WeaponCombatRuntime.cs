@@ -10,6 +10,9 @@ namespace FPSProject.Combat.Runtime
     /// </summary>
     public class WeaponCombatRuntime : MonoBehaviour
     {
+        private const float MuzzleContactPadding = 0.05f;
+        private const float MinimumTracerTravelDuration = 0.05f;
+
         [Header("Aim")]
         [Tooltip("The camera used for aim ray origin and direction.")]
         [SerializeField] private Camera _aimCamera;
@@ -65,9 +68,10 @@ namespace FPSProject.Combat.Runtime
             public GameObject prefab;
             public Vector3 startPosition;
             public Vector3 endPosition;
-            public float speed;
-            public float lifetime;
+            public float travelDuration;
+            public float totalLifetime;
             public float elapsed;
+            public bool reachedEnd;
         }
 
         private void Awake()
@@ -135,6 +139,7 @@ namespace FPSProject.Combat.Runtime
             // Start with the unobstructed camera endpoint so the value is always
             // defined, even when the non-alloc query returns no accepted hits.
             Vector3 desiredDestination = cameraOrigin + cameraDirection * maxRange;
+            RaycastHit? cameraAimHit = null;
 
             RaycastHit[] cameraHits = new RaycastHit[32];
             int cameraHitCount = Physics.RaycastNonAlloc(
@@ -161,6 +166,7 @@ namespace FPSProject.Combat.Runtime
                 {
                     nearestCamDist = hit.distance;
                     desiredDestination = hit.point;
+                    cameraAimHit = hit;
                 }
             }
 
@@ -170,20 +176,27 @@ namespace FPSProject.Combat.Runtime
             float muzzleDistance = Vector3.Distance(muzzlePosition, desiredDestination);
             muzzleDistance = Mathf.Min(muzzleDistance, maxRange);
 
+            // The desired destination is commonly the exact surface point returned
+            // by the camera ray. Give the muzzle query a small amount of padding so
+            // floating-point precision does not exclude a hit at its max distance.
+            float muzzleQueryDistance = cameraAimHit.HasValue
+                ? muzzleDistance + MuzzleContactPadding
+                : muzzleDistance;
+
             Vector3 authoritativeEndpoint;
             RaycastHit? authoritativeHit = null;
 
             RaycastHit[] muzzleHits = new RaycastHit[32];
             int muzzleHitCount = Physics.RaycastNonAlloc(
                 muzzlePosition, muzzleDirection, muzzleHits,
-                muzzleDistance, hitMask, triggerInteraction);
+                muzzleQueryDistance, hitMask, triggerInteraction);
 
             if (muzzleHitCount == muzzleHits.Length)
             {
                 muzzleHits = new RaycastHit[muzzleHits.Length * 2];
                 muzzleHitCount = Physics.RaycastNonAlloc(
                     muzzlePosition, muzzleDirection, muzzleHits,
-                    muzzleDistance, hitMask, triggerInteraction);
+                    muzzleQueryDistance, hitMask, triggerInteraction);
             }
 
             float nearestMuzzleDist = float.MaxValue;
@@ -203,6 +216,14 @@ namespace FPSProject.Combat.Runtime
             if (authoritativeHit.HasValue)
             {
                 authoritativeEndpoint = authoritativeHit.Value.point;
+            }
+            else if (cameraAimHit.HasValue)
+            {
+                // A muzzle can briefly enter the hit collider during recoil or
+                // weapon animation. Raycasts do not reliably report the collider
+                // they start inside, so retain the already validated camera hit.
+                authoritativeHit = cameraAimHit;
+                authoritativeEndpoint = cameraAimHit.Value.point;
             }
             else
             {
@@ -364,12 +385,32 @@ namespace FPSProject.Combat.Runtime
             var instance = _poolManager.RentTracer(prefab);
             if (instance == null) return;
 
+            // Rent activates pooled objects before the caller can position them.
+            // Stop and clear every TrailRenderer first so stale points and the
+            // teleport from the pool parent never become part of the new shot.
+            float trailFadeDuration = PrepareTracerRenderers(instance);
+
             instance.transform.SetParent(null, true);
             instance.transform.position = start;
-            instance.transform.rotation = Quaternion.LookRotation((end - start).normalized);
+            Vector3 route = end - start;
+            float routeDistance = route.magnitude;
+            if (routeDistance > 0.0001f)
+            {
+                instance.transform.rotation = Quaternion.LookRotation(route / routeDistance);
+            }
 
             float speed = request.Ballistics.tracerSpeed > 0f ? request.Ballistics.tracerSpeed : 200f;
-            float lifetime = request.Ballistics.tracerLifetime > 0f ? request.Ballistics.tracerLifetime : 0.1f;
+            float requestedLifetime = request.Ballistics.tracerLifetime > 0f
+                ? request.Ballistics.tracerLifetime
+                : 0.1f;
+            float travelDuration = Mathf.Max(
+                routeDistance / Mathf.Max(speed, 0.01f),
+                MinimumTracerTravelDuration);
+            float totalLifetime = Mathf.Max(
+                requestedLifetime,
+                travelDuration + trailFadeDuration);
+
+            SetTracerEmission(instance, true);
 
             _activeTracers.Add(new ActiveTracer
             {
@@ -377,10 +418,44 @@ namespace FPSProject.Combat.Runtime
                 prefab = prefab,
                 startPosition = start,
                 endPosition = end,
-                speed = speed,
-                lifetime = lifetime,
-                elapsed = 0f
+                travelDuration = travelDuration,
+                totalLifetime = totalLifetime,
+                elapsed = 0f,
+                reachedEnd = false
             });
+        }
+
+        private static float PrepareTracerRenderers(GameObject instance)
+        {
+            float longestTrailTime = 0f;
+            var trailRenderers = instance.GetComponentsInChildren<TrailRenderer>(true);
+            foreach (var trailRenderer in trailRenderers)
+            {
+                trailRenderer.emitting = false;
+                trailRenderer.Clear();
+                longestTrailTime = Mathf.Max(longestTrailTime, trailRenderer.time);
+            }
+
+            return longestTrailTime;
+        }
+
+        private static void SetTracerEmission(GameObject instance, bool emitting)
+        {
+            var trailRenderers = instance.GetComponentsInChildren<TrailRenderer>(true);
+            foreach (var trailRenderer in trailRenderers)
+            {
+                trailRenderer.emitting = emitting;
+            }
+        }
+
+        private static void ClearTracerRenderers(GameObject instance)
+        {
+            var trailRenderers = instance.GetComponentsInChildren<TrailRenderer>(true);
+            foreach (var trailRenderer in trailRenderers)
+            {
+                trailRenderer.emitting = false;
+                trailRenderer.Clear();
+            }
         }
 
         private void SpawnImpactEffects(
@@ -605,17 +680,27 @@ namespace FPSProject.Combat.Runtime
 
                 tracer.elapsed += dt;
 
-                if (tracer.elapsed >= tracer.lifetime)
+                float travelT = tracer.travelDuration > 0f
+                    ? Mathf.Clamp01(tracer.elapsed / tracer.travelDuration)
+                    : 1f;
+                tracer.instance.transform.position = Vector3.Lerp(
+                    tracer.startPosition,
+                    tracer.endPosition,
+                    travelT);
+
+                if (!tracer.reachedEnd && travelT >= 1f)
                 {
+                    tracer.reachedEnd = true;
+                    SetTracerEmission(tracer.instance, false);
+                }
+
+                if (tracer.elapsed >= tracer.totalLifetime)
+                {
+                    ClearTracerRenderers(tracer.instance);
                     _poolManager.ReturnTracer(tracer.prefab, tracer.instance);
                     _activeTracers.RemoveAt(i);
                     continue;
                 }
-
-                // Move tracer toward endpoint
-                float t = tracer.elapsed / tracer.lifetime;
-                Vector3 currentPos = Vector3.Lerp(tracer.startPosition, tracer.endPosition, t);
-                tracer.instance.transform.position = currentPos;
 
                 _activeTracers[i] = tracer;
             }

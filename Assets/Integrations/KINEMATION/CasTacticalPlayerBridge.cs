@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CAS_Demo.Scripts.FPS;
+using FPSProject.Combat.Runtime;
 using KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera;
 using KINEMATION.TacticalShooterPack.Scripts.Animation;
 using KINEMATION.TacticalShooterPack.Scripts.Player;
@@ -17,7 +18,7 @@ namespace FirstPersonProject.Integrations.Kinemation
     /// look, and camera control.
     /// </summary>
     [DefaultExecutionOrder(-1000)]
-    public sealed class CasTacticalPlayerBridge : MonoBehaviour
+    public sealed class CasTacticalPlayerBridge : MonoBehaviour, IWeaponMuzzleProvider
     {
         [Serializable]
         private sealed class BoneLink
@@ -304,6 +305,27 @@ namespace FirstPersonProject.Integrations.Kinemation
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Uses the active Tactical presentation weapon's muzzle so combat VFX
+        /// originate from the barrel the player actually sees. The CAS weapon
+        /// prop remains the fallback when no Tactical muzzle is available.
+        /// </summary>
+        public bool TryGetMuzzle(out Vector3 position, out Quaternion rotation)
+        {
+            TacticalShooterWeapon weapon = TryGetTacticalWeapon();
+            Transform muzzleTransform = weapon == null ? null : weapon.MuzzleTransform;
+            if (muzzleTransform == null)
+            {
+                position = Vector3.zero;
+                rotation = Quaternion.identity;
+                return false;
+            }
+
+            position = muzzleTransform.position;
+            rotation = muzzleTransform.rotation;
+            return true;
         }
 
         private void LateUpdate()

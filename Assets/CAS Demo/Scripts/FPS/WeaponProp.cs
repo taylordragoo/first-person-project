@@ -42,6 +42,7 @@ namespace CAS_Demo.Scripts.FPS
         protected AudioSource _audioSource;
         protected WeaponCombatRuntime _combatRuntime;
         protected Camera _combatAimCamera;
+        protected IWeaponMuzzleProvider _combatMuzzleProvider;
 
 #if UNITY_EDITOR
         public static readonly string WeaponSettingsName = nameof(weaponSettings);
@@ -268,6 +269,7 @@ namespace CAS_Demo.Scripts.FPS
             {
                 _combatAimCamera = _combatRuntime.AimCamera;
             }
+            _combatMuzzleProvider = root.GetComponent<IWeaponMuzzleProvider>();
 
             muzzle.GetActiveAttachment()?.EnableAttachment();
             scopes.GetActiveAttachment()?.EnableAttachment();
@@ -291,7 +293,13 @@ namespace CAS_Demo.Scripts.FPS
             Vector3 muzzlePos;
             Quaternion muzzleRot;
 
-            if (muzzlePoint != null)
+            if (_combatMuzzleProvider != null
+                && _combatMuzzleProvider.TryGetMuzzle(out muzzlePos, out muzzleRot))
+            {
+                // Hybrid rigs render a separate presentation weapon. Its muzzle
+                // must win so tracers originate from the barrel visible on screen.
+            }
+            else if (muzzlePoint != null)
             {
                 muzzlePos = muzzlePoint.position;
                 muzzleRot = muzzlePoint.rotation;

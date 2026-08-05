@@ -27,6 +27,19 @@ namespace KINEMATION.TacticalShooterPack.Scripts.Weapon
         public bool IsOneHanded => tacWeaponSettings.isOneHanded;
         public float AimingSpeed => tacWeaponSettings.aimingSpeed;
         public AnimationClip BaseIdlePose => _idlePose;
+        public Transform MuzzleTransform
+        {
+            get
+            {
+                if (isSuppressed && muzzleFlashSuppressed != null)
+                {
+                    return muzzleFlashSuppressed.transform;
+                }
+
+                if (muzzleFlash != null) return muzzleFlash.transform;
+                return muzzleFlashSuppressed == null ? null : muzzleFlashSuppressed.transform;
+            }
+        }
         
         public TacticalWeaponSettings tacWeaponSettings;
         [HideInInspector] public KTransform gunRightHandPose = KTransform.Identity;
