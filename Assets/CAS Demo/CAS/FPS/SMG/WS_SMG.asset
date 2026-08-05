@@ -89,3 +89,23 @@ MonoBehaviour:
     weapon: {fileID: 0}
   equipMotion: {fileID: 11400000, guid: 925be0711b2c2c84c900c0c2c64938e0, type: 2}
   unEquipMotion: {fileID: 11400000, guid: 3aaa2aebedd2b814289aad483975bfe9, type: 2}
+  ballistics:
+    combatEnabled: 1
+    shotType: 0
+    damage: 12
+    maxRange: 60
+    hitMask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    triggerInteraction: 1
+    spreadDegrees: 1.25
+    tracerPrefab: {fileID: 1436881700163988447, guid: 72fbb691dea891c45a6caa10b437b857, type: 3}
+    tracerSpeed: 300
+    tracerLifetime: 0.12
+    projectilePrefab: {fileID: 0}
+    projectileSpeed: 120
+    projectileSweepRadius: 0.01
+    projectileGravityEnabled: 0
+    projectileGravityMultiplier: 1
+    projectileLifetime: 5
+    impactEffectLibrary: {fileID: 11400000, guid: cbf68163ad9b04f7096d7c03a1b52f8c, type: 2}

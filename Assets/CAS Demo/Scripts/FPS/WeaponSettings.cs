@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FPSProject.Combat.Runtime;
 using KINEMATION.CharacterAnimationSystem.Addons.FPS.Scripts.Modifiers;
 using KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera;
 using KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core;
@@ -32,7 +33,7 @@ namespace CAS_Demo.Scripts.FPS
 
         [Header("Sounds")] public List<AudioClip> fireSounds;
         public List<AudioClip> animEventSounds;
-        
+
         [Tab("Animation")]
         
         [Header("Offsets")]
@@ -53,6 +54,10 @@ namespace CAS_Demo.Scripts.FPS
         public IkMotionSettings equipMotion;
         public IkMotionSettings unEquipMotion;
         
+        [Tab("Combat")]
+        [Header("Ballistics")]
+        public WeaponBallisticsSettings ballistics;
+
 #if UNITY_EDITOR
         public static readonly string WeaponPoseName = nameof(weaponPose);
         public static readonly string WeaponPoseThirdPersonName = nameof(weaponPoseThirdPerson);

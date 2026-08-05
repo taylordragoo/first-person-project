@@ -1,4 +1,5 @@
 ﻿using CAS_Demo.Scripts.FPS.Attachments;
+using FPSProject.Combat.Runtime;
 using KINEMATION.CharacterAnimationSystem.Examples.Scripts;
 using KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera;
 using KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core;
@@ -19,6 +20,10 @@ namespace CAS_Demo.Scripts.FPS
         [SerializeField] protected FireMode fireMode = FireMode.Semi;
         public Transform defaultAimPoint;
 
+        [Header("Combat")]
+        [Tooltip("Muzzle point transform on the weapon prefab. Used as the shot origin.")]
+        public Transform muzzlePoint;
+
         [Header("Attachments")]
         public WeaponAttachmentGroup<WeaponAttachment> muzzle = new WeaponAttachmentGroup<WeaponAttachment>();
         public WeaponAttachmentGroup<GripAttachment> grips = new WeaponAttachmentGroup<GripAttachment>();
@@ -35,6 +40,8 @@ namespace CAS_Demo.Scripts.FPS
         protected bool _isFiring;
 
         protected AudioSource _audioSource;
+        protected WeaponCombatRuntime _combatRuntime;
+        protected Camera _combatAimCamera;
 
 #if UNITY_EDITOR
         public static readonly string WeaponSettingsName = nameof(weaponSettings);
@@ -100,12 +107,15 @@ namespace CAS_Demo.Scripts.FPS
             {
                 PlaySound(weaponSettings.fireSounds[Random.Range(0, weaponSettings.fireSounds.Count)]);
             }
-            
+
             if(_recoilAnimation != null) _recoilAnimation.Play();
             if(_characterCamera != null) _characterCamera.PlayCameraShake(weaponSettings.recoilShake);
-            
+
             PlayCharacterWeaponAnimation(weaponSettings.fire);
             
+            // Submit combat shot after presentation but before burst decrement
+            SubmitCombatShot();
+
             if (fireMode == FireMode.Burst) _burstCount--;
 
             if (fireMode == FireMode.Semi || fireMode == FireMode.Burst && _burstCount == 0)
@@ -228,7 +238,7 @@ namespace CAS_Demo.Scripts.FPS
             scopes.CycleAttachments(true);
             UpdateCameraFOV();
         }
-        
+
         protected void UpdateCameraFOV()
         {
             float targetFov = _recoilAnimation.isAiming ? GetScopeData().aimFov : _characterCamera.DefaultFov;
@@ -244,17 +254,64 @@ namespace CAS_Demo.Scripts.FPS
         protected virtual void Awake()
         {
             Transform root = transform.root;
-            
+
             _recoilAnimation = root.GetComponentInChildren<RecoilAnimation>();
             _characterAnimation = root.GetComponentInChildren<CharacterAnimationComponent>();
             _proceduralAnimation = root.GetComponentInChildren<ProceduralAnimationComponent>();
             _characterCamera = root.GetComponentInChildren<CharacterCamera>();
             _animationPlayer = GetComponentInChildren<SimpleAnimationPlayer>();
             _audioSource = GetComponent<AudioSource>();
-            
+
+            // Cache combat runtime from root/parents
+            _combatRuntime = root.GetComponentInChildren<WeaponCombatRuntime>();
+            if (_combatRuntime != null)
+            {
+                _combatAimCamera = _combatRuntime.AimCamera;
+            }
+
             muzzle.GetActiveAttachment()?.EnableAttachment();
             scopes.GetActiveAttachment()?.EnableAttachment();
             grips.GetActiveAttachment()?.EnableAttachment();
+        }
+
+        /// <summary>
+        /// Submits a combat shot through the shared WeaponCombatRuntime.
+        /// Does nothing if combat is disabled, runtime is missing, or camera is missing.
+        /// </summary>
+        protected virtual void SubmitCombatShot()
+        {
+            if (_combatRuntime == null) return;
+            if (!weaponSettings.ballistics.combatEnabled) return;
+            if (_combatAimCamera == null)
+            {
+                Debug.LogWarning($"[{nameof(WeaponProp)}] Cannot submit combat shot: no aim camera found on {nameof(WeaponCombatRuntime)}.");
+                return;
+            }
+
+            Vector3 muzzlePos;
+            Quaternion muzzleRot;
+
+            if (muzzlePoint != null)
+            {
+                muzzlePos = muzzlePoint.position;
+                muzzleRot = muzzlePoint.rotation;
+            }
+            else
+            {
+                muzzlePos = transform.position;
+                muzzleRot = transform.rotation;
+            }
+
+            var request = new WeaponShotRequest(
+                weaponSettings.ballistics,
+                transform.root.gameObject,
+                gameObject,
+                muzzlePos,
+                muzzleRot,
+                _combatAimCamera.transform.position,
+                _combatAimCamera.transform.forward);
+
+            _combatRuntime.SubmitShot(request);
         }
     }
 }

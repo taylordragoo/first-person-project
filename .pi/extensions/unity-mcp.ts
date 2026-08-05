@@ -278,7 +278,9 @@ export default async function (pi: ExtensionAPI) {
     try {
       ctx.ui.setStatus("unity-mcp", "Connecting to Unity MCP...");
       await mcp.connect(() => {
-        ctx.ui.setStatus("unity-mcp", "Unity MCP disconnected");
+        // Don't use ctx here — it may be stale after session replacement.
+        // session_shutdown handles cleanup; this is only for unexpected disconnects.
+        console.error("[unity-mcp] Unexpected disconnect from Unity MCP server");
         toolsRegistered = false;
       });
 

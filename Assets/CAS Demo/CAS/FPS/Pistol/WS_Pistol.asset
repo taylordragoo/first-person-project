@@ -12,6 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f5fc7d223544bf8d93b7a51c17d2b0, type: 3}
   m_Name: WS_Pistol
   m_EditorClassIdentifier: 
+  fireRate: 400
+  recoilData: {fileID: 11400000, guid: 2c844a366fdbb904ba08f92aa427b572, type: 2}
+  recoilShake: {fileID: 11400000, guid: ed140d7b109f58f46875763585689d49, type: 2}
+  supportsBurst: 0
+  supportsAuto: 0
+  burstRounds: 0
+  fireSounds:
+  - {fileID: 8300000, guid: ba5ce05ea06a5c24ca97c9f557c81db3, type: 3}
+  - {fileID: 8300000, guid: 16e9f15099056404086a1fdb89930e1f, type: 3}
+  animEventSounds:
+  - {fileID: 8300000, guid: c40cc5984d8ee1e48a9826242affa98b, type: 3}
   weaponPose:
     position: {x: -0.03, y: -0.05, z: 0.12}
     rotation: {x: 0, y: 0, z: 0, w: 1}
@@ -64,12 +75,6 @@ MonoBehaviour:
     dampingFactor: 8
     space: 2
     adsScale: 0.4
-  fireRate: 400
-  recoilData: {fileID: 11400000, guid: 2c844a366fdbb904ba08f92aa427b572, type: 2}
-  recoilShake: {fileID: 11400000, guid: ed140d7b109f58f46875763585689d49, type: 2}
-  supportsBurst: 0
-  supportsAuto: 0
-  burstRounds: 0
   reload:
     character: {fileID: 11400000, guid: 034ace70a8644c248af91296af366f6f, type: 2}
     weapon: {fileID: 11400000, guid: 13f8152441f3a7740ba2878473d387a0, type: 2}
@@ -84,8 +89,23 @@ MonoBehaviour:
     weapon: {fileID: 0}
   equipMotion: {fileID: 11400000, guid: 925be0711b2c2c84c900c0c2c64938e0, type: 2}
   unEquipMotion: {fileID: 11400000, guid: 3aaa2aebedd2b814289aad483975bfe9, type: 2}
-  fireSounds:
-  - {fileID: 8300000, guid: ba5ce05ea06a5c24ca97c9f557c81db3, type: 3}
-  - {fileID: 8300000, guid: 16e9f15099056404086a1fdb89930e1f, type: 3}
-  animEventSounds:
-  - {fileID: 8300000, guid: c40cc5984d8ee1e48a9826242affa98b, type: 3}
+  ballistics:
+    combatEnabled: 1
+    shotType: 0
+    damage: 25
+    maxRange: 75
+    hitMask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    triggerInteraction: 1
+    spreadDegrees: 0.5
+    tracerPrefab: {fileID: 1436881700163988447, guid: 72fbb691dea891c45a6caa10b437b857, type: 3}
+    tracerSpeed: 300
+    tracerLifetime: 0.12
+    projectilePrefab: {fileID: 0}
+    projectileSpeed: 120
+    projectileSweepRadius: 0.01
+    projectileGravityEnabled: 0
+    projectileGravityMultiplier: 1
+    projectileLifetime: 5
+    impactEffectLibrary: {fileID: 11400000, guid: cbf68163ad9b04f7096d7c03a1b52f8c, type: 2}
