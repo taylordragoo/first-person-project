@@ -1,0 +1,216 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &661935358332422414
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.953383
+      objectReference: {fileID: 0}
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7000009
+      objectReference: {fileID: 0}
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -24.993883
+      objectReference: {fileID: 0}
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 140613083901867898, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 816056438618802308, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975569282174607945, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2264261512201008232, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3106988141597025256, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_Name
+      value: CAS_Player_Network
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064748075205822715, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: casController
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7887001081661743403, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8722518329490941363, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 3315910698624428298, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2429819265531568206}
+    - targetCorrespondingSourceObject: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5605040081671372534}
+    - targetCorrespondingSourceObject: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 693147219447866964}
+  m_SourcePrefab: {fileID: 100100000, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+--- !u!1 &6081883102162342820 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+  m_PrefabInstance: {fileID: 661935358332422414}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2429819265531568206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6081883102162342820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39ac9ee82e7a847469c512a6adcc504d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonProject.Integrations.Kinemation.Multiplayer.NetworkFPSExampleController
+  timeScale: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  mouseSensitivity: 0.15
+  movingVelocityThreshold: 0.1
+  walkInputThreshold: 0.5
+  useDefaultWalk: 0
+  idleDeceleration: 50
+  animGaitSmoothing: 5
+  walkGait:
+    velocity: 1.5
+    acceleration: 2
+    deceleration: 2
+    rotationSpeed: 5
+  jogGait:
+    velocity: 3
+    acceleration: 1.8
+    deceleration: 1.5
+    rotationSpeed: 5
+  sprintGait:
+    velocity: 5
+    acceleration: 1.7
+    deceleration: 2
+    rotationSpeed: 4
+  crouchWalkGait:
+    velocity: 1.1
+    acceleration: 2.2
+    deceleration: 2
+    rotationSpeed: 4
+  jumpHeight: 1
+  fallDelay: 0.1
+  gravity: 9.81
+  maxFallVelocity: 25
+  airMaxSpeed: 4
+  airAcceleration: 4
+  landingMomentumFactor: 0.6
+  groundedStickVelocity: 2
+  jumpCoyoteTime: 0.12
+  groundSnapDistance: 0.25
+  maxStableSlopeAngle: 60
+  groundProbeRadiusFactor: 0.9
+  minFallSpeedToInAir: 1.25
+  debugGrounding: 0
+  isFirstPerson: 0
+  orientRotationToMovement: 1
+  aimingRotationSpeed: 10
+  leanAngle: 30
+  stepCrouch: {fileID: 11400000, guid: 7349b695c99456145832a6d869a722d5, type: 2}
+  stepUncrouch: {fileID: 11400000, guid: 25f3bc72028a79f41ad18fff315a0cb8, type: 2}
+  stepInPlace: {fileID: 11400000, guid: 7598a3a1b4b5218459ed98c19315bb16, type: 2}
+  startMoving: {fileID: 11400000, guid: 7982b6c5913ed6445b2918a2e21ebe35, type: 2}
+  stopMoving: {fileID: 11400000, guid: 86bb28f62fa9eea4b8ca27516f3fb891, type: 2}
+  animatorMoveInterpSpeed: 7
+  aimingMotion: {fileID: 11400000, guid: aac1afcfcc9b0364882be8044f38f2e7, type: 2}
+  fireModeMotion: {fileID: 11400000, guid: 6c3c8c07556be304e80d25bf1e15e617, type: 2}
+  movementMotion: {fileID: 11400000, guid: 28f1f3ff26440594383cdcb577f8fbbd, type: 2}
+--- !u!114 &5605040081671372534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6081883102162342820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1211485450
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &693147219447866964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6081883102162342820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 859b377151d41f149a96dd2559c6d518, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonProject.Integrations.Kinemation.Multiplayer.NetworkCasPlayer
+  ShowTopMostFoldoutHeaderGroup: 1
+  controller: {fileID: 2429819265531568206}
+  tuning: {fileID: 11400000, guid: 23cc8b89e2e8d2c4aa75b77f76d54af6, type: 2}
+  staticEnvironmentMask:
+    serializedVersion: 2
+    m_Bits: 1
+  debugMotion: 0

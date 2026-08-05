@@ -39,6 +39,13 @@ namespace FirstPersonProject.Integrations.Kinemation
             public Quaternion targetBindLocalRotation;
         }
 
+        private sealed class LocalTransformBindPose
+        {
+            public Transform transform;
+            public Vector3 localPosition;
+            public Quaternion localRotation;
+        }
+
         private static readonly string[] PoseBonePaths =
         {
             "root/pelvis/thigh_l",
@@ -69,6 +76,8 @@ namespace FirstPersonProject.Integrations.Kinemation
         [SerializeField, Min(0.01f)] private float crouchHeightSmoothTime = 0.06f;
 
         private readonly List<BoneLink> _boneLinks = new List<BoneLink>();
+        private readonly List<LocalTransformBindPose> _tacticalIkBindPose
+            = new List<LocalTransformBindPose>();
 
         private LowerBodyFrameLink _rootLink;
         private LowerBodyFrameLink _pelvisLink;
@@ -84,6 +93,7 @@ namespace FirstPersonProject.Integrations.Kinemation
         private float _presentationHeightVelocity;
         private bool _hasStandingTacticalFootHeight;
         private bool _tacticalAimState;
+        private bool _reportedInvalidPresentationState;
 
         private void Awake()
         {
@@ -100,6 +110,13 @@ namespace FirstPersonProject.Integrations.Kinemation
 
             Transform ikHandGun = tacticalAnimation == null ? null : tacticalAnimation.bones.ikHandGun;
             _tacticalWeaponIkRoot = ikHandGun == null ? null : ikHandGun.parent;
+            CacheTacticalIkBindPose(_tacticalWeaponIkRoot);
+            CacheTacticalIkBindPose(ikHandGun);
+            if (tacticalAnimation != null)
+            {
+                CacheTacticalIkBindPose(tacticalAnimation.bones.ikRightHand);
+                CacheTacticalIkBindPose(tacticalAnimation.bones.ikLeftHand);
+            }
 
             if (_tacticalPresentationRoot != null)
             {
@@ -116,6 +133,18 @@ namespace FirstPersonProject.Integrations.Kinemation
             {
                 tacticalAnimation = GetComponentInChildren<TacticalProceduralAnimation>(true);
             }
+        }
+
+        private void CacheTacticalIkBindPose(Transform target)
+        {
+            if (target == null) return;
+
+            _tacticalIkBindPose.Add(new LocalTransformBindPose
+            {
+                transform = target,
+                localPosition = target.localPosition,
+                localRotation = target.localRotation
+            });
         }
 
         private void Update()
@@ -325,11 +354,18 @@ namespace FirstPersonProject.Integrations.Kinemation
 
             position = muzzleTransform.position;
             rotation = muzzleTransform.rotation;
-            return true;
+            return IsFinite(position) && IsFinite(rotation);
         }
 
         private void LateUpdate()
         {
+            if (!HasFinitePresentationInputs())
+            {
+                RecoverInvalidTacticalIkPose(
+                    "Tactical IK or CAS retarget input became non-finite before presentation.");
+                return;
+            }
+
             // CAS root/pelvis motion contains directional blend, locomotion lean, stride bob, and
             // turn-in-place compensation. Keep Tactical's finished upper-body orientation, then
             // shift its separate weapon/IK frame by the same translation the pelvis gives the
@@ -348,12 +384,19 @@ namespace FirstPersonProject.Integrations.Kinemation
                 ? Quaternion.identity
                 : _tacticalWeaponIkRoot.rotation;
 
-            RetargetLowerBodyFrame(_rootLink);
-            RetargetLowerBodyFrame(_pelvisLink);
+            if (!RetargetLowerBodyFrame(_rootLink) || !RetargetLowerBodyFrame(_pelvisLink))
+            {
+                RecoverInvalidTacticalIkPose("Lower-body retarget calculation became non-finite.");
+                return;
+            }
 
             foreach (BoneLink link in _boneLinks)
             {
-                RetargetRotation(link);
+                if (!RetargetRotation(link))
+                {
+                    RecoverInvalidTacticalIkPose("Lower-body rotation retarget became non-finite.");
+                    return;
+                }
                 // Local positions intentionally remain Tactical-authored so its bone lengths
                 // are never replaced by the differently proportioned CAS skeleton.
             }
@@ -368,24 +411,114 @@ namespace FirstPersonProject.Integrations.Kinemation
                 Vector3 upperBodyTranslation = _tacticalSpine == null
                     ? Vector3.zero
                     : _tacticalSpine.position - tacticalSpinePosition;
-                _tacticalWeaponIkRoot.position = tacticalWeaponIkRootPosition + upperBodyTranslation;
+                Vector3 restoredIkPosition = tacticalWeaponIkRootPosition + upperBodyTranslation;
+                if (!IsFinite(upperBodyTranslation) || !IsFinite(restoredIkPosition))
+                {
+                    RecoverInvalidTacticalIkPose(
+                        "Tactical upper-body translation became non-finite.");
+                    return;
+                }
+
+                _tacticalWeaponIkRoot.position = restoredIkPosition;
                 _tacticalWeaponIkRoot.rotation = tacticalWeaponIkRootRotation;
             }
 
             UpdateCrouchPresentationHeight();
+            _reportedInvalidPresentationState = false;
         }
 
-        private void RetargetLowerBodyFrame(LowerBodyFrameLink link)
+        private bool HasFinitePresentationInputs()
         {
-            if (link == null) return;
+            if (!float.IsFinite(_lowerBodyTranslationScale) || !HasFiniteTacticalIkPose())
+            {
+                return false;
+            }
+
+            if (_tacticalSpine != null
+                && (!IsFinite(_tacticalSpine.position) || !IsFinite(_tacticalSpine.rotation)))
+            {
+                return false;
+            }
+
+            if (!HasFiniteLowerBodyFrame(_rootLink) || !HasFiniteLowerBodyFrame(_pelvisLink))
+            {
+                return false;
+            }
+
+            foreach (BoneLink link in _boneLinks)
+            {
+                if (link == null || link.source == null || link.target == null
+                    || !IsFinite(link.source.localRotation)
+                    || !IsFinite(link.sourceBindLocalRotation)
+                    || !IsFinite(link.targetBindLocalRotation))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool HasFiniteLowerBodyFrame(LowerBodyFrameLink link)
+        {
+            return link == null || link.source != null && link.target != null
+                && IsFinite(link.source.localPosition)
+                && IsFinite(link.source.localRotation)
+                && IsFinite(link.sourceBindLocalPosition)
+                && IsFinite(link.sourceBindLocalRotation)
+                && IsFinite(link.targetBindLocalPosition)
+                && IsFinite(link.targetBindLocalRotation);
+        }
+
+        private bool HasFiniteTacticalIkPose()
+        {
+            foreach (LocalTransformBindPose bindPose in _tacticalIkBindPose)
+            {
+                if (bindPose.transform == null
+                    || !IsFinite(bindPose.transform.localPosition)
+                    || !IsFinite(bindPose.transform.localRotation)
+                    || !IsFinite(bindPose.transform.position)
+                    || !IsFinite(bindPose.transform.rotation))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void RecoverInvalidTacticalIkPose(string reason)
+        {
+            foreach (LocalTransformBindPose bindPose in _tacticalIkBindPose)
+            {
+                if (bindPose.transform == null) continue;
+                bindPose.transform.localPosition = bindPose.localPosition;
+                bindPose.transform.localRotation = bindPose.localRotation;
+            }
+
+            if (_reportedInvalidPresentationState) return;
+
+            Debug.LogError($"[{nameof(CasTacticalPlayerBridge)}] {reason} "
+                + "Restored the Tactical IK bind pose and skipped this presentation frame.", this);
+            _reportedInvalidPresentationState = true;
+        }
+
+        private bool RetargetLowerBodyFrame(LowerBodyFrameLink link)
+        {
+            if (link == null) return true;
 
             Vector3 sourcePositionDelta = link.source.localPosition - link.sourceBindLocalPosition;
-            link.target.localPosition = link.targetBindLocalPosition
+            Vector3 targetPosition = link.targetBindLocalPosition
                 + sourcePositionDelta * _lowerBodyTranslationScale;
 
             Quaternion localAnimationDelta = Quaternion.Inverse(link.sourceBindLocalRotation)
                 * link.source.localRotation;
-            link.target.localRotation = link.targetBindLocalRotation * localAnimationDelta;
+            Quaternion targetRotation = link.targetBindLocalRotation * localAnimationDelta;
+            if (!IsFinite(targetPosition) || !IsFinite(targetRotation)) return false;
+
+            link.target.localPosition = targetPosition;
+            link.target.localRotation = targetRotation;
+            return true;
         }
 
         private void UpdateCrouchPresentationHeight()
@@ -417,10 +550,17 @@ namespace FirstPersonProject.Integrations.Kinemation
                 : 0f;
             _presentationHeightOffset = Mathf.SmoothDamp(_presentationHeightOffset, targetOffset,
                 ref _presentationHeightVelocity, crouchHeightSmoothTime);
+            if (!float.IsFinite(_presentationHeightOffset)
+                || !float.IsFinite(_presentationHeightVelocity))
+            {
+                _presentationHeightOffset = 0f;
+                _presentationHeightVelocity = 0f;
+                return;
+            }
 
             Vector3 localPosition = _tacticalPresentationBindPosition;
             localPosition.y += _presentationHeightOffset;
-            _tacticalPresentationRoot.localPosition = localPosition;
+            if (IsFinite(localPosition)) _tacticalPresentationRoot.localPosition = localPosition;
         }
 
         private bool TryGetLowestTacticalFootHeight(out float height)
@@ -432,18 +572,42 @@ namespace FirstPersonProject.Integrations.Kinemation
                 .InverseTransformPoint(_tacticalLeftFoot.position).y;
             float rightHeight = casController.transform
                 .InverseTransformPoint(_tacticalRightFoot.position).y;
+            if (!float.IsFinite(leftHeight) || !float.IsFinite(rightHeight)) return false;
+
             height = Mathf.Min(leftHeight, rightHeight);
             return true;
         }
 
-        private void RetargetRotation(BoneLink link)
+        private bool RetargetRotation(BoneLink link)
         {
             // Transfer each joint's animation relative to its own bind pose. Folding pelvis yaw
             // into every thigh independently makes the legs rotate around separate hip sockets,
             // which crosses and twists the feet during crouched turn-in-place animations.
             Quaternion localAnimationDelta = Quaternion.Inverse(link.sourceBindLocalRotation)
                 * link.source.localRotation;
-            link.target.localRotation = link.targetBindLocalRotation * localAnimationDelta;
+            Quaternion targetRotation = link.targetBindLocalRotation * localAnimationDelta;
+            if (!IsFinite(targetRotation)) return false;
+
+            link.target.localRotation = targetRotation;
+            return true;
+        }
+
+        private static bool IsFinite(Vector3 value)
+        {
+            return float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z);
+        }
+
+        private static bool IsFinite(Quaternion value)
+        {
+            if (!float.IsFinite(value.x) || !float.IsFinite(value.y)
+                || !float.IsFinite(value.z) || !float.IsFinite(value.w))
+            {
+                return false;
+            }
+
+            float magnitudeSquared = value.x * value.x + value.y * value.y
+                + value.z * value.z + value.w * value.w;
+            return magnitudeSquared > Mathf.Epsilon;
         }
 
         private void OnDisable()

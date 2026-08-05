@@ -1,0 +1,22 @@
+{
+    "name": "FPSProject.Multiplayer.PlayModeTests",
+    "rootNamespace": "FPSProject.Multiplayer.PlayModeTests",
+    "references": [
+        "FPSProject.Multiplayer.Core",
+        "Unity.Netcode.Runtime",
+        "UnityEngine.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,5 +1,16 @@
 # CAS + Tactical Character Multiplayer Plan
 
+## Progress
+
+| Step | Status | Summary |
+|---:|:---|---|
+| 1 | DONE | NGO 2.13.1, Transport 6.5.0, Playmode 2.0.2, Tools 2.2.10 installed. Core asmdef at `Assets/FPSProject/Multiplayer/Core/`. |
+| 2 | DONE | `INetworkSessionBootstrap` + `DirectNetworkSessionBootstrap` + `DevSessionLauncher`. NetworkManager scene at `Assets/Scenes/MultiplayerTest.unity`. Minimal test cube spawns as host. |
+| 3 | DONE | Multiplayer prefab variant + owner-only init (`NetworkCasPlayer`, `NetworkFPSExampleController`). Prefab at `Assets/FPSProject/Multiplayer/Prefabs/CAS_Player_Network.prefab`. Host spawns with LocalOwner mode, all owner-only components enabled, Tactical presentation armed. |
+| 4 | DONE | Core data contracts (`OwnerMotionSample`, `ProxyPresentationState`, `PlayerSimulationMode`, `MultiplayerTuningSettings`), owner 20Hz motion submission, host validation (`HostMotionValidator`), remote interpolation buffer (`ProxyInterpolationBuffer`), soft/hard corrections, late-join snapshots. |
+| 5 | DONE | `ApplyRemotePresentationState` CAS animator driver with edge detection for crouch/jump/landing/moving/aim transitions. Proxies write animator parameters directly, feed CharacterCamera pitch/yaw, and drive body yaw without running the full CAS Update path. |
+| 6-12 | PENDING | See Implementation Order below. |
+
 ## Summary
 
 Build a 2-8-player listen-server game using Netcode for GameObjects (NGO) and Unity Transport. CAS remains the sole owner of local input, movement, look, camera, and locomotion decisions. The Tactical rig remains presentation-only through `CasTacticalPlayerBridge`.
@@ -268,18 +279,132 @@ After acceptance, the host decrements ammunition, records cadence, resolves the 
 
 ## Implementation Order
 
-1. Install NGO/Transport/testing packages and add the core assembly without changing gameplay.
-2. Add direct host/client bootstrap and spawn a minimal network object.
-3. Build the multiplayer prefab variant and prove owner-only input/camera initialization.
-4. Implement owner movement submission, host validation, remote interpolation, and corrections.
-5. Implement the remote CAS presentation driver and verify the existing CAS/Tactical bridge remains visually correct.
-6. Add stable weapon catalog IDs, persistent equipped/ammo/fire-mode state, and ID-based presentation.
-7. Add the offline/network/server shot router and prove damage can execute only on the host.
-8. Add prediction deduplication, deterministic spread, and all four weapon behaviors including Police buckshot.
-9. Add lag-compensated historical capsule hit testing.
-10. Add health, death, spawn selection, and respawn.
-11. Run latency/loss and eight-player performance tests.
-12. Add Sessions and Relay through the bootstrap interface.
+> Progress tracker. Steps marked **[DONE]** are complete; **[IN PROGRESS]** are active; **[PENDING]** remain. Notes record concrete file paths, GUIDs, and decisions made during implementation.
+
+### 1. [DONE] Install NGO/Transport/testing packages and add the core assembly without changing gameplay.
+
+**Packages installed** (Unity 6000.5.4f1):
+
+- `com.unity.netcode.gameobjects` 2.13.1
+- `com.unity.transport` 6.5.0 (transitive via NGO; not added to manifest explicitly per plan — "without altering unrelated package entries")
+- `com.unity.multiplayer.playmode` 2.0.2
+- `com.unity.multiplayer.tools` 2.2.10
+
+`com.unity.services.multiplayer` is deliberately **not** installed yet (deferred until after the vertical slice, per Section 8).
+
+`Packages/manifest.json` and `Packages/packages-lock.json` were updated by Unity Package Manager; no unrelated entries were modified.
+
+**Core assembly created:**
+- `Assets/FPSProject/Multiplayer/Core/FPSProject.Multiplayer.Core.asmdef`
+  - rootNamespace: `FPSProject.Multiplayer.Core`
+  - references: `FPSProject.Combat.Runtime` (GUID `b805ca460311543e89ca46007f995c22`), `Unity.Netcode.Runtime`, `Unity.Networking.Transport` (required transitively because `UnityTransport.ConnectionData` references `NetworkEndpoint`).
+  - `autoReferenced: true`, no platform restrictions, no unsafe code.
+
+**KINEMATION adapter location:** Per plan, adapters that reference `Assembly-CSharp` types (CAS controller, Tactical player, bridge) will live under `Assets/Integrations/KINEMATION/Multiplayer` in `Assembly-CSharp` (no asmdef). Third-party CAS/Tactical folders remain untouched.
+
+**Compiles clean — 0 errors.**
+
+### 2. [DONE] Add direct host/client bootstrap and spawn a minimal network object.
+
+**Bootstrap contracts and implementations** (all in core assembly):
+- `Assets/FPSProject/Multiplayer/Core/Bootstrap/INetworkSessionBootstrap.cs` — interface with `IsStarted`, `StartHost()`, `StartClient()`, `Stop()`.
+- `Assets/FPSProject/Multiplayer/Core/Bootstrap/DirectNetworkSessionBootstrap.cs` — `MonoBehaviour, INetworkSessionBootstrap`. Uses `UnityTransport.SetConnectionData(address, port)`. Resolves `NetworkManager` on same GameObject if not serialized.
+- `Assets/FPSProject/Multiplayer/Core/Bootstrap/DevSessionLauncher.cs` — dev-only keyboard driver (H=host, C=client, X=stop).
+
+**Minimal test prefab:**
+- `Assets/FPSProject/Multiplayer/Core/Test/MinimalTestCube.cs` — `NetworkBehaviour` that colors the cube green for owner, red for remote, and randomizes host spawn position.
+- `Assets/FPSProject/Multiplayer/Prefabs/MinimalNetworkTestCube.prefab` — Cube + `NetworkObject` + `MinimalTestCube`.
+
+**Test scene:**
+- `Assets/Scenes/MultiplayerTest.unity` — contains:
+  - `NetworkManager` GO with `NetworkManager` + `UnityTransport` + `DirectNetworkSessionBootstrap` + `DevSessionLauncher`. `NetworkConfig.NetworkTransport` wired to the transport; `MinimalNetworkTestCube` registered as both a network prefab and `PlayerPrefab`.
+  - `Ground` plane, `DirectionalLight` (directional).
+
+**Smoke test passed:** Entered play mode, called `DirectNetworkSessionBootstrap.StartHost()`, confirmed `IsListening=True`, `IsHost=True`, and `MinimalTestCube` spawned (CubeCount=1). Exited play mode cleanly.
+
+### 3. [DONE] Build the multiplayer prefab variant and prove owner-only input/camera initialization.
+
+**Adapter scripts (Assembly-CSharp, under `Assets/Integrations/KINEMATION/Multiplayer/`):**
+
+- `NetworkFPSExampleController.cs` — derives from `FPSExampleController` (CAS_Demo.Scripts.FPS). Overrides `Awake()` to cache `PlayerInput` without activating it, and `Start()` to no-op (the network spawn path drives initialization via `InitializeAsOwner()` / `InitializeAsProxy()`). Adds three simulation modes via `SetSimulationMode(PlayerSimulationMode)`:
+  - `LocalOwner`: runs the existing CAS `Update()` path unchanged.
+  - `RemoteProxy`: skips CAS grounding, physics, movement, look input, and camera control; applies accepted presentation state.
+  - `Disabled`: no input, motor, or proxy animation work.
+  - `CaptureOwnerMotionSample(uint, int)` builds an `OwnerMotionSample` from the live CAS motor state.
+  - `ApplyRemotePresentationState(SampledState)` writes animator parameters directly, detects movement/crouch/jump/landing/aim state edges so CAS procedural transition modifiers fire once, and feeds pitch to `CharacterCamera` for the bridge.
+  - Caches and toggles owner-only components: `PlayerInput`, `Camera`, `AudioListener`, `RecoilAnimation`. `CharacterController` is disabled on proxies.
+
+- `NetworkCasPlayer.cs` — `NetworkBehaviour` on the prefab root. Owns player lifecycle, the owner-to-host motion submission `ServerRpc`, the host-to-proxy broadcast `ClientRpc`, and the per-client interpolation/correction loop.
+  - `OnNetworkSpawn()`: calls `InitializeAsOwner()` or `InitializeAsProxy()` on the controller, enables the Tactical presentation components in the correct order, and initializes the `ProxyInterpolationBuffer` for remote instances.
+  - Owner path: submits `OwnerMotionSample` at 20 Hz via unreliable `SubmitMotionSampleServerRpc`.
+  - Host path: `HostMotionValidator.Validate()` checks stale sequences, non-finite values, world bounds, speed/displacement, blocking-geometry capsule sweep, and incompatible state combinations (sprint+crouch, sprint without forward, aiming while sprinting). Accepted poses are recorded and broadcast at 20 Hz. Rejected samples trigger soft (smooth) or hard (snap) corrections.
+  - Proxy path: `ProxyInterpolationBuffer.Sample()` interpolates 100 ms behind the latest accepted state, extrapolates up to 100 ms, then holds. The sampled state is applied via `ApplyRemotePresentationState`.
+  - Late-join: `SendLateJoinSnapshot(ulong)` sends one reliable current snapshot per existing player to a new client.
+  - `NotifyDeath()` / `NotifyRespawn(Vector3)` hooks for the future health system.
+
+**Prefab builder (editor tool, under `Assets/Integrations/KINEMATION/Multiplayer/Editor/`):**
+
+- `MultiplayerPrefabBuilder.cs` — `Tools/FPSProject/Build Multiplayer Player Prefab` menu item. Instantiates the offline `CAS_Player_Example_FPS_Tactical.prefab`, replaces `FPSExampleController` with `NetworkFPSExampleController` (preserving serialized field values), adds `NetworkObject` and `NetworkCasPlayer`, wires the controller reference, and disables owner-only components by default (`PlayerInput`, `Camera`, `AudioListener`, `RecoilAnimation`, `TacticalShooterPlayer`, `TacticalProceduralAnimation`). The Tactical components are disabled to avoid a component-order race where `TacticalShooterPlayer.Start` calls `EquipWeapon` before `TacticalProceduralAnimation.Start` has resolved its Animator; `NetworkCasPlayer.EnableTacticalPresentation()` enables them in the correct order during `OnNetworkSpawn`.
+
+**Prefab:**
+- `Assets/FPSProject/Multiplayer/Prefabs/CAS_Player_Network.prefab` — prefab variant of the offline CAS/Tactical player. Root components: `Transform`, `CharacterController`, `PlayerInput` (disabled), `MotionWarpingComponent`, `RecoilAnimation` (disabled), `ClimbComponent`, `VaultComponent`, `CharacterTrajectory`, `WeaponCombatRuntime`, `CasTacticalPlayerBridge`, `NetworkFPSExampleController`, `NetworkObject`, `NetworkCasPlayer`. Camera child: `Camera` (disabled), `AudioListener` (disabled), `CharacterCamera`. Tactical Presentation child: `TacticalShooterPlayer` (disabled), `TacticalProceduralAnimation` (disabled), `PlayerInput` (disabled), nested `FPCamera` with `Camera` (disabled) + `AudioListener` (disabled).
+
+**Tuning asset:**
+- `Assets/FPSProject/Multiplayer/Core/MultiplayerTuningSettings.asset` — `MultiplayerTuningSettings` ScriptableObject with plan defaults (20 Hz send rate, 100 ms interpolation delay, 100 ms extrapolation cap, 0.75 m soft / 2 m hard correction, 0.35 m validation grace, 500x200x500 world bounds, 250 ms rewind). Assigned to `NetworkCasPlayer.tuning` on the prefab.
+
+**NetworkManager scene wiring:**
+- `Assets/Scenes/MultiplayerTest.unity` — `NetworkManager.NetworkConfig.PlayerPrefab` set to `CAS_Player_Network`. Prefab registered in `NetworkConfig.Prefabs.NetworkPrefabsLists[0]`.
+
+**Smoke test passed:** Entered play mode, started host via `DirectNetworkSessionBootstrap.StartHost()`. Confirmed: `IsHost=True`, `IsSpawned=True`, `IsOwner=True`, `SimulationMode=LocalOwner`, `IsOwnerInitialized=True`. All owner-only components enabled (`PlayerInput`, `Camera`, `AudioListener`, `RecoilAnimation`, `CharacterController`). Tactical presentation enabled with weapon equipped (`CAS_Rifle` / `SKM_WK-11_Viper_Body`). Tactical's own `PlayerInput` correctly disabled. Zero errors, zero warnings. Exited play mode cleanly.
+
+### 4. [DONE] Implement owner movement submission, host validation, remote interpolation, and corrections.
+
+**Core data contracts (in `Assets/FPSProject/Multiplayer/Core/Movement/`, core assembly):**
+
+- `PlayerSimulationMode.cs` — enum: `LocalOwner`, `RemoteProxy`, `Disabled`.
+- `OwnerMotionSample.cs` — `INetworkSerializable` struct: sequence, network tick, position, velocity, body yaw, aim yaw, aim pitch, MoveX/Y, gait, grounded/in-air/crouch/sprint/aiming/moving flags. No health, weapon, or ammunition state.
+- `ProxyPresentationState.cs` — `INetworkSerializable` struct: host-accepted motion fields plus `IsAlive` for death/respawn presentation. Transient locomotion state; persistent weapon/life state uses NetworkVariables (step 6).
+- `MultiplayerTuningSettings.cs` — `ScriptableObject` with send rate, interpolation delay, extrapolation cap, correction thresholds, validation grace, speed limits and multipliers, world bounds, rewind duration. `IsInsideWorldBounds(Vector3)` helper.
+
+**Movement synchronization (core assembly):**
+
+- `ProxyInterpolationBuffer.cs` — time-indexed snapshot buffer. `Add(state, localTime)` maintains ascending order and prunes old snapshots. `Sample(renderTime, out SampledState)` interpolates between the two snapshots bracketing `renderTime - interpolationDelay`, extrapolates up to `extrapolationCap` seconds (position += velocity * elapsed), then holds the last state. `Clear(ClearReason)` for hard corrections, respawns, and late joins.
+- `HostMotionValidator.cs` — static validator. `Validate(sample, context)` checks: non-finite values, world bounds, state consistency (sprint+crouch, sprint without forward, aiming while sprinting), speed/displacement (`speedLimit * elapsed + grace`), and blocking-geometry capsule sweep (`Physics.CapsuleCast` against the static environment layer). Returns `ValidationResult` with `RejectReason` and debug message.
+
+**Network plumbing (Assembly-CSharp adapter):**
+
+- `NetworkCasPlayer` owner path: `OwnerUpdate()` accumulates time and submits `OwnerMotionSample` at 20 Hz via `SubmitMotionSampleServerRpc` (unreliable, `RequireOwnership = true`).
+- `NetworkCasPlayer` host path: `HostValidateAndApply()` validates each sample, updates `HostClientState`, and marks `HasPendingBroadcast`. `HostBroadcastUpdate()` sends `BroadcastProxyStateClientRpc` at 20 Hz. Rejections trigger `SendSoftCorrectionClientRpc` (smooth over `correctionSmoothDuration`) or `SendHardCorrectionClientRpc` (snap + buffer clear).
+- `NetworkCasPlayer` proxy path: `ProxyUpdate()` samples the `ProxyInterpolationBuffer` and calls `controller.ApplyRemotePresentationState(sampled)`.
+- Late-join: `SendLateJoinSnapshot(ulong)` sends a reliable `SendLateJoinSnapshotClientRpc` to the joining client.
+
+### 5. [DONE] Implement the remote CAS presentation driver and verify the existing CAS/Tactical bridge remains visually correct.
+
+**Remote presentation driver (in `NetworkFPSExampleController`):**
+
+- `ApplyRemotePresentationState(SampledState)` writes the interpolated remote state to the hidden CAS source rig:
+  - Sets `transform.position` and `transform.rotation` (body yaw only) directly — the `CharacterController` is disabled on proxies.
+  - Feeds `CharacterCamera.pitchInput` / `yawInput` / `isAiming` / `isCrouching` so the bridge's `Update()` reads the correct pitch and gait for Tactical presentation.
+  - Sets `_aimRotation`, `_lookInput.y`, `_isAiming`, `_isCrouching`, `_isInAir`, `_moveInput`, `_gait`, `_animatorGait` so the base class fields reflect the replicated state.
+  - Edge detection (with `_proxyFirstApply` reset on respawn/hard correction): crouch transition fires `stepCrouch`/`stepUncrouch` modifiers; jump trigger fires `Animator_Jumped` when grounded→in-air; moving state edge fires `startMoving`/`stopMoving` modifiers.
+  - Writes animator parameters directly: `MoveX`, `MoveY`, `Gait`, `ViewWeight`, `AimingWeight`, `IsFirstPerson` (always false on proxies), `IsInAir`, `IsMoving`. Uses `KMath.ExpDecayAlpha` for smooth move-parameter interpolation, matching the base controller's smoothing.
+- `ResetProxyState()` clears edge-detection state for respawn and hard correction.
+
+**Bridge verification:** The `CasTacticalPlayerBridge` remains presentation-only. Its `Update()` reads `casCamera.pitchInput` and `casController.Gait`/`IsSprinting`/`IsAiming`/`IsCrouching` — all of which are now driven by `ApplyRemotePresentationState` on proxies. Its `LateUpdate()` retargets lower-body bone rotations and the crouch height offset from the CAS source rig onto the Tactical presentation rig, exactly as in the offline rig. No bridge source was modified. The bridge continues to receive presentation-only data through the same fields; it never calculates movement or look direction.
+
+### 6. [PENDING] Add stable weapon catalog IDs, persistent equipped/ammo/fire-mode state, and ID-based presentation.
+
+### 7. [PENDING] Add the offline/network/server shot router and prove damage can execute only on the host.
+
+### 8. [PENDING] Add prediction deduplication, deterministic spread, and all four weapon behaviors including Police buckshot.
+
+### 9. [PENDING] Add lag-compensated historical capsule hit testing.
+
+### 10. [PENDING] Add health, death, spawn selection, and respawn.
+
+### 11. [PENDING] Run latency/loss and eight-player performance tests.
+
+### 12. [PENDING] Add Sessions and Relay through the bootstrap interface.
 
 ## Test Plan and Acceptance Criteria
 

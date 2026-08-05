@@ -12,9 +12,11 @@
   <Project Path="KAnimationCore.Runtime.csproj" />
   <Project Path="CAS.Editor.csproj" />
   <Project Path="CAS.Examples.Editor.csproj" />
+  <Project Path="FPSProject.Multiplayer.Core.csproj" />
   <Project Path="ScriptableWidget.Editor.csproj" />
   <Project Path="SingularityGroup.HotReload.Runtime.Public.csproj" />
   <Project Path="PropertyBindings.Editor.csproj" />
+  <Project Path="FPSProject.Multiplayer.Core.EditModeTests.csproj" />
   <Project Path="CAS.Examples.Scripts.csproj" />
   <Project Path="FPSProject.Combat.EditModeTests.csproj" />
   <Project Path="FbxExporter.Editor.csproj" />
@@ -23,4 +25,5 @@
   <Project Path="ScriptableWidget.Runtime.csproj" />
   <Project Path="CAS.Addons.FPS.Editor.csproj" />
   <Project Path="RecoilAnimation.Runtime.csproj" />
+  <Project Path="FPSProject.Multiplayer.PlayModeTests.csproj" />
 </Solution>
