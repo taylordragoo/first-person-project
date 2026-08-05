@@ -3,6 +3,8 @@
     "rootNamespace": "FPSProject.Multiplayer.Core.EditModeTests",
     "references": [
         "FPSProject.Multiplayer.Core",
+        "Unity.Netcode.Runtime",
+        "Unity.Networking.Transport",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

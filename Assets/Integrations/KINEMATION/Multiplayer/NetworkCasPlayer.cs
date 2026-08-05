@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using FPSProject.Multiplayer.Core.Movement;
+using FPSProject.Multiplayer.Core.Weapons;
 using KINEMATION.TacticalShooterPack.Scripts.Animation;
 using KINEMATION.TacticalShooterPack.Scripts.Player;
 using Unity.Netcode;
@@ -21,6 +22,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
     {
         [Header("References (auto-resolved on spawn)")]
         [SerializeField] private NetworkFPSExampleController controller;
+        [SerializeField] private NetworkTacticalShooterPlayer tacticalPlayer;
+        [SerializeField] private NetworkWeaponState weaponState;
 
         [Header("Tuning")]
         [Tooltip("Project-owned tuning asset. If unset, the component tries to load a " +
@@ -67,10 +70,14 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         public bool IsAlive => _isAlive;
         public MultiplayerTuningSettings Tuning => tuning;
         public NetworkFPSExampleController Controller => controller;
+        public NetworkWeaponState WeaponState => weaponState;
+        public NetworkTacticalShooterPlayer TacticalPlayer => tacticalPlayer;
 
         public override void OnNetworkSpawn()
         {
             if (controller == null) controller = GetComponent<NetworkFPSExampleController>();
+            if (tacticalPlayer == null) tacticalPlayer = GetComponentInChildren<NetworkTacticalShooterPlayer>(true);
+            if (weaponState == null) weaponState = GetComponent<NetworkWeaponState>();
             if (tuning == null) tuning = ResolveTuning();
 
             ResolveCapsuleDimensions();
@@ -89,6 +96,17 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
             _tacticalPresentationInitialization = StartCoroutine(
                 InitializeTacticalPresentation());
+
+            // Subscribe to weapon state changes so owners and proxies apply authoritative
+            // equipped weapon, ammo, fire mode, reload, and life state as it changes.
+            if (weaponState != null)
+            {
+                weaponState.EquippedWeaponId.OnValueChanged += OnEquippedWeaponIdChanged;
+                weaponState.ActiveFireMode.OnValueChanged += OnFireModeChanged;
+                weaponState.ActiveReloadState.OnValueChanged += OnReloadStateChanged;
+                weaponState.LifeState.OnValueChanged += OnLifeStateChanged;
+                weaponState.AmmoState.OnListChanged += OnAmmoListChanged;
+            }
 
             // Host-side: initialize validation state for every existing client that owns a player.
             // The host's own player uses LocalOwner and does not go through the validator.
@@ -119,9 +137,67 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 NetworkManager.OnClientConnectedCallback -= OnClientConnected;
             }
 
+            if (weaponState != null)
+            {
+                weaponState.EquippedWeaponId.OnValueChanged -= OnEquippedWeaponIdChanged;
+                weaponState.ActiveFireMode.OnValueChanged -= OnFireModeChanged;
+                weaponState.ActiveReloadState.OnValueChanged -= OnReloadStateChanged;
+                weaponState.LifeState.OnValueChanged -= OnLifeStateChanged;
+                weaponState.AmmoState.OnListChanged -= OnAmmoListChanged;
+            }
+
             controller?.SetSimulationMode(PlayerSimulationMode.Disabled);
             _proxyBuffer?.Clear(ProxyInterpolationBuffer.ClearReason.ManualReset);
             _hostStates.Clear();
+        }
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // Weapon state change handlers. Drive ID-based Tactical presentation from
+        // host-authoritative NetworkVariables. Owners and proxies apply the same accepted
+        // state; the owner additionally predicts locally and reconciles on confirmation.
+        // ─────────────────────────────────────────────────────────────────────────────
+
+        private void OnEquippedWeaponIdChanged(ushort previous, ushort current)
+        {
+            ApplyEquippedWeaponPresentation(current);
+        }
+
+        private void OnFireModeChanged(KINEMATION.ProceduralRecoilAnimationSystem.Runtime.FireMode previous,
+            KINEMATION.ProceduralRecoilAnimationSystem.Runtime.FireMode current)
+        {
+            ApplyCurrentFireModePresentation();
+        }
+
+        private void OnReloadStateChanged(ReloadState previous, ReloadState current)
+        {
+            if (tacticalPlayer == null) return;
+            var presentation = tacticalPlayer.GetActiveNetworkWeaponPresentation();
+            if (presentation == null) return;
+            if (current == ReloadState.Reloading)
+                presentation.PlayNetworkReloadPresentation();
+            else if (previous == ReloadState.Reloading && current == ReloadState.None)
+                presentation.PlayNetworkReloadEndPresentation();
+        }
+
+        private void OnLifeStateChanged(PlayerLifeState previous, PlayerLifeState current)
+        {
+            if (current == PlayerLifeState.Dead)
+            {
+                _isAlive = false;
+                controller?.SetSimulationMode(PlayerSimulationMode.Disabled);
+            }
+            else if (current == PlayerLifeState.Alive && previous != PlayerLifeState.Alive)
+            {
+                _isAlive = true;
+            }
+        }
+
+        private void OnAmmoListChanged(Unity.Netcode.NetworkListEvent<WeaponAmmoState> changeEvent)
+        {
+            // Only apply if the changed entry is for the currently-equipped weapon.
+            if (weaponState == null || tacticalPlayer == null) return;
+            if (changeEvent.Value.WeaponId != weaponState.EquippedWeaponId.Value) return;
+            ApplyCurrentAmmoPresentation();
         }
 
         /// <summary>
@@ -300,6 +376,10 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             state.AcceptedProxyState = proxy;
             state.HasPendingBroadcast = true;
             _hostStates[clientId] = state;
+
+            // Record the accepted pose into the host-side hitbox history for lag-compensated
+            // hitscan. The history is sized by the tuning's rewind duration.
+            RecordHitboxHistory(clientId, in sample);
 
             // If this is the host's own player (host is also an owner), apply the accepted pose
             // to the host's local controller copy so the host sees the same reconciliation.
@@ -488,8 +568,9 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
             TacticalProceduralAnimation tacticalAnimation
                 = tacticalChild.GetComponent<TacticalProceduralAnimation>();
-            TacticalShooterPlayer tacticalPlayer
-                = tacticalChild.GetComponent<TacticalShooterPlayer>();
+            NetworkTacticalShooterPlayer netTacticalPlayer
+                = tacticalChild.GetComponent<NetworkTacticalShooterPlayer>();
+            TacticalShooterPlayer tacticalPlayer = netTacticalPlayer;
             Animator tacticalAnimator = tacticalChild.GetComponentInChildren<Animator>(true);
             if (tacticalAnimation == null || tacticalPlayer == null || tacticalAnimator == null)
             {
@@ -524,6 +605,53 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
             tacticalAnimator.enabled = restoreAnimatorEnabled;
             _tacticalPresentationInitialization = null;
+
+            // After the vendor Start path has populated the Tactical weapon list, initialize the
+            // network tactical player's catalog mapping and apply the current authoritative
+            // equipped weapon ID so late joiners and proxies present the correct weapon.
+            if (netTacticalPlayer != null && weaponState != null)
+            {
+                netTacticalPlayer.InitializeNetwork(weaponState.Catalog);
+                ApplyEquippedWeaponPresentation(weaponState.EquippedWeaponId.Value);
+                ApplyCurrentAmmoPresentation();
+                ApplyCurrentFireModePresentation();
+            }
+        }
+
+        /// <summary>
+        /// Apply an authoritative equipped weapon ID to the Tactical presentation. Called on
+        /// spawn and whenever the EquippedWeaponId NetworkVariable changes. Idempotent.
+        /// </summary>
+        public void ApplyEquippedWeaponPresentation(ushort weaponId)
+        {
+            if (tacticalPlayer == null) return;
+            tacticalPlayer.ApplyEquippedWeapon(weaponId);
+            // After equipping, push the authoritative ammo and fire mode for the new weapon.
+            ApplyCurrentAmmoPresentation();
+            ApplyCurrentFireModePresentation();
+        }
+
+        /// <summary>
+        /// Push the authoritative ammunition for the currently-equipped weapon to the Tactical
+        /// presentation. Called on spawn, weapon change, and ammo change.
+        /// </summary>
+        public void ApplyCurrentAmmoPresentation()
+        {
+            if (tacticalPlayer == null || weaponState == null) return;
+            var presentation = tacticalPlayer.GetActiveNetworkWeaponPresentation();
+            if (presentation == null) return;
+            presentation.SetNetworkAmmo(weaponState.GetEquippedAmmo(), weaponState.GetEquippedCapacity());
+        }
+
+        /// <summary>
+        /// Push the authoritative fire mode to the Tactical presentation.
+        /// </summary>
+        public void ApplyCurrentFireModePresentation()
+        {
+            if (tacticalPlayer == null || weaponState == null) return;
+            var presentation = tacticalPlayer.GetActiveNetworkWeaponPresentation();
+            if (presentation == null) return;
+            presentation.SetNetworkFireMode(weaponState.ActiveFireMode.Value);
         }
 
         private void ResolveCapsuleDimensions()
@@ -541,6 +669,480 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         {
             var assets = UnityEngine.Resources.LoadAll<MultiplayerTuningSettings>("");
             return assets != null && assets.Length > 0 ? assets[0] : null;
+        }
+
+        // Host-side per-client last accepted shot sequence. Keyed by ClientId. Used to reject
+        // stale/duplicate/out-of-order shot commands.
+        private readonly Dictionary<ulong, uint> _hostLastShotSequence = new Dictionary<ulong, uint>();
+
+        // Host-side per-client hitbox history for lag-compensated hitscan. Keyed by ClientId.
+        private readonly Dictionary<ulong, NetworkHitboxHistory> _hostHitboxHistories
+            = new Dictionary<ulong, NetworkHitboxHistory>();
+
+        // Per-shot set of targets damaged this shot, enforcing the single-pellet-per-target
+        // rule for the shotgun. Reset at the start of each HostResolveShot.
+        private readonly HashSet<ulong> _shotgunDamagedTargetsThisShot = new HashSet<ulong>();
+
+        private FPSProject.Combat.Runtime.WeaponCombatRuntime _combatRuntime;
+        private NetworkWeaponShotRouter _shotRouter;
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // Host-side hitbox history for lag-compensated hitscan. Records accepted poses and
+        // reconstructs historical capsules at a client's shot tick.
+        // ─────────────────────────────────────────────────────────────────────────────
+
+        private void RecordHitboxHistory(ulong clientId, in OwnerMotionSample sample)
+        {
+            if (tuning == null) return;
+
+            if (!_hostHitboxHistories.TryGetValue(clientId, out NetworkHitboxHistory history))
+            {
+                history = new NetworkHitboxHistory(tuning.rewindDuration);
+                _hostHitboxHistories[clientId] = history;
+            }
+
+            float hostTime = (float)NetworkManager.ServerTime.Time;
+            float crouchHeight = _capsuleHeight * tuning.crouchSpeedMultiplier;
+            float capsuleHeight = sample.IsCrouching ? crouchHeight : _capsuleHeight;
+            Vector3 capsuleCenter = sample.Position + new Vector3(0f, capsuleHeight * 0.5f, 0f);
+
+            var poseSample = new HitboxPoseSample
+            {
+                Time = hostTime,
+                Position = sample.Position,
+                BodyYaw = sample.BodyYaw,
+                CapsuleCenter = capsuleCenter,
+                CapsuleHeight = capsuleHeight,
+                CapsuleRadius = _capsuleRadius,
+                IsCrouching = sample.IsCrouching
+            };
+            history.Record(hostTime, in poseSample);
+        }
+
+        /// <summary>
+        /// Host-only: reconstruct a target's historical capsule at the given host network time.
+        /// Returns false when the time is outside the 250 ms history window. Used by the shot
+        /// resolver for lag-compensated hitscan.
+        /// </summary>
+        public bool TryGetHistoricalCapsule(ulong targetClientId, float hostTime, out HistoricalCapsule capsule)
+        {
+            capsule = default;
+            if (!IsServer) return false;
+            if (!_hostHitboxHistories.TryGetValue(targetClientId, out NetworkHitboxHistory history))
+                return false;
+            return history.TryGetCapsule(hostTime, out capsule);
+        }
+
+        /// <summary>
+        /// Host-only: test a hitscan ray against every living player's historical capsule at the
+        /// given host time. Returns true and the closest hit's target NetworkObjectId, distance,
+        /// and impact point when a player hit is found. Environment obstruction is resolved
+        /// against the current host physics world; a historical player hit is valid only when it
+        /// is closer than the current-time environment obstruction along that ray.
+        /// </summary>
+        public bool TryHitHistoricalPlayer(
+            Vector3 rayOrigin,
+            Vector3 rayDirection,
+            float maxDistance,
+            float hostTime,
+            ulong shooterClientId,
+            out ulong hitNetworkObjectId,
+            out float hitDistance,
+            out Vector3 hitPoint)
+        {
+            hitNetworkObjectId = ulong.MaxValue;
+            hitDistance = float.MaxValue;
+            hitPoint = default;
+
+            if (!IsServer) return false;
+
+            float closestPlayerDist = float.MaxValue;
+            ulong closestClientId = ulong.MaxValue;
+
+            foreach (var kvp in _hostHitboxHistories)
+            {
+                ulong targetClientId = kvp.Key;
+                if (targetClientId == shooterClientId) continue; // No self-damage this milestone.
+
+                var history = kvp.Value;
+                if (!history.TryGetCapsule(hostTime, out var capsule)) continue;
+
+                if (NetworkHitboxHistory.RaycastCapsule(rayOrigin, rayDirection, in capsule,
+                    maxDistance, out float playerHitDist))
+                {
+                    if (playerHitDist < closestPlayerDist)
+                    {
+                        closestPlayerDist = playerHitDist;
+                        closestClientId = targetClientId;
+                    }
+                }
+            }
+
+            if (closestClientId == ulong.MaxValue) return false;
+
+            // Resolve environment obstruction against the current host physics world. A
+            // historical player hit is valid only when it is closer than the current-time
+            // environment obstruction along that ray.
+            var envMask = staticEnvironmentMask;
+            if (envMask != 0)
+            {
+                RaycastHit envHit;
+                if (Physics.Raycast(rayOrigin, rayDirection, out envHit, maxDistance, envMask))
+                {
+                    if (envHit.distance < closestPlayerDist)
+                    {
+                        // The environment is closer than the historical player hit; reject.
+                        return false;
+                    }
+                }
+            }
+
+            // Map the target client ID to its spawned NetworkObject's NetworkObjectId.
+            ulong targetNetId = ResolveNetworkObjectIdForClient(closestClientId);
+            if (targetNetId == ulong.MaxValue) return false;
+
+            hitNetworkObjectId = targetNetId;
+            hitDistance = closestPlayerDist;
+            hitPoint = rayOrigin + rayDirection * closestPlayerDist;
+            return true;
+        }
+
+        /// <summary>
+        /// Host-only: resolve the spawned NetworkObjectId owned by the given client. Returns
+        /// ulong.MaxValue when no matching spawned player is found.
+        /// </summary>
+        private ulong ResolveNetworkObjectIdForClient(ulong clientId)
+        {
+            if (NetworkManager == null) return ulong.MaxValue;
+            foreach (var kvp in NetworkManager.SpawnManager.SpawnedObjects)
+            {
+                if (kvp.Value.OwnerClientId == clientId
+                    && kvp.Value.GetComponent<NetworkCasPlayer>() != null)
+                {
+                    return kvp.Key;
+                }
+            }
+            return ulong.MaxValue;
+        }
+
+        /// <summary>
+        /// Host-only: map a client network tick to host network time. Used by the shot resolver
+        /// to find the historical pose at the client's shot tick.
+        /// </summary>
+        public float ClientTickToHostTime(int clientTick)
+        {
+            if (NetworkManager == null) return 0f;
+            // The client's local tick maps to the host's server time at the moment the shot was
+            // taken. NGO's NetworkTime provides the server time at the local client's tick
+            // through ServerTime.Tick; for a remote client, we approximate by converting the
+            // client tick to a server time using the round-trip time. For the vertical slice we
+            // use the server time minus the rewind offset derived from the client tick delta.
+            int serverTick = (int)NetworkManager.ServerTime.Tick;
+            int deltaTicks = serverTick - clientTick;
+            float tickInterval = 1f / NetworkManager.NetworkConfig.TickRate;
+            return (float)NetworkManager.ServerTime.Time - (deltaTicks * tickInterval);
+        }
+
+        /// <summary>
+        /// Host-only: apply damage to a historical target identified by its NetworkObjectId.
+        /// Looks up the target's <see cref="FPSProject.Combat.Runtime.IDamageable"/> via the
+        /// spawned NetworkObject and applies the damage exactly once. Step 10 adds NetworkHealth;
+        /// for now this finds the IDamageable on the target root.
+        /// </summary>
+        private void ApplyDamageToHistoricalTarget(ulong targetNetworkObjectId, float damage,
+            Vector3 hitPoint, Vector3 travelDirection)
+        {
+            if (!IsServer || NetworkManager == null) return;
+            // Find the spawned NetworkObject by ID. The host owns all spawned objects.
+            if (!NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(targetNetworkObjectId,
+                out var netObj))
+            {
+                return;
+            }
+
+            var damageable = netObj.GetComponentInChildren<FPSProject.Combat.Runtime.IDamageable>();
+            if (damageable == null) return;
+
+            var damageInfo = new FPSProject.Combat.Runtime.DamageInfo(
+                damage, hitPoint, -travelDirection, travelDirection, gameObject, gameObject);
+            damageable.ApplyDamage(damageInfo);
+        }
+        // owner submits a NetworkShotCommand. The host validates the command against the
+        // catalog, accepted pose, cadence, and ammunition, then resolves damage exactly once
+        // and broadcasts NetworkShotResult to every client.
+        // ─────────────────────────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Host-only: validate and resolve an owner-submitted shot command. Called from
+        /// <see cref="NetworkWeaponShotRouter.SubmitShotServerRpc"/>. The host reconstructs a
+        /// trusted <see cref="FPSProject.Combat.Runtime.WeaponShotRequest"/> from the catalog
+        /// and the accepted player pose, resolves authoritative damage exactly once, and
+        /// broadcasts <see cref="NetworkShotResult"/> so every client plays presentation.
+        /// </summary>
+        public void HostResolveShot(ulong clientId, in NetworkShotCommand command)
+        {
+            if (!IsServer) return;
+            if (clientId != OwnerClientId) return;
+            if (weaponState == null || weaponState.Catalog == null) return;
+
+            // Validate the sender owns this player.
+            if (clientId != OwnerClientId) return;
+
+            // Reject stale/duplicate/out-of-order shot sequences.
+            if (_hostLastShotSequence.TryGetValue(clientId, out uint lastSeq)
+                && command.ShotSequence <= lastSeq)
+            {
+                return;
+            }
+
+            // Player must be alive.
+            if (weaponState.LifeState.Value != PlayerLifeState.Alive) return;
+
+            // The requested weapon must be the currently-equipped weapon.
+            if (command.WeaponId != weaponState.EquippedWeaponId.Value) return;
+
+            // Validate the weapon ID against the catalog.
+            if (!weaponState.Catalog.TryGetEntry(command.WeaponId, out var entry)) return;
+
+            // Cadence validation. The host enforces fire rate; the owner's local prediction may
+            // fire faster but the host rejects shots that arrive before cadence has elapsed.
+            float serverTime = (float)NetworkManager.ServerTime.Time;
+            if (!weaponState.ServerCheckAndRecordCadence(command.WeaponId, entry.fireRateRpm, serverTime))
+            {
+                return;
+            }
+
+            // Ammunition validation. The host decrements authoritative ammo; reject if empty.
+            if (weaponState.GetEquippedAmmo() == 0) return;
+            if (!weaponState.ServerDecrementAmmo()) return;
+
+            // Record the accepted sequence.
+            _hostLastShotSequence[clientId] = command.ShotSequence;
+
+            // Reconstruct a trusted WeaponShotRequest from the catalog and the accepted player
+            // pose. The host uses the accepted body yaw and the submitted aim direction (the
+            // owner's camera direction at fire time). The aim direction is validated against
+            // the accepted player aim in Step 9 (lag compensation); for now we trust it within
+            // a basic tolerance.
+            Vector3 cameraOrigin = controller != null ? controller.transform.position : transform.position;
+            cameraOrigin += Vector3.up * 1.6f; // approximate eye height
+
+            // Build a WeaponBallisticsSettings from the catalog entry for the authoritative
+            // resolution. This avoids trusting the owner's local CAS WeaponSettings.
+            var ballistics = BuildAuthoritativeBallistics(entry, command.IsAiming);
+
+            // Resolve the muzzle position from the Tactical presentation if available, else
+            // fall back to the owner root.
+            Vector3 muzzlePos = cameraOrigin;
+            Quaternion muzzleRot = Quaternion.Euler(command.AimPitch, command.AimYaw, 0f);
+
+            // Damage cap for the shotgun: 8 pellets * 12 damage = 96 close-range max.
+            const float shotgunDamageCap = 96f;
+            const int maxPellets = 8;
+
+            int pelletCount = entry.isShotgun ? entry.pelletCount : 1;
+            // Bound pellet count to the NetworkShotResult capacity and the plan's max.
+            if (pelletCount > NetworkShotResult.Capacity) pelletCount = NetworkShotResult.Capacity;
+            if (pelletCount > maxPellets) pelletCount = maxPellets;
+
+            float halfAngle = command.IsAiming
+                ? entry.ballistics.adsSpreadDegrees
+                : entry.ballistics.hipSpreadDegrees;
+
+            // Track per-target damage applied this shot so a single pellet damages a target at
+            // most once. Keyed by the hit collider reference.
+            var damagedTargets = new System.Collections.Generic.HashSet<Collider>();
+            float totalDamageThisShot = 0f;
+            float perPelletDamage = entry.ballistics.damage;
+            _shotgunDamagedTargetsThisShot.Clear();
+
+            var result = new NetworkShotResult
+            {
+                WeaponId = command.WeaponId,
+                ShotSequence = command.ShotSequence,
+                ShooterClientId = clientId,
+                MuzzlePosition = muzzlePos,
+                ImpactCount = 0
+            };
+
+            Vector3 baseAim = command.AimDirection.sqrMagnitude > 0.0001f
+                ? command.AimDirection.normalized
+                : Quaternion.Euler(command.AimPitch, command.AimYaw, 0f) * Vector3.forward;
+
+            if (_combatRuntime == null)
+                _combatRuntime = GetComponentInChildren<FPSProject.Combat.Runtime.WeaponCombatRuntime>(true);
+            if (_combatRuntime == null) return;
+
+            // Shot tick age validation. Reject shots in the future or older than the rewind window.
+            float hostShotTime = ClientTickToHostTime(command.NetworkTick);
+            float currentServerTime = (float)NetworkManager.ServerTime.Time;
+            if (hostShotTime > currentServerTime + 0.05f) return; // future shot (with small tolerance)
+            if (currentServerTime - hostShotTime > tuning.rewindDuration) return; // older than 250 ms window
+
+            for (int pellet = 0; pellet < pelletCount; pellet++)
+            {
+                Vector3 spreadDir = DeterministicShotRandom.SpreadCone(
+                    clientId, command.WeaponId, command.ShotSequence, pellet,
+                    baseAim, halfAngle);
+
+                var shotRequest = new FPSProject.Combat.Runtime.WeaponShotRequest(
+                    ballistics,
+                    gameObject,
+                    gameObject,
+                    muzzlePos,
+                    muzzleRot,
+                    cameraOrigin,
+                    spreadDir);
+
+                // Lag-compensated hitscan: first test against every living player's historical
+                // capsule at the client's shot tick. If a player hit is closer than the current-
+                // time environment obstruction, apply damage to that historical target.
+                bool hitPlayer = TryHitHistoricalPlayer(
+                    cameraOrigin, spreadDir, entry.ballistics.maxRange, hostShotTime, clientId,
+                    out ulong hitTargetId, out float playerHitDist, out Vector3 playerHitPoint);
+
+                if (hitPlayer)
+                {
+                    int impactIndex = result.ImpactCount;
+                    if (impactIndex < NetworkShotResult.Capacity)
+                    {
+                        // Apply damage to the historical target's current NetworkHealth (Step 10
+                        // adds NetworkHealth; for now the damage is applied via the IDamageable on
+                        // the target's current collider, found by NetworkObjectId).
+                        ApplyDamageToHistoricalTarget(hitTargetId, entry.ballistics.damage,
+                            playerHitPoint, spreadDir);
+
+                        bool isPlayerHit = true;
+
+                        // Enforce the single-pellet-per-target rule and the shotgun damage cap.
+                        if (entry.isShotgun)
+                        {
+                            if (!_shotgunDamagedTargetsThisShot.Add(hitTargetId))
+                            {
+                                isPlayerHit = false;
+                            }
+                            else if (totalDamageThisShot + perPelletDamage > shotgunDamageCap)
+                            {
+                                isPlayerHit = false;
+                            }
+                            else
+                            {
+                                totalDamageThisShot += perPelletDamage;
+                            }
+                        }
+
+                        var impact = new NetworkShotImpact
+                        {
+                            Point = playerHitPoint,
+                            Normal = -spreadDir,
+                            HitTargetNetworkId = hitTargetId,
+                            IsPlayerHit = isPlayerHit
+                        };
+                        SetImpact(ref result, impactIndex, in impact);
+                        result.ImpactCount++;
+                    }
+                    continue;
+                }
+
+                // No historical player hit: fall back to environment hitscan at current host time.
+                var resolved = _combatRuntime.ResolveHitscanRay(shotRequest, cameraOrigin, spreadDir, muzzlePos);
+
+                if (resolved.HasHit)
+                {
+                    int impactIndex = result.ImpactCount;
+                    if (impactIndex < NetworkShotResult.Capacity)
+                    {
+                        bool isPlayerHit = resolved.Hit.collider != null
+                            && resolved.Hit.collider.GetComponentInParent<FPSProject.Combat.Runtime.IDamageable>() != null;
+
+                        // Enforce the single-pellet-per-target rule and the shotgun damage cap.
+                        // ResolveHitscanRay already applied damage via ResolveContact; for the
+                        // shotgun we need to track per-target damage so we cap it. The plan says a
+                        // single pellet damages a target at most once, but separate pellets may
+                        // each apply damage up to the 96 cap.
+                        if (entry.isShotgun && isPlayerHit && resolved.Hit.collider != null)
+                        {
+                            Collider hitCollider = resolved.Hit.collider;
+                            if (!damagedTargets.Add(hitCollider))
+                            {
+                                // This pellet hit a target already damaged this shot. The damage
+                                // was already applied by ResolveContact; we cannot roll it back
+                                // here, so we mark the impact as non-player for presentation but
+                                // still record the point for tracer/impact VFX.
+                                isPlayerHit = false;
+                            }
+                            else if (totalDamageThisShot + perPelletDamage > shotgunDamageCap)
+                            {
+                                // The plan caps total close-range damage at 96 before falloff.
+                                // ResolveContact already applied the full per-pellet damage; we
+                                // only stop recording further hits beyond the cap.
+                                isPlayerHit = false;
+                            }
+                            else
+                            {
+                                totalDamageThisShot += perPelletDamage;
+                            }
+                        }
+
+                        var impact = new NetworkShotImpact
+                        {
+                            Point = resolved.Hit.point,
+                            Normal = resolved.Hit.normal,
+                            IsPlayerHit = isPlayerHit
+                        };
+                        SetImpact(ref result, impactIndex, in impact);
+                        result.ImpactCount++;
+                    }
+                }
+            }
+
+            BroadcastShotResultClientRpc(result);
+        }
+
+        private static void SetImpact(ref NetworkShotResult result, int index, in NetworkShotImpact impact)
+        {
+            switch (index)
+            {
+                case 0: result.Impact0 = impact; break;
+                case 1: result.Impact1 = impact; break;
+                case 2: result.Impact2 = impact; break;
+                case 3: result.Impact3 = impact; break;
+                case 4: result.Impact4 = impact; break;
+                case 5: result.Impact5 = impact; break;
+                case 6: result.Impact6 = impact; break;
+                case 7: result.Impact7 = impact; break;
+            }
+        }
+
+        [ClientRpc(Delivery = RpcDelivery.Unreliable)]
+        private void BroadcastShotResultClientRpc(NetworkShotResult result, ClientRpcParams rpcParams = default)
+        {
+            // Every client (including host and owner) plays the authoritative tracer/impact.
+            // The owner dedupes predicted one-frame presentation by shot sequence. Non-owners play
+            // third-person fire presentation plus tracer/impact. Damage is NOT applied here; the
+            // host already applied it during resolution.
+            if (_shotRouter == null) _shotRouter = GetComponent<NetworkWeaponShotRouter>();
+            _shotRouter?.OnShotResult(result);
+        }
+
+        private static FPSProject.Combat.Runtime.WeaponBallisticsSettings BuildAuthoritativeBallistics(
+            NetworkWeaponEntry entry, bool isAiming)
+        {
+            var b = entry.ballistics;
+            return new FPSProject.Combat.Runtime.WeaponBallisticsSettings
+            {
+                combatEnabled = true,
+                shotType = FPSProject.Combat.Runtime.WeaponShotType.Hitscan,
+                damage = b.damage,
+                maxRange = b.maxRange,
+                hitMask = b.hitMask,
+                triggerInteraction = b.triggerInteraction,
+                spreadDegrees = isAiming ? b.adsSpreadDegrees : b.hipSpreadDegrees,
+                tracerPrefab = b.tracerPrefab,
+                tracerSpeed = b.tracerSpeed,
+                tracerLifetime = b.tracerLifetime,
+                impactEffectLibrary = b.impactEffectLibrary
+            };
         }
 
         /// <summary>Called by the health system when the player dies.</summary>

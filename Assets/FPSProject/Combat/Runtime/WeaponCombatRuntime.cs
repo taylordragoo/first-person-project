@@ -107,7 +107,10 @@ namespace FPSProject.Combat.Runtime
         }
 
         /// <summary>
-        /// Submit a shot request. This is the only entry point used by the CAS bridge.
+        /// Submit a shot request. This is the only entry point used by the CAS bridge offline.
+        /// For the network path, use <see cref="ResolveAuthoritativeShot"/> and
+        /// <see cref="PlayShotResult"/> separately so the host applies damage exactly once and
+        /// every client plays presentation without re-applying damage.
         /// </summary>
         public void SubmitShot(in WeaponShotRequest request)
         {
@@ -118,7 +121,29 @@ namespace FPSProject.Combat.Runtime
                 return;
             }
 
-            // Resolve camera aim with spread
+            AuthoritativeShotResult result = ResolveAuthoritativeShot(request);
+            PlayShotResult(request, in result);
+        }
+
+        /// <summary>
+        /// Resolve an authoritative shot: apply spread, raycast against the hit mask, find the
+        /// nearest environment/player hit, apply damage to IDamageable receivers, and return the
+        /// resolved endpoint + impact info. Does not require a local Camera component; the
+        /// caller supplies the camera origin/direction through <paramref name="request"/>.
+        /// Damage is applied exactly once here. Tracers/impacts are NOT spawned; call
+        /// <see cref="PlayShotResult"/> to play them.
+        /// </summary>
+        public AuthoritativeShotResult ResolveAuthoritativeShot(in WeaponShotRequest request)
+        {
+            var result = new AuthoritativeShotResult();
+
+            if (!request.Ballistics.combatEnabled) return result;
+            if (_aimCamera == null)
+            {
+                Debug.LogWarning($"[{nameof(WeaponCombatRuntime)}] Cannot resolve shot: Aim Camera is null.");
+                return result;
+            }
+
             Vector3 cameraOrigin = request.CameraOrigin;
             Vector3 cameraDirection = request.CameraDirection;
 
@@ -131,13 +156,10 @@ namespace FPSProject.Combat.Runtime
                 cameraDirection = (cameraDirection + randomOffset).normalized;
             }
 
-            // Camera query
             float maxRange = request.Ballistics.maxRange;
             var hitMask = request.Ballistics.hitMask;
             var triggerInteraction = request.Ballistics.triggerInteraction;
 
-            // Start with the unobstructed camera endpoint so the value is always
-            // defined, even when the non-alloc query returns no accepted hits.
             Vector3 desiredDestination = cameraOrigin + cameraDirection * maxRange;
             RaycastHit? cameraAimHit = null;
 
@@ -154,7 +176,6 @@ namespace FPSProject.Combat.Runtime
                     maxRange, hitMask, triggerInteraction);
             }
 
-            // Find nearest accepted camera hit
             float nearestCamDist = float.MaxValue;
             for (int i = 0; i < cameraHitCount; i++)
             {
@@ -170,15 +191,11 @@ namespace FPSProject.Combat.Runtime
                 }
             }
 
-            // Muzzle query: aim from muzzle toward desired destination
             Vector3 muzzlePosition = request.MuzzlePosition;
             Vector3 muzzleDirection = (desiredDestination - muzzlePosition).normalized;
             float muzzleDistance = Vector3.Distance(muzzlePosition, desiredDestination);
             muzzleDistance = Mathf.Min(muzzleDistance, maxRange);
 
-            // The desired destination is commonly the exact surface point returned
-            // by the camera ray. Give the muzzle query a small amount of padding so
-            // floating-point precision does not exclude a hit at its max distance.
             float muzzleQueryDistance = cameraAimHit.HasValue
                 ? muzzleDistance + MuzzleContactPadding
                 : muzzleDistance;
@@ -219,9 +236,6 @@ namespace FPSProject.Combat.Runtime
             }
             else if (cameraAimHit.HasValue)
             {
-                // A muzzle can briefly enter the hit collider during recoil or
-                // weapon animation. Raycasts do not reliably report the collider
-                // they start inside, so retain the already validated camera hit.
                 authoritativeHit = cameraAimHit;
                 authoritativeEndpoint = cameraAimHit.Value.point;
             }
@@ -230,21 +244,155 @@ namespace FPSProject.Combat.Runtime
                 authoritativeEndpoint = muzzlePosition + muzzleDirection * muzzleDistance;
             }
 
-            // Spawn tracer from muzzle to authoritative endpoint
-            SpawnTracer(request, muzzlePosition, authoritativeEndpoint);
+            result.MuzzlePosition = muzzlePosition;
+            result.Endpoint = authoritativeEndpoint;
+            result.HasHit = authoritativeHit.HasValue;
+            result.Hit = authoritativeHit ?? default;
 
-            // Handle based on shot type
-            if (request.Ballistics.shotType == WeaponShotType.Hitscan)
+            // Apply damage exactly once on the host for the authoritative hit.
+            if (authoritativeHit.HasValue && request.Ballistics.shotType == WeaponShotType.Hitscan)
             {
-                if (authoritativeHit.HasValue)
-                {
-                    ResolveContact(request, authoritativeHit.Value);
-                }
+                ResolveContact(request, authoritativeHit.Value);
             }
-            else // Projectile
+
+            return result;
+        }
+
+        /// <summary>
+        /// Play the visual/audio result of a resolved shot: tracer from muzzle to endpoint,
+        /// impact effects and decals at the hit point. Does not apply damage. Call this on
+        /// every client (including the host) after <see cref="ResolveAuthoritativeShot"/> has
+        /// applied damage on the host.
+        /// </summary>
+        public void PlayShotResult(in WeaponShotRequest request, in AuthoritativeShotResult result)
+        {
+            if (!request.Ballistics.combatEnabled) return;
+
+            SpawnTracer(request, result.MuzzlePosition, result.Endpoint);
+
+            if (result.HasHit && request.Ballistics.shotType == WeaponShotType.Hitscan)
             {
+                ImpactSurfaceType surfaceType = ImpactSurface.Resolve(result.Hit.collider);
+                SpawnImpactEffects(request, result.Hit.point, result.Hit.normal, surfaceType, result.Hit.transform);
+            }
+            else if (request.Ballistics.shotType == WeaponShotType.Projectile)
+            {
+                Vector3 muzzleDirection = (result.Endpoint - result.MuzzlePosition).normalized;
                 SpawnProjectile(request, muzzleDirection);
             }
+        }
+
+        /// <summary>
+        /// Result of an authoritative shot resolution. Holds the muzzle/endpoint and the resolved
+        /// hit (if any) so <see cref="PlayShotResult"/> can play presentation without re-running
+        /// the raycast.
+        /// </summary>
+        public struct AuthoritativeShotResult
+        {
+            public Vector3 MuzzlePosition;
+            public Vector3 Endpoint;
+            public bool HasHit;
+            public RaycastHit Hit;
+        }
+
+        /// <summary>
+        /// Resolve a single hitscan ray with a caller-supplied spread-adjusted direction. The
+        /// caller (host shot resolver) computes the spread deterministically; this method only
+        /// runs the raycast, applies damage, and returns the hit info. Does not spawn tracers or
+        /// impacts; call <see cref="PlayShotResult"/> for those.
+        /// </summary>
+        public AuthoritativeShotResult ResolveHitscanRay(
+            in WeaponShotRequest request,
+            Vector3 cameraOrigin,
+            Vector3 spreadDirection,
+            Vector3 muzzlePosition)
+        {
+            var result = new AuthoritativeShotResult
+            {
+                MuzzlePosition = muzzlePosition,
+                Endpoint = muzzlePosition + spreadDirection * request.Ballistics.maxRange
+            };
+
+            float maxRange = request.Ballistics.maxRange;
+            var hitMask = request.Ballistics.hitMask;
+            var triggerInteraction = request.Ballistics.triggerInteraction;
+
+            // Camera ray to find the desired endpoint.
+            RaycastHit[] cameraHits = new RaycastHit[32];
+            int cameraHitCount = Physics.RaycastNonAlloc(
+                cameraOrigin, spreadDirection, cameraHits, maxRange, hitMask, triggerInteraction);
+            if (cameraHitCount == cameraHits.Length)
+            {
+                cameraHits = new RaycastHit[cameraHits.Length * 2];
+                cameraHitCount = Physics.RaycastNonAlloc(
+                    cameraOrigin, spreadDirection, cameraHits, maxRange, hitMask, triggerInteraction);
+            }
+
+            Vector3 desiredDestination = cameraOrigin + spreadDirection * maxRange;
+            RaycastHit? cameraAimHit = null;
+            float nearestCamDist = float.MaxValue;
+            for (int i = 0; i < cameraHitCount; i++)
+            {
+                var hit = cameraHits[i];
+                if (IsOwnerOrDescendant(hit.transform, request.OwnerRoot)) continue;
+                if (hit.distance < nearestCamDist)
+                {
+                    nearestCamDist = hit.distance;
+                    desiredDestination = hit.point;
+                    cameraAimHit = hit;
+                }
+            }
+
+            Vector3 muzzleDirection = (desiredDestination - muzzlePosition).normalized;
+            float muzzleDistance = Mathf.Min(Vector3.Distance(muzzlePosition, desiredDestination), maxRange);
+            float muzzleQueryDistance = cameraAimHit.HasValue
+                ? muzzleDistance + MuzzleContactPadding
+                : muzzleDistance;
+
+            RaycastHit[] muzzleHits = new RaycastHit[32];
+            int muzzleHitCount = Physics.RaycastNonAlloc(
+                muzzlePosition, muzzleDirection, muzzleHits,
+                muzzleQueryDistance, hitMask, triggerInteraction);
+            if (muzzleHitCount == muzzleHits.Length)
+            {
+                muzzleHits = new RaycastHit[muzzleHits.Length * 2];
+                muzzleHitCount = Physics.RaycastNonAlloc(
+                    muzzlePosition, muzzleDirection, muzzleHits,
+                    muzzleQueryDistance, hitMask, triggerInteraction);
+            }
+
+            RaycastHit? authoritativeHit = null;
+            float nearestMuzzleDist = float.MaxValue;
+            for (int i = 0; i < muzzleHitCount; i++)
+            {
+                var hit = muzzleHits[i];
+                if (IsOwnerOrDescendant(hit.transform, request.OwnerRoot)) continue;
+                if (hit.distance < nearestMuzzleDist)
+                {
+                    nearestMuzzleDist = hit.distance;
+                    authoritativeHit = hit;
+                }
+            }
+
+            if (authoritativeHit.HasValue)
+            {
+                result.HasHit = true;
+                result.Hit = authoritativeHit.Value;
+                result.Endpoint = authoritativeHit.Value.point;
+            }
+            else if (cameraAimHit.HasValue)
+            {
+                result.HasHit = true;
+                result.Hit = cameraAimHit.Value;
+                result.Endpoint = cameraAimHit.Value.point;
+            }
+
+            if (result.HasHit)
+            {
+                ResolveContact(request, result.Hit);
+            }
+
+            return result;
         }
 
         /// <summary>

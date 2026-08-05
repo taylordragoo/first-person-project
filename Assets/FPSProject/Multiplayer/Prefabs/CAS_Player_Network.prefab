@@ -72,6 +72,10 @@ PrefabInstance:
       propertyPath: casController
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 7064748075205822715, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      propertyPath: tacticalPlayer
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7887001081661743403, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -82,6 +86,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3315910698624428298, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+    - {fileID: 8722518329490941363, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -94,7 +99,50 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 693147219447866964}
+    - targetCorrespondingSourceObject: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 401561564085916873}
+    - targetCorrespondingSourceObject: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4374552078556300964}
+    - targetCorrespondingSourceObject: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1979393562708837252}
+    - targetCorrespondingSourceObject: {fileID: 3307187255396238109, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3453708469032010866}
   m_SourcePrefab: {fileID: 100100000, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+--- !u!1 &2651168802929854995 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3307187255396238109, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
+  m_PrefabInstance: {fileID: 661935358332422414}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3453708469032010866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2651168802929854995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2391b70de8982e343a83c33ea281b891, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonProject.Integrations.Kinemation.Multiplayer.NetworkTacticalShooterPlayer
+  lookSensitivity: 1
+  timeScale: 1
+  weaponPrefabs: []
+  fpsCamera: {fileID: 0}
+  aimIkMotion: {fileID: 0}
+  fireModeIkMotion: {fileID: 0}
+  quickDrawSound: {fileID: 0}
+  quickHolsterSound: {fileID: 0}
+  jumpSound: {fileID: 0}
+  landSound: {fileID: 0}
+  walkSounds: []
+  sprintSounds: []
+  walkDelay: 0.4
+  sprintDelay: 0.4
 --- !u!1 &6081883102162342820 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6721792622341036714, guid: 7633fe9e188757145a4252cd9061117b, type: 3}
@@ -181,13 +229,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1211485450
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 2690843457
+  InScenePlacedSourceGlobalObjectIdHash: 1211485450
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 0
+  m_InScenePlaced: 1
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -209,8 +257,73 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonProject.Integrations.Kinemation.Multiplayer.NetworkCasPlayer
   ShowTopMostFoldoutHeaderGroup: 1
   controller: {fileID: 2429819265531568206}
+  tacticalPlayer: {fileID: 3453708469032010866}
+  weaponState: {fileID: 401561564085916873}
   tuning: {fileID: 11400000, guid: 23cc8b89e2e8d2c4aa75b77f76d54af6, type: 2}
   staticEnvironmentMask:
     serializedVersion: 2
     m_Bits: 1
   debugMotion: 0
+--- !u!114 &401561564085916873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6081883102162342820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0e6266a54a5bb04b9bdbee8df2949c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonProject.Integrations.Kinemation.Multiplayer.NetworkWeaponState
+  ShowTopMostFoldoutHeaderGroup: 1
+  catalog: {fileID: 11400000, guid: ae00cab0c647b5c4e86f8b95fc449ebe, type: 2}
+  EquippedWeaponId:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 1
+  ActiveFireMode:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  ActiveReloadState:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  LifeState:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  AmmoState:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+--- !u!114 &4374552078556300964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6081883102162342820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b1569a46614c024a955eb3163b3160a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonProject.Integrations.Kinemation.Multiplayer.NetworkWeaponShotRouter
+--- !u!114 &1979393562708837252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6081883102162342820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b2b0d5ea9caa2545b64d2bfd52bac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonProject.Integrations.Kinemation.Multiplayer.NetworkWeaponPropBridge
+  ShowTopMostFoldoutHeaderGroup: 1

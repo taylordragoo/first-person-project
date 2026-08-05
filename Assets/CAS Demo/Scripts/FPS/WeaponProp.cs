@@ -44,6 +44,15 @@ namespace CAS_Demo.Scripts.FPS
         protected Camera _combatAimCamera;
         protected IWeaponMuzzleProvider _combatMuzzleProvider;
 
+        // Network shot routing. When a shot router is present on the player root, shots are
+        // routed through it instead of resolved directly on the local WeaponCombatRuntime.
+        // The router decides offline (local resolve), network owner (send command to host), or
+        // proxy (drop). These fields are set by the network adapter (NetworkWeaponPropBridge).
+        protected FPSProject.Multiplayer.Core.Weapons.IWeaponShotRouter _shotRouter;
+        protected ushort _networkWeaponId;
+        protected int _networkTick;
+        protected bool _isAimingForRouter;
+
 #if UNITY_EDITOR
         public static readonly string WeaponSettingsName = nameof(weaponSettings);
         public static readonly string GetScopeDataName = nameof(GetScopeData);
@@ -277,6 +286,43 @@ namespace CAS_Demo.Scripts.FPS
         }
 
         /// <summary>
+        /// Set the network shot router used by <see cref="SubmitCombatShot"/>. When set, shots
+        /// are routed through the router instead of resolved directly on the local
+        /// <see cref="WeaponCombatRuntime"/>. The network adapter calls this on the owner.
+        /// </summary>
+        public void SetShotRouter(FPSProject.Multiplayer.Core.Weapons.IWeaponShotRouter router)
+        {
+            _shotRouter = router;
+        }
+
+        /// <summary>
+        /// Set the stable catalog weapon ID for this weapon prop. The network adapter calls this
+        /// so the owner's shot commands carry the correct weapon ID for host validation.
+        /// </summary>
+        public void SetNetworkWeaponId(ushort weaponId)
+        {
+            _networkWeaponId = weaponId;
+        }
+
+        /// <summary>
+        /// Set the synchronized network tick at fire time. The network adapter updates this so
+        /// shot commands carry a tick the host can map to its pose history for lag compensation.
+        /// </summary>
+        public void SetNetworkTick(int tick)
+        {
+            _networkTick = tick;
+        }
+
+        /// <summary>
+        /// Set the aiming flag used by the shot router. The network adapter updates this so the
+        /// host receives the correct ADS/hip flag for spread selection.
+        /// </summary>
+        public void SetNetworkAiming(bool isAiming)
+        {
+            _isAimingForRouter = isAiming;
+        }
+
+        /// <summary>
         /// Submits a combat shot through the shared WeaponCombatRuntime.
         /// Does nothing if combat is disabled, runtime is missing, or camera is missing.
         /// </summary>
@@ -319,7 +365,26 @@ namespace CAS_Demo.Scripts.FPS
                 _combatAimCamera.transform.position,
                 _combatAimCamera.transform.forward);
 
-            _combatRuntime.SubmitShot(request);
+            // Route through the shot router if one is available on the player root. The router
+            // decides whether to resolve locally (offline), send a network command (owner), or
+            // drop the shot (proxy). When no router is present, fall back to direct local
+            // resolution so the offline CAS/Tactical rig remains functional without networking.
+            if (_shotRouter != null)
+            {
+                ushort weaponId = _networkWeaponId;
+                _shotRouter.SubmitShot(
+                    request,
+                    weaponId,
+                    shotSequence: 0,
+                    networkTick: _networkTick,
+                    aimYaw: _combatAimCamera.transform.eulerAngles.y,
+                    aimPitch: _combatAimCamera.transform.eulerAngles.x,
+                    isAiming: _isAimingForRouter);
+            }
+            else
+            {
+                _combatRuntime.SubmitShot(request);
+            }
         }
     }
 }

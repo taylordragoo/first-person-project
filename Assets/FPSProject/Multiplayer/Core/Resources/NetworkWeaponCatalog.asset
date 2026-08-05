@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79eac43138835c84baecdaddecb50cb3, type: 3}
+  m_Name: NetworkWeaponCatalog
+  m_EditorClassIdentifier: FPSProject.Multiplayer.Core::FPSProject.Multiplayer.Core.Weapons.NetworkWeaponCatalog
+  entries:
+  - weaponId: 1
+    displayName: TR15
+    tacticalWeaponPrefab: {fileID: 6491911074622455297, guid: 61507977461de1f4196a9c93c1b4e7a1, type: 3}
+    magazineCapacity: 32
+    fireRateRpm: 600
+    supportsSemi: 1
+    supportsBurst: 1
+    supportsAuto: 1
+    burstRounds: 3
+    isShotgun: 0
+    pelletCount: 1
+    ballistics:
+      damage: 25
+      maxRange: 100
+      hitMask:
+        serializedVersion: 2
+        m_Bits: 0
+      triggerInteraction: 0
+      hipSpreadDegrees: 1.5
+      adsSpreadDegrees: 0.1
+      tracerPrefab: {fileID: 0}
+      tracerSpeed: 200
+      tracerLifetime: 0.1
+      impactEffectLibrary: {fileID: 0}
+    configured: 1
+  - weaponId: 2
+    displayName: WK-11 Viper
+    tacticalWeaponPrefab: {fileID: 3548645422124800404, guid: 9381fd6957d10c34dbb99be5938367c6, type: 3}
+    magazineCapacity: 26
+    fireRateRpm: 450
+    supportsSemi: 1
+    supportsBurst: 0
+    supportsAuto: 0
+    burstRounds: 2
+    isShotgun: 0
+    pelletCount: 1
+    ballistics:
+      damage: 30
+      maxRange: 100
+      hitMask:
+        serializedVersion: 2
+        m_Bits: 0
+      triggerInteraction: 0
+      hipSpreadDegrees: 1.2
+      adsSpreadDegrees: 0.08
+      tracerPrefab: {fileID: 0}
+      tracerSpeed: 200
+      tracerLifetime: 0.1
+      impactEffectLibrary: {fileID: 0}
+    configured: 1
+  - weaponId: 3
+    displayName: Herrington 11-87 Police
+    tacticalWeaponPrefab: {fileID: 1531783477257730245, guid: 45c14264dcf446e4badd7d345c91a064, type: 3}
+    magazineCapacity: 12
+    fireRateRpm: 90
+    supportsSemi: 1
+    supportsBurst: 0
+    supportsAuto: 0
+    burstRounds: 2
+    isShotgun: 1
+    pelletCount: 8
+    ballistics:
+      damage: 12
+      maxRange: 50
+      hitMask:
+        serializedVersion: 2
+        m_Bits: 0
+      triggerInteraction: 0
+      hipSpreadDegrees: 4
+      adsSpreadDegrees: 2.5
+      tracerPrefab: {fileID: 0}
+      tracerSpeed: 200
+      tracerLifetime: 0.1
+      impactEffectLibrary: {fileID: 0}
+    configured: 1
+  - weaponId: 4
+    displayName: Mk14 EBR
+    tacticalWeaponPrefab: {fileID: 8291716542775071706, guid: c048279712e48aa448c96895079317ed, type: 3}
+    magazineCapacity: 20
+    fireRateRpm: 700
+    supportsSemi: 1
+    supportsBurst: 0
+    supportsAuto: 1
+    burstRounds: 2
+    isShotgun: 0
+    pelletCount: 1
+    ballistics:
+      damage: 35
+      maxRange: 120
+      hitMask:
+        serializedVersion: 2
+        m_Bits: 0
+      triggerInteraction: 0
+      hipSpreadDegrees: 1.4
+      adsSpreadDegrees: 0.1
+      tracerPrefab: {fileID: 0}
+      tracerSpeed: 200
+      tracerLifetime: 0.1
+      impactEffectLibrary: {fileID: 0}
+    configured: 1

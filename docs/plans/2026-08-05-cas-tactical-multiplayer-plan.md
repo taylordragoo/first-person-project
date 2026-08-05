@@ -9,7 +9,11 @@
 | 3 | DONE | Multiplayer prefab variant + owner-only init (`NetworkCasPlayer`, `NetworkFPSExampleController`). Prefab at `Assets/FPSProject/Multiplayer/Prefabs/CAS_Player_Network.prefab`. Host spawns with LocalOwner mode, all owner-only components enabled, Tactical presentation armed. |
 | 4 | DONE | Core data contracts (`OwnerMotionSample`, `ProxyPresentationState`, `PlayerSimulationMode`, `MultiplayerTuningSettings`), owner 20Hz motion submission, host validation (`HostMotionValidator`), remote interpolation buffer (`ProxyInterpolationBuffer`), soft/hard corrections, late-join snapshots. |
 | 5 | DONE | `ApplyRemotePresentationState` CAS animator driver with edge detection for crouch/jump/landing/moving/aim transitions. Proxies write animator parameters directly, feed CharacterCamera pitch/yaw, and drive body yaw without running the full CAS Update path. |
-| 6-12 | PENDING | See Implementation Order below. |
+| 6 | DONE | `NetworkWeaponCatalog` (4 plan weapons: TR15, WK-11 Viper, Herrington Police, Mk14 EBR) with stable IDs, magazine/cadence/fire-mode config, and authoritative ballistics. `NetworkWeaponState` NetworkBehaviour with `EquippedWeaponId`, `ActiveFireMode`, `ActiveReloadState`, `LifeState`, `NetworkList<WeaponAmmoState>`. `NetworkTacticalShooterPlayer.ApplyEquippedWeapon(ushort)`. Networked weapon prefab variants implementing `INetworkTacticalWeaponPresentation`. |
+| 7 | DONE | `IWeaponShotRouter` + `OfflineWeaponShotRouter` + `NetworkWeaponShotRouter`. `WeaponProp.SubmitCombatShot()` routed through the router. `WeaponCombatRuntime.ResolveAuthoritativeShot`/`PlayShotResult` split. `NetworkShotCommand`/`NetworkShotResult` structs. Host validates ownership, sequence, life state, equipped weapon, cadence, and ammunition; resolves damage exactly once. Owner never applies local damage. `NetworkWeaponPropBridge` wires CAS weapon props to the router. |
+| 8 | DONE | `DeterministicShotRandom` xorshift64 PRNG seeded by shooter/weapon/sequence (never mutates Unity Random). Per-pellet deterministic cone spread. Herrington Police: 8 pellets, 12 dmg/pellet, 96 cap, single-pellet-per-target rule. `NetworkShotResult` fixed-capacity 8-impact collection. Owner predicted one-frame presentation (recoil/muzzle/casing/audio) with dedup by shot sequence; non-owners play third-person fire + tracer/impact. |
+| 9 | DONE | `NetworkHitboxHistory` 250 ms rolling pose history per player. Analytical ray-vs-capsule intersection. Host records accepted poses; shot resolver maps client tick to host time, interpolates each target's historical capsule, tests ray against capsules, resolves environment obstruction at current time. Rejects shots older than 250 ms. No self-damage this milestone. |
+| 10-12 | PENDING | See Implementation Order below. |
 
 ## Summary
 
@@ -392,13 +396,135 @@ After acceptance, the host decrements ammunition, records cadence, resolves the 
 
 **Bridge verification:** The `CasTacticalPlayerBridge` remains presentation-only. Its `Update()` reads `casCamera.pitchInput` and `casController.Gait`/`IsSprinting`/`IsAiming`/`IsCrouching` — all of which are now driven by `ApplyRemotePresentationState` on proxies. Its `LateUpdate()` retargets lower-body bone rotations and the crouch height offset from the CAS source rig onto the Tactical presentation rig, exactly as in the offline rig. No bridge source was modified. The bridge continues to receive presentation-only data through the same fields; it never calculates movement or look direction.
 
-### 6. [PENDING] Add stable weapon catalog IDs, persistent equipped/ammo/fire-mode state, and ID-based presentation.
+### 6. [DONE] Add stable weapon catalog IDs, persistent equipped/ammo/fire-mode state, and ID-based presentation.
 
-### 7. [PENDING] Add the offline/network/server shot router and prove damage can execute only on the host.
+**Core weapon state types (in `Assets/FPSProject/Multiplayer/Core/Weapons/`, core assembly):**
 
-### 8. [PENDING] Add prediction deduplication, deterministic spread, and all four weapon behaviors including Police buckshot.
+- `ReloadState.cs` — enum: `None`, `Reloading`.
+- `PlayerLifeState.cs` — enum: `Alive`, `Dead`, `Respawning`.
+- `WeaponAmmoState.cs` — `INetworkSerializable, IEquatable<WeaponAmmoState>`: WeaponId, CurrentAmmo, Capacity.
+- `NetworkWeaponCatalog.cs` — `ScriptableObject` with `List<NetworkWeaponEntry>`. Each entry has stable `weaponId`, `displayName`, `tacticalWeaponPrefab`, `magazineCapacity`, `fireRateRpm`, `supportsSemi/Burst/Auto`, `burstRounds`, `isShotgun`, `pelletCount`, and `NetworkWeaponBallistics` (damage, maxRange, hitMask, hip/ads spread, tracer, impact library). `OnValidate()` rejects duplicate/zero IDs, bad capacities, no fire modes, ADS > hip spread. `TryGetEntry`, `IndexOf`, `Contains`, `AddEntry` (test-only), `ClearEntries` (test-only).
+- `NetworkWeaponBallistics` — serializable class: damage, maxRange, hitMask, triggerInteraction, hipSpreadDegrees, adsSpreadDegrees, tracerPrefab/speed/lifetime, impactEffectLibrary.
 
-### 9. [PENDING] Add lag-compensated historical capsule hit testing.
+**Catalog asset:** `Assets/FPSProject/Multiplayer/Core/Resources/NetworkWeaponCatalog.asset` — 4 entries:
+- ID 1 TR15: 32 mag, 600 RPM, Semi/Burst/Auto, hitscan, 25 dmg, 100 m, 1.5°/0.1° spread.
+- ID 2 WK-11 Viper: 26 mag, 450 RPM, Semi, hitscan, 30 dmg, 100 m, 1.2°/0.08°.
+- ID 3 Herrington 11-87 Police: 12 mag, 90 RPM, Semi, shotgun 8 pellets, 12 dmg/pellet, 50 m, 4°/2.5°.
+- ID 4 Mk14 EBR: 20 mag, 700 RPM, Semi/Auto, hitscan, 35 dmg, 120 m, 1.4°/0.1°.
+
+**Tactical Presentation adapters (Assembly-CSharp, under `Assets/Integrations/KINEMATION/Multiplayer/`):**
+
+- `INetworkTacticalWeaponPresentation.cs` — interface: `PlayNetworkFirePresentation`, `PlayNetworkReloadPresentation`, `PlayNetworkReloadEndPresentation`, `SetNetworkAmmo`, `SetNetworkFireMode`, `StopNetworkFiring`. Presentation-only; no ammo mutation or cadence scheduling.
+- `NetworkTacticalShooterPlayer.cs` — derives from `TacticalShooterPlayer`. `InitializeNetwork(catalog)` builds weapon-ID-to-Tactical-index map. `ApplyEquippedWeapon(ushort)` equips by index, bypassing next/previous cycling. `GetActiveNetworkWeaponPresentation()` returns the equipped weapon's `INetworkTacticalWeaponPresentation`.
+- `NetworkTacticalShooterWeapon.cs` — derives from `TacticalShooterWeapon`, implements `INetworkTacticalWeaponPresentation`. Fire/reload presentation mirrors the vendor path but stops before ammo decrement and `Invoke` cadence.
+- `NetworkTacticalShotgun.cs` — derives from `TacticalShotgun`, implements `INetworkTacticalWeaponPresentation`. Per-shell reload loop presentation driven by host-authoritative reload state.
+
+**Networked weapon prefab variants (in `Assets/FPSProject/Multiplayer/Prefabs/Weapons/`):**
+
+- `W_TR15_Network.prefab`, `W_WK-11_Viper_Network.prefab`, `W_Herrington_11-87_Police_Network.prefab`, `W_Mk14EBR_Network.prefab` — prefab variants of the vendor weapons with the script component swapped to the networked subclass. Serialized fields preserved.
+
+**Persistent state (Assembly-CSharp adapter):**
+
+- `NetworkWeaponState.cs` — `NetworkBehaviour` on the player root. `NetworkVariable<ushort> EquippedWeaponId` (default 1), `NetworkVariable<FireMode> ActiveFireMode` (Semi), `NetworkVariable<ReloadState> ActiveReloadState` (None), `NetworkVariable<PlayerLifeState> LifeState` (Alive), `NetworkList<WeaponAmmoState> AmmoState` (one per catalog entry, in catalog order). All Server-write, Everyone-read. `OnNetworkSpawn` initializes the server list, applies current state to presentation, then subscribes to change callbacks. Server-side helpers: `ServerSetEquippedWeapon`, `ServerSetFireMode`, `ServerSetReloadState`, `ServerSetLifeState`, `ServerDecrementAmmo`, `ServerRefillAmmo`, `ServerRefillAllAmmo`, `ServerCheckAndRecordCadence`, `ServerResetForRespawn`. Client read helpers: `GetEquippedAmmo`, `GetEquippedCapacity`, `GetAmmoFor`.
+
+**Player prefab wiring (`MultiplayerWeaponStateBuilder.cs` editor tool, `Tools/FPSProject/Build Multiplayer Weapon State (Step 6)`):**
+
+- Replaces vendor `TacticalShooterPlayer` with `NetworkTacticalShooterPlayer` (serialized fields preserved).
+- Swaps the `weaponPrefabs` array entries that have networked variants.
+- Adds `NetworkWeaponState` to the root, wires the catalog reference.
+- Wires `NetworkCasPlayer.tacticalPlayer` and `NetworkCasPlayer.weaponState`.
+
+**NetworkCasPlayer weapon state integration:**
+
+- `OnNetworkSpawn` resolves `tacticalPlayer` and `weaponState`, subscribes to `EquippedWeaponId`, `ActiveFireMode`, `ActiveReloadState`, `LifeState`, and `AmmoState` change callbacks.
+- `InitializeTacticalPresentation` coroutine calls `tacticalPlayer.InitializeNetwork(catalog)` after the vendor Start populates the weapon list, then applies the current equipped weapon, ammo, and fire mode so late joiners see the correct state.
+- Change handlers drive ID-based Tactical presentation: `ApplyEquippedWeaponPresentation`, `ApplyCurrentAmmoPresentation`, `ApplyCurrentFireModePresentation`.
+
+**Tests:** `NetworkWeaponCatalogTests` (10 tests) — catalog lookup, ID uniqueness, capacity/fire-mode defaults, Resources asset has 4 plan weapons with correct defaults, ADS spread <= hip spread, `WeaponAmmoState` equality/hash. All 65 EditMode tests pass.
+
+### 7. [DONE] Add the offline/network/server shot router and prove damage can execute only on the host.
+
+**Core contracts (in `Assets/FPSProject/Multiplayer/Core/Weapons/`):**
+
+- `IWeaponShotRouter.cs` — interface with `SubmitShot(in WeaponShotRequest, weaponId, shotSequence, networkTick, aimYaw, aimPitch, isAiming)`. Routes a local shot from `WeaponProp.SubmitCombatShot()` based on network role.
+- `NetworkShotCommand.cs` — `INetworkSerializable`: WeaponId, ShotSequence, NetworkTick, AimYaw, AimPitch, AimDirection (normalized), IsAiming. No damage/ammo/prefab/hit fields.
+- `NetworkShotResult.cs` — `INetworkSerializable`: WeaponId, ShotSequence, ShooterClientId, MuzzlePosition, ImpactCount, and 8 fixed `NetworkShotImpact` fields (Impact0..Impact7). `NetworkShotImpact` has Point, Normal, HitTargetNetworkId, IsPlayerHit. Capacity = 8.
+
+**WeaponCombatRuntime refactor (`Assets/FPSProject/Combat/Runtime/WeaponCombatRuntime.cs`):**
+
+- `SubmitShot(in WeaponShotRequest)` remains as the offline facade, now calling `ResolveAuthoritativeShot` then `PlayShotResult`.
+- `ResolveAuthoritativeShot(in WeaponShotRequest)` returns `AuthoritativeShotResult` (muzzle, endpoint, hasHit, hit) and applies damage exactly once via `ResolveContact`. Does not require a local Camera; the caller supplies camera origin/direction.
+- `PlayShotResult(in WeaponShotRequest, in AuthoritativeShotResult)` spawns tracers and impacts without applying damage. Call this on every client for presentation.
+- `ResolveHitscanRay(in WeaponShotRequest, cameraOrigin, spreadDirection, muzzlePosition)` — single-ray resolution with caller-supplied spread direction, for the deterministic spread path.
+
+**Shot routers (Assembly-CSharp adapter):**
+
+- `OfflineWeaponShotRouter.cs` — `MonoBehaviour, IWeaponShotRouter`. Forwards to `WeaponCombatRuntime.SubmitShot` locally. Preserves offline behavior.
+- `NetworkWeaponShotRouter.cs` — `MonoBehaviour, IWeaponShotRouter`. Owner-side: increments shot sequence, plays predicted one-frame presentation, caches it by sequence, sends `NetworkShotCommand` via `SubmitShotServerRpc` (unreliable, RequireOwnership). Never applies local damage. `OnShotResult` dedupes predicted presentation on the owner and plays third-person fire + tracer/impact on non-owners. `ClearPredictedShots` for respawn.
+- `NetworkWeaponPropBridge.cs` — `NetworkBehaviour`. Owner-only. Pushes the current equipped weapon ID, network tick, and aim flag into every CAS `WeaponProp` every frame so `SubmitCombatShot` carries the correct values to the router.
+
+**WeaponProp routing (`Assets/CAS Demo/Scripts/FPS/WeaponProp.cs`):**
+
+- Added `_shotRouter`, `_networkWeaponId`, `_networkTick`, `_isAimingForRouter` fields.
+- `SetShotRouter`, `SetNetworkWeaponId`, `SetNetworkTick`, `SetNetworkAiming` public setters for the adapter.
+- `SubmitCombatShot` now routes through `IWeaponShotRouter` when present, falling back to direct `WeaponCombatRuntime.SubmitShot` when no router is set (offline compatibility).
+
+**Host-side authoritative resolution (`NetworkCasPlayer.HostResolveShot`):**
+
+- Validates: sender owns this player, shot sequence is newer than last accepted, player is alive, requested weapon is currently equipped, weapon ID is in the catalog, cadence has elapsed, ammunition is available. Rejects stale/duplicate/empty.
+- Decrements authoritative ammo, records cadence, reconstructs a trusted `WeaponShotRequest` from the catalog (not the owner's local CAS settings), and resolves via `WeaponCombatRuntime.ResolveHitscanRay`.
+- Broadcasts `NetworkShotResult` via `BroadcastShotResultClientRpc` (unreliable).
+
+**Player prefab:** Step 6 builder adds `NetworkWeaponShotRouter` and `NetworkWeaponPropBridge` to the root.
+
+**Tests:** `NetworkShotCommandTests`/`NetworkShotResultTests` (5 tests) — FastBufferWriter/Reader round trips for all fields, 8-impact round trip, command does not carry damage/ammo/prefab fields, Capacity == 8.
+
+### 8. [DONE] Add prediction deduplication, deterministic spread, and all four weapon behaviors including Police buckshot.
+
+**Deterministic spread (`Assets/FPSProject/Multiplayer/Core/Weapons/DeterministicShotRandom.cs`):**
+
+- `BuildSeed(shooterClientId, weaponId, shotSequence)` — xorshift-style 64-bit seed combine; never zero.
+- `SpreadCone(shooterClientId, weaponId, shotSequence, pelletIndex, baseDirection, halfAngleDegrees)` — xorshift64 PRNG seeded per (shooter, weapon, sequence, pellet), uniform disk distribution within the cone. Never mutates `UnityEngine.Random` state.
+
+**Host-side per-pellet resolution (`NetworkCasPlayer.HostResolveShot`):**
+
+- For each pellet (1 for hitscan, 8 for the Police shotgun), compute the deterministic spread direction via `DeterministicShotRandom.SpreadCone`.
+- Resolve each pellet via `WeaponCombatRuntime.ResolveHitscanRay` with the spread-adjusted direction.
+- Shotgun rules: single-pellet-per-target (tracked via `_shotgunDamagedTargetsThisShot` HashSet<NetworkObjectId>), total close-range damage capped at 96 (8 * 12), separate pellets may each apply damage up to the cap.
+- `NetworkShotResult` carries up to 8 `NetworkShotImpact` entries.
+
+**Prediction deduplication (`NetworkWeaponShotRouter`):**
+
+- `SubmitShot` plays predicted one-frame presentation (recoil, muzzle flash, casing, fire animation, fire audio) via `INetworkTacticalWeaponPresentation.PlayNetworkFirePresentation` on the owner immediately, and caches by shot sequence.
+- `OnShotResult`: owner removes the prediction from the cache (no replay). Non-owners play third-person fire presentation plus tracer/impact. Every client plays the authoritative tracer/impact via `PlayShotResultPresentation`.
+- CAS's shared recoil response runs once per local predicted shot on the owner. Tactical presentation methods do not invoke a second shared recoil or camera-shake path.
+
+**Tests:** `DeterministicShotRandomTests` (11 tests) — seed determinism/difference, zero-angle returns normalized base, spread stays within cone, normalized output, does not mutate Unity Random state. All 65 EditMode tests pass.
+
+### 9. [DONE] Add lag-compensated historical capsule hit testing.
+
+**Hitbox history (`Assets/FPSProject/Multiplayer/Core/Weapons/NetworkHitboxHistory.cs`):**
+
+- `HitboxPoseSample` struct: Time, Position, BodyYaw, CapsuleCenter, CapsuleHeight, CapsuleRadius, IsCrouching.
+- `HistoricalCapsule` struct: Top, Bottom, Radius, Center, Height.
+- `NetworkHitboxHistory` class: rolling buffer sized by `rewindDuration` (250 ms default). `Record(time, sample)` maintains ascending order and prunes. `TryGetCapsule(time, out capsule)` interpolates between bracketing samples, rejects times outside the window. `IsTimeInWindow` helper.
+- `RaycastCapsule(rayOrigin, rayDirection, capsule, maxDistance, out hitDistance)` — analytical ray-vs-capsule intersection. Solves the 2x2 closest-approach system, clamps the axis parameter to the segment, computes the entry distance from the perpendicular distance and chord. Falls back to sphere intersection for a degenerate axis. No allocations, no live `CharacterController` movement.
+
+**Host-side integration (`NetworkCasPlayer`):**
+
+- `_hostHitboxHistories: Dictionary<ulong clientId, NetworkHitboxHistory>` — one per remote player, sized by `tuning.rewindDuration`.
+- `RecordHitboxHistory(clientId, sample)` — called from `HostValidateAndApply` on every accepted motion sample. Records position, body yaw, capsule center/height/radius (crouch reduces height by `crouchSpeedMultiplier`).
+- `TryGetHistoricalCapsule(targetClientId, hostTime, out capsule)` — interpolates a target's capsule at the given host time.
+- `TryHitHistoricalPlayer(rayOrigin, rayDirection, maxDistance, hostTime, shooterClientId, out hitNetworkObjectId, out hitDistance, out hitPoint)` — tests the ray against every living player's historical capsule (excluding the shooter), returns the closest hit. Resolves environment obstruction against the current host physics world via `Physics.Raycast`; a historical player hit is valid only when closer than the current-time environment obstruction.
+- `ClientTickToHostTime(clientTick)` — maps the owner's network tick to host network time using the tick delta and `NetworkConfig.TickRate`.
+- `ApplyDamageToHistoricalTarget(networkObjectId, damage, hitPoint, travelDirection)` — looks up the spawned NetworkObject by ID and applies damage to its `IDamageable` exactly once.
+
+**Shot resolution wiring (`HostResolveShot`):**
+
+- Shot tick age validation: rejects shots in the future (with 50 ms tolerance) or older than `tuning.rewindDuration` (250 ms), rather than clamping to the oldest pose.
+- Per pellet: first calls `TryHitHistoricalPlayer` at the mapped host time. If a player hit is found, applies damage to the historical target and records the impact. If no player hit, falls back to environment hitscan at current host time.
+
+**Tests:** `NetworkHitboxHistoryTests` (14 tests) — empty history, record/retrieve, pruning, window rejection, interpolation, clear, analytical ray-vs-capsule hits (center/degenerate, cylinder, top/bottom sphere), miss when off-axis, max-distance respect, origin-inside returns zero. All 65 EditMode tests pass.
 
 ### 10. [PENDING] Add health, death, spawn selection, and respawn.
 
