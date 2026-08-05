@@ -5,11 +5,11 @@ import {
     MainMenuScreen,
     SettingsPanel,
     type MenuSettings,
-} from "../../../../FortressLevel/OutDoorScene_URP_OneJS/OneJS UI/~/menus"
+} from "./menus"
 import {
     applySettings,
     readSettings,
-} from "../../../../FortressLevel/OutDoorScene_URP_OneJS/OneJS UI/~/settings-bridge"
+} from "./settings-bridge"
 
 const RuntimeCS = (globalThis as any).CS
 
@@ -32,7 +32,7 @@ function App() {
     const startOperations = () => {
         if (!__isPlaying) return
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterGameplayMode()
-        RuntimeCS.UnityEngine.SceneManagement.SceneManager.LoadScene("OutDoorScene_URP_OneJS")
+        RuntimeCS.UnityEngine.SceneManagement.SceneManager.LoadScene("OperationsDemo")
     }
 
     const quit = () => {

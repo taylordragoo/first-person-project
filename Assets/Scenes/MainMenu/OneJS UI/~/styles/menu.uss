@@ -1,0 +1,426 @@
+.ps-main-menu,
+.ps-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.ps-menu-background,
+.ps-menu-shade,
+.ps-pause-shade,
+.ps-settings-dismiss {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.ps-menu-background {
+    opacity: 1;
+}
+
+.ps-menu-shade {
+    background-color: rgba(0, 0, 0, 0.22);
+}
+
+.ps-menu-nav {
+    position: absolute;
+    left: 52px;
+    bottom: 104px;
+    width: 560px;
+}
+
+.ps-menu-logo {
+    height: 56px;
+    padding-left: 16px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.ps-menu-logo-part {
+    flex-shrink: 0;
+    margin-right: 12px;
+    color: rgb(232, 200, 160);
+    font-size: 42px;
+    letter-spacing: 3px;
+    -unity-font-style: normal;
+}
+
+.ps-orange {
+    color: rgb(255, 107, 0);
+}
+
+.ps-menu-actions,
+.ps-pause-actions {
+    align-items: flex-start;
+}
+
+.ps-menu-action {
+    width: 280px;
+    height: 42px;
+    margin-top: 2px;
+    padding-left: 16px;
+    border-width: 0;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(224, 90, 0);
+    font-size: 27px;
+    letter-spacing: 2px;
+    -unity-text-align: middle-left;
+}
+
+.ps-menu-action:hover,
+.ps-menu-action:focus {
+    background-color: rgba(224, 90, 0, 0.2);
+    color: white;
+}
+
+.ps-menu-action:active {
+    color: rgb(122, 48, 0);
+}
+
+.ps-menu-action--compact {
+    width: 300px;
+    height: 34px;
+    font-size: 21px;
+}
+
+.ps-menu-build {
+    position: absolute;
+    right: 18px;
+    bottom: 14px;
+    color: rgba(232, 200, 160, 0.5);
+    font-size: 10px;
+    letter-spacing: 1.4px;
+}
+
+.ps-overlay {
+    align-items: center;
+    justify-content: center;
+}
+
+.ps-pause-shade {
+    background-color: rgba(3, 3, 3, 0.76);
+}
+
+.ps-pause-card {
+    width: 390px;
+    padding-top: 28px;
+    padding-right: 34px;
+    padding-bottom: 25px;
+    padding-left: 34px;
+    border-left-width: 2px;
+    border-left-color: rgb(224, 90, 0);
+    background-color: rgba(15, 13, 12, 0.96);
+}
+
+.ps-kicker {
+    color: rgb(122, 96, 80);
+    font-size: 10px;
+    letter-spacing: 2.3px;
+    -unity-font-style: bold;
+}
+
+.ps-pause-title {
+    height: 48px;
+    margin-top: 5px;
+    color: rgb(232, 200, 160);
+    font-size: 31px;
+    letter-spacing: 2px;
+}
+
+.ps-pause-actions {
+    margin-left: -16px;
+}
+
+.ps-pause-hint {
+    margin-top: 22px;
+    color: rgb(122, 96, 80);
+    font-size: 9px;
+    letter-spacing: 1.8px;
+}
+
+.ps-settings-overlay {
+    background-color: rgba(3, 3, 3, 0.67);
+}
+
+.ps-settings-dismiss {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.ps-settings-panel {
+    width: 760px;
+    height: 560px;
+    border-width: 1px;
+    border-color: rgba(122, 96, 80, 0.58);
+    background-color: rgb(22, 22, 22);
+}
+
+.ps-settings-header {
+    height: 78px;
+    padding-right: 20px;
+    padding-left: 20px;
+    flex-direction: row;
+    align-items: center;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(122, 96, 80, 0.36);
+    background-color: rgb(30, 30, 30);
+}
+
+.ps-title-mark {
+    width: 18px;
+    height: 18px;
+    margin-right: 13px;
+    rotate: 45deg;
+    border-width: 3px;
+    border-color: rgb(255, 107, 0);
+    background-color: rgb(86, 31, 0);
+}
+
+.ps-settings-heading {
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.ps-settings-title {
+    margin-top: 3px;
+    color: rgb(224, 90, 0);
+    font-size: 22px;
+    letter-spacing: 1.7px;
+}
+
+.ps-settings-close {
+    width: 38px;
+    height: 38px;
+    padding-bottom: 4px;
+    border-width: 0;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(122, 96, 80);
+    font-size: 27px;
+}
+
+.ps-settings-close:hover,
+.ps-settings-close:focus {
+    color: rgb(255, 107, 0);
+}
+
+.ps-settings-body {
+    height: 414px;
+    flex-direction: row;
+}
+
+.ps-settings-tabs {
+    width: 155px;
+    border-right-width: 1px;
+    border-right-color: rgba(122, 96, 80, 0.34);
+    background-color: rgb(16, 16, 16);
+}
+
+.ps-settings-tab {
+    height: 50px;
+    padding-left: 18px;
+    border-width: 0;
+    border-left-width: 3px;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(122, 96, 80);
+    font-size: 12px;
+    letter-spacing: 1.4px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+}
+
+.ps-settings-tab:hover,
+.ps-settings-tab:focus,
+.ps-settings-tab--active {
+    border-left-color: rgb(224, 90, 0);
+    background-color: rgb(22, 22, 22);
+    color: rgb(224, 90, 0);
+}
+
+.ps-settings-content {
+    padding-top: 25px;
+    padding-right: 28px;
+    padding-bottom: 25px;
+    padding-left: 28px;
+    flex-grow: 1;
+}
+
+.ps-settings-section {
+    flex-grow: 1;
+}
+
+.ps-section-heading {
+    height: 42px;
+}
+
+.ps-section-title {
+    color: rgb(212, 160, 48);
+    font-size: 13px;
+    letter-spacing: 2px;
+}
+
+.ps-section-line {
+    height: 1px;
+    margin-top: 10px;
+    background-color: rgba(122, 96, 80, 0.28);
+}
+
+.ps-setting-row {
+    min-height: 58px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.ps-setting-label {
+    width: 170px;
+    color: rgb(232, 200, 160);
+    font-size: 15px;
+}
+
+.ps-setting-value {
+    width: 52px;
+    margin-left: 12px;
+    color: rgb(224, 90, 0);
+    font-size: 12px;
+    -unity-text-align: middle-right;
+}
+
+.ps-slider {
+    width: 270px;
+    height: 24px;
+}
+
+.ps-slider .unity-base-slider__tracker {
+    height: 4px;
+    border-width: 0;
+    background-color: rgb(51, 51, 51);
+}
+
+.ps-slider .unity-base-slider__dragger {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+    border-color: rgb(224, 90, 0);
+    border-radius: 8px;
+    background-color: rgb(255, 107, 0);
+}
+
+.ps-resolution-control,
+.ps-state-group {
+    height: 38px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.ps-resolution-control {
+    width: 360px;
+    border-width: 1px;
+    border-color: rgb(51, 51, 51);
+    background-color: rgb(51, 51, 51);
+}
+
+.ps-resolution-value {
+    width: 270px;
+    color: rgb(224, 90, 0);
+    font-size: 13px;
+    -unity-text-align: middle-center;
+}
+
+.ps-arrow-button {
+    width: 44px;
+    height: 36px;
+    padding-bottom: 4px;
+    border-width: 0;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(122, 96, 80);
+    font-size: 25px;
+}
+
+.ps-arrow-button:hover,
+.ps-arrow-button:focus {
+    color: rgb(255, 107, 0);
+}
+
+.ps-state-button {
+    min-width: 86px;
+    height: 36px;
+    margin-right: 8px;
+    padding-right: 12px;
+    padding-left: 12px;
+    border-width: 1px;
+    border-color: rgb(51, 51, 51);
+    border-radius: 0;
+    background-color: rgb(51, 51, 51);
+    color: rgb(122, 96, 80);
+    font-size: 11px;
+    letter-spacing: 1px;
+    -unity-font-style: bold;
+}
+
+.ps-state-button:hover,
+.ps-state-button:focus,
+.ps-state-button--active {
+    border-color: rgb(224, 90, 0);
+    color: rgb(255, 107, 0);
+}
+
+.ps-state-button--active {
+    background-color: rgb(67, 26, 3);
+}
+
+.ps-settings-footer {
+    height: 68px;
+    padding-right: 20px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    border-top-width: 1px;
+    border-top-color: rgba(122, 96, 80, 0.36);
+    background-color: rgb(30, 30, 30);
+}
+
+.ps-footer-button {
+    min-width: 88px;
+    height: 38px;
+    margin-left: 10px;
+    padding-right: 16px;
+    padding-left: 16px;
+    border-width: 1px;
+    border-color: rgba(122, 96, 80, 0.5);
+    border-radius: 0;
+    background-color: rgb(51, 51, 51);
+    color: rgb(122, 96, 80);
+    font-size: 11px;
+    letter-spacing: 1.3px;
+    -unity-font-style: bold;
+}
+
+.ps-footer-button:hover,
+.ps-footer-button:focus {
+    border-color: rgb(122, 96, 80);
+    color: white;
+}
+
+.ps-footer-button--outline {
+    color: rgb(224, 90, 0);
+}
+
+.ps-footer-button--primary {
+    border-color: rgb(224, 90, 0);
+    background-color: rgb(255, 107, 0);
+    color: rgb(57, 18, 0);
+}
+
+.ps-footer-button--primary:hover,
+.ps-footer-button--primary:focus {
+    background-color: rgb(255, 129, 43);
+    color: black;
+}
