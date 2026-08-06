@@ -47,7 +47,9 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         {
             if (!_initialized || _shotRouter == null || _networkCasPlayer == null) return;
 
-            int tick = NetworkManager != null ? (int)NetworkManager.LocalTime.Tick : 0;
+            // LocalTime is prediction-ahead on clients. Shots must use the synchronized
+            // ServerTime timeline so the host does not reject remote-owner shots as future.
+            int tick = NetworkManager != null ? (int)NetworkManager.ServerTime.Tick : 0;
             bool isAiming = _networkCasPlayer.Controller != null && _networkCasPlayer.Controller.IsAiming;
             ushort equippedId = _networkCasPlayer.WeaponState != null
                 ? _networkCasPlayer.WeaponState.EquippedWeaponId.Value

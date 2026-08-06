@@ -262,7 +262,10 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 _timeSinceLastOwnerSample = 0f;
                 _ownerSequence++;
 
-                int networkTick = (int)NetworkManager.LocalTime.Tick;
+                // LocalTime intentionally runs ahead on NGO clients to support prediction.
+                // Motion validation compares against the host's ServerTime, so submitting a
+                // LocalTime tick makes every non-host owner appear future-dated over Relay.
+                int networkTick = (int)NetworkManager.ServerTime.Tick;
                 OwnerMotionSample sample = controller.CaptureOwnerMotionSample(_ownerSequence, networkTick);
                 SubmitMotionSampleServerRpc(sample);
             }
@@ -371,7 +374,10 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             }
 
             // Accepted: update host state and record the accepted proxy state.
-            uint acceptedSeq = state.LastAcceptedSequence + 1;
+            // Preserve the owner's sequence. Unreliable delivery can skip packets; rewriting
+            // a received sequence as last + 1 would allow a delayed older packet to pass the
+            // stale check and move the proxy backwards.
+            uint acceptedSeq = sample.Sequence;
             ProxyPresentationState proxy = BuildProxyFromSample(sample, acceptedSeq, _isAlive);
 
             state.LastAcceptedPosition = sample.Position;
@@ -844,11 +850,9 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         public float ClientTickToHostTime(int clientTick)
         {
             if (NetworkManager == null) return 0f;
-            // The client's local tick maps to the host's server time at the moment the shot was
-            // taken. NGO's NetworkTime provides the server time at the local client's tick
-            // through ServerTime.Tick; for a remote client, we approximate by converting the
-            // client tick to a server time using the round-trip time. For the vertical slice we
-            // use the server time minus the rewind offset derived from the client tick delta.
+            // Owners submit a tick from their synchronized ServerTime timeline. Convert the
+            // difference between that captured tick and the host's current server tick into a
+            // rewind offset for lag-compensated hit resolution.
             int serverTick = (int)NetworkManager.ServerTime.Tick;
             int deltaTicks = serverTick - clientTick;
             float tickInterval = 1f / NetworkManager.NetworkConfig.TickRate;

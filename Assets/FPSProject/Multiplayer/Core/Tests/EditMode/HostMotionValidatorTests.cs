@@ -136,6 +136,20 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
         }
 
         [Test]
+        public void AcceptsPastSynchronizedServerTick()
+        {
+            // A remote owner captures the client's synchronized ServerTime tick. By the time
+            // the packet reaches the host it is expected to be behind the host's current tick.
+            var tuning = CreateTuning();
+            var ctx = CreateContext(tuning, Vector3.zero, 0.05f, currentTick: 100);
+            var sample = CreateSample(1, new Vector3(0.1f, 0f, 0f), tick: 95);
+
+            var result = HostMotionValidator.Validate(sample, ctx);
+            Assert.IsTrue(result.Accepted,
+                $"Synchronized past tick was rejected: {result.Reason} - {result.DebugMessage}");
+        }
+
+        [Test]
         public void RejectsOutOfWorldBounds()
         {
             var tuning = CreateTuning();

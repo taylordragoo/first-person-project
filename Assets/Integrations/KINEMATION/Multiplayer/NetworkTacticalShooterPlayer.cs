@@ -82,11 +82,17 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         {
             // _weapons and _activeWeaponIndex are protected on the base class.
             if (_weapons == null || index < 0 || index >= _weapons.Count) return;
-            if (_activeWeaponIndex == index) return;
 
-            GetActiveWeapon().HideWeapon();
-            _activeWeaponIndex = index;
-            EquipWeapon(false);
+            if (_activeWeaponIndex != index)
+            {
+                GetActiveWeapon().HideWeapon();
+                _activeWeaponIndex = index;
+                EquipWeapon(false);
+            }
+
+            // The vendor's non-animated Draw path updates settings but returns before restoring
+            // child visibility. Network equips are intentionally immediate, so restore it here.
+            GetActiveWeapon().RestoreWeaponVisibility();
         }
 
         /// <summary>Index of the currently-equipped Tactical weapon, or -1 if not initialized.</summary>

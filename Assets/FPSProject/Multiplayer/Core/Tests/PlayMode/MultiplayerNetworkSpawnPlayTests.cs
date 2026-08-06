@@ -167,6 +167,21 @@ namespace FPSProject.Multiplayer.PlayModeTests
             Assert.IsNotNull(tacticalPlayer);
             Assert.IsTrue(tacticalAnimation.enabled);
             Assert.IsTrue(tacticalPlayer.enabled);
+            AssertActiveWeaponVisible(tacticalPlayer);
+        }
+
+        private static void AssertActiveWeaponVisible(Behaviour tacticalPlayer)
+        {
+            object activeWeapon = tacticalPlayer.GetType()
+                .GetMethod("GetActiveWeapon")?.Invoke(tacticalPlayer, null);
+            Assert.IsNotNull(activeWeapon);
+
+            Component weaponComponent = activeWeapon as Component;
+            Assert.IsNotNull(weaponComponent);
+            Assert.Greater(weaponComponent.transform.childCount, 0);
+            Assert.IsTrue(weaponComponent.transform.Cast<Transform>()
+                    .Any(child => child.gameObject.activeSelf),
+                "The authoritative equipped Tactical weapon has no visible child objects.");
         }
 
         private static Behaviour FindBehaviour(GameObject root, string typeName, bool rootOnly)
