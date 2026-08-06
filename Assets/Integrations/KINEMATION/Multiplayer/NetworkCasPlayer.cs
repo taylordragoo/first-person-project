@@ -1168,17 +1168,17 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         }
 
         /// <summary>Called by the health/respawn system when the player respawns.</summary>
-        public void NotifyRespawn(Vector3 spawnPosition)
+        public void NotifyRespawn(Vector3 spawnPosition, Quaternion spawnRotation)
         {
             _isAlive = true;
             if (IsOwner)
             {
-                controller.transform.position = spawnPosition;
+                controller.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
                 controller.SetSimulationMode(PlayerSimulationMode.LocalOwner);
             }
             else
             {
-                controller.transform.position = spawnPosition;
+                controller.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
                 controller.ResetProxyState();
                 controller.SetSimulationMode(PlayerSimulationMode.RemoteProxy);
                 _proxyBuffer?.Clear(ProxyInterpolationBuffer.ClearReason.Respawn);

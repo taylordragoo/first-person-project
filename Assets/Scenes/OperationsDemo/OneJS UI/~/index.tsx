@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { render, Text, useFrameSync, useThrottledSync, View } from "onejs-react"
+import { Button, render, Text, useFrameSync, useThrottledSync, View } from "onejs-react"
 import {
     cloneMenuSettings,
     PauseMenuOverlay,
@@ -634,10 +634,115 @@ function isPaused(): boolean {
     }
 }
 
+type MultiplayerSessionData = {
+    active: boolean
+    state: string
+    joinCode: string
+    error: string
+    players: number
+    host: boolean
+}
+
+const offlineSession: MultiplayerSessionData = {
+    active: false,
+    state: "OFFLINE",
+    joinCode: "",
+    error: "",
+    players: 0,
+    host: false,
+}
+
+function readMultiplayerSessionSnapshot(): string {
+    if (!__isPlaying) return JSON.stringify(offlineSession)
+
+    try {
+        return String(RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.ReadSessionSnapshot())
+    } catch {
+        return JSON.stringify(offlineSession)
+    }
+}
+
+function decodeMultiplayerSessionSnapshot(snapshot: string): MultiplayerSessionData {
+    try {
+        return { ...offlineSession, ...JSON.parse(snapshot) }
+    } catch {
+        return offlineSession
+    }
+}
+
+function MultiplayerSessionPanel({ session }: { session: MultiplayerSessionData }) {
+    if (!session.active) return null
+
+    const copyCode = () => {
+        RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.CopyJoinCode()
+    }
+
+    return (
+        <View
+            name="multiplayer-session-status"
+            style={{
+                position: "absolute",
+                top: 28,
+                right: 58,
+                width: 310,
+                paddingTop: 13,
+                paddingRight: 15,
+                paddingBottom: 13,
+                paddingLeft: 15,
+                borderLeftWidth: 2,
+                borderLeftColor: session.error ? "rgb(255, 104, 78)" : colors.orange,
+                backgroundColor: colors.darkSolid,
+            }}
+        >
+            <HudText text="MULTIPLAYER // UNITY RELAY" size={10} color={colors.orange} tracking={1.6} />
+            <HudText text={session.state} size={16} color={session.error ? "rgb(255, 104, 78)" : colors.white} tracking={1.3} />
+            {session.joinCode && (
+                <>
+                    <HudText text={`JOIN CODE  ${session.joinCode}`} size={20} color={colors.cyanBright} tracking={2.2} />
+                    {session.host && (
+                        <Button
+                            text="COPY JOIN CODE"
+                            onClick={copyCode}
+                            style={{
+                                height: 30,
+                                marginTop: 7,
+                                borderWidth: 1,
+                                borderColor: colors.cyanLine,
+                                borderRadius: 0,
+                                backgroundColor: colors.cyanSoft,
+                                color: colors.cyanBright,
+                                fontSize: 10,
+                                letterSpacing: 1.1,
+                            }}
+                        />
+                    )}
+                </>
+            )}
+            {session.players > 0 && (
+                <HudText text={`PLAYERS  ${session.players}`} size={10} color={colors.green} tracking={1.2} />
+            )}
+            {session.error && (
+                <Text
+                    text={session.error}
+                    pickingMode="Ignore"
+                    style={{
+                        marginTop: 6,
+                        color: "rgb(255, 150, 130)",
+                        fontSize: 10,
+                        whiteSpace: "normal",
+                    }}
+                />
+            )}
+        </View>
+    )
+}
+
 function App() {
     const paused = useFrameSync(isPaused, [])
     const weaponSnapshot = useThrottledSync(readWeaponHudSnapshot, 50)
     const weaponHud = decodeWeaponHudSnapshot(weaponSnapshot)
+    const sessionSnapshot = useThrottledSync(readMultiplayerSessionSnapshot, 100)
+    const multiplayerSession = decodeMultiplayerSessionSnapshot(sessionSnapshot)
     const [showSettings, setShowSettings] = useState(false)
     const [draft, setDraft] = useState<MenuSettings>(() => readSettings())
     const [defaults, setDefaults] = useState<MenuSettings>(() => readSettings(true))
@@ -667,7 +772,7 @@ function App() {
     const returnToMainMenu = () => {
         if (!__isPlaying) return
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode()
-        RuntimeCS.UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu")
+        RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.ReturnToMainMenu()
     }
 
     const quit = () => {
@@ -683,6 +788,7 @@ function App() {
                     <AmmoCounter weapon={weaponHud} />
                 </>
             )}
+            <MultiplayerSessionPanel session={multiplayerSession} />
             {paused && !showSettings && (
                 <PauseMenuOverlay
                     onResume={resume}

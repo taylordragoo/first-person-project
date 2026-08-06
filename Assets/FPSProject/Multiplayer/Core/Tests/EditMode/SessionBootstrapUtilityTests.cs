@@ -34,5 +34,13 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
             Assert.AreEqual(8, SessionBootstrapUtility.GetPositiveCommandLineInt(
                 args, "-fpsProfilePlayers", 2));
         }
+
+        [Test]
+        public void MultiplayerMenuBridge_RejectsEmptyJoinCodeBeforeLoadingScene()
+        {
+            Assert.IsFalse(MultiplayerMenuBridge.LaunchClient("  "));
+            Assert.AreEqual("Enter a session code before joining.",
+                MultiplayerMenuBridge.LastError);
+        }
     }
 }

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Button, Image, Slider, Text, View } from "onejs-react"
+import { Button, Image, Slider, Text, TextField, View } from "onejs-react"
 import menuStyles from "./styles/menu.uss"
 
 compileStyleSheet(menuStyles, "project-sapphire-menu.uss")
@@ -77,10 +77,12 @@ function MenuAction({ text, onClick, compact = false }: { text: string, onClick:
 
 export function MainMenuScreen({
     onOperations,
+    onMultiplayer,
     onSettings,
     onQuit,
 }: {
     onOperations: () => void
+    onMultiplayer: () => void
     onSettings: () => void
     onQuit: () => void
 }) {
@@ -95,11 +97,70 @@ export function MainMenuScreen({
                 </View>
                 <View className="ps-menu-actions">
                     <MenuAction text="OPERATIONS" onClick={onOperations} />
+                    <MenuAction text="MULTIPLAYER" onClick={onMultiplayer} />
                     <MenuAction text="SETTINGS" onClick={onSettings} />
                     <MenuAction text="QUIT" onClick={onQuit} />
                 </View>
             </View>
             <PixelText text="TACTICAL OPERATIONS SYSTEM  //  BUILD 01" className="ps-menu-build" />
+        </View>
+    )
+}
+
+export function MultiplayerPanel({
+    joinCode,
+    error,
+    onJoinCodeChange,
+    onHost,
+    onJoin,
+    onClose,
+}: {
+    joinCode: string
+    error: string
+    onJoinCodeChange: (code: string) => void
+    onHost: () => void
+    onJoin: () => void
+    onClose: () => void
+}) {
+    return (
+        <View name="project-sapphire-multiplayer" className="ps-overlay ps-multiplayer-overlay">
+            <View className="ps-settings-dismiss" onClick={onClose} />
+            <View className="ps-multiplayer-panel">
+                <View className="ps-settings-header">
+                    <View className="ps-title-mark" pickingMode="Ignore" />
+                    <View className="ps-settings-heading" pickingMode="Ignore">
+                        <PixelText text="UNITY RELAY" className="ps-kicker" />
+                        <PixelText text="MULTIPLAYER OPERATION" className="ps-settings-title" />
+                    </View>
+                    <Button text="×" className="ps-settings-close" onClick={onClose} />
+                </View>
+                <View className="ps-multiplayer-body">
+                    <View className="ps-multiplayer-section">
+                        <PixelText text="HOST" className="ps-section-title" />
+                        <PixelText
+                            text="Create a Relay session. Share the code shown in-game with other players."
+                            className="ps-multiplayer-copy"
+                        />
+                        <Button text="HOST OPERATION" className="ps-multiplayer-primary" onClick={onHost} />
+                    </View>
+                    <View className="ps-multiplayer-divider" />
+                    <View className="ps-multiplayer-section">
+                        <PixelText text="JOIN" className="ps-section-title" />
+                        <PixelText text="Enter the host's session code." className="ps-multiplayer-copy" />
+                        <TextField
+                            value={joinCode}
+                            className="ps-join-code"
+                            onChange={(event) => onJoinCodeChange(String(event.value).toUpperCase())}
+                            style={{
+                                unityFont: menuFont,
+                                unityFontDefinition: menuFontDefinition,
+                            }}
+                        />
+                        <Button text="JOIN OPERATION" className="ps-multiplayer-primary" onClick={onJoin} />
+                    </View>
+                    {error && <PixelText text={error} className="ps-multiplayer-error" />}
+                </View>
+            </View>
         </View>
     )
 }

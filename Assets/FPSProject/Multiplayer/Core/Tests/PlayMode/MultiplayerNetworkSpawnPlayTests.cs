@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using FPSProject.Multiplayer.Core.Bootstrap;
+using FPSProject.Multiplayer.Core.Health;
 using NUnit.Framework;
 using Unity.Netcode;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace FPSProject.Multiplayer.PlayModeTests
     public class MultiplayerNetworkSpawnPlayTests
     {
         private const string TestSceneName = "MultiplayerTest";
+        private const string OperationsSceneName = "OperationsDemoMultiplayer";
 
         private NetworkManager _networkManager;
         private Scene _multiplayerScene;
@@ -31,17 +33,21 @@ namespace FPSProject.Multiplayer.PlayModeTests
         [UnityTearDown]
         public IEnumerator TearDown()
         {
-            if (_networkManager != null && _networkManager.IsListening)
+            NetworkManager[] managers = Object.FindObjectsByType<NetworkManager>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (NetworkManager manager in managers)
             {
-                _networkManager.Shutdown();
-                yield return null;
+                if (manager != null && manager.IsListening) manager.Shutdown();
             }
+            if (managers.Any(manager => manager != null && manager.IsListening)) yield return null;
 
-            if (_networkManager != null)
+            foreach (NetworkManager manager in managers)
             {
-                Object.Destroy(_networkManager.gameObject);
-                yield return null;
+                if (manager != null) Object.Destroy(manager.gameObject);
             }
+            if (managers.Length > 0) yield return null;
+
+            _networkManager = null;
 
             if (_multiplayerScene.IsValid() && _multiplayerScene.isLoaded)
             {
@@ -106,10 +112,97 @@ namespace FPSProject.Multiplayer.PlayModeTests
                 "DevSessionLauncher", rootOnly: true);
             Assert.IsNotNull(launcher);
 
-            GameObject spawnRoot = GameObject.Find("Network Spawn Points");
+            GameObject spawnRoot = _multiplayerScene.GetRootGameObjects()
+                .FirstOrDefault(root => root.name == "Network Spawn Points");
             Assert.IsNotNull(spawnRoot);
             Assert.AreEqual(8, spawnRoot.GetComponentsInChildren<Behaviour>(true)
                 .Count(component => component.GetType().Name == "NetworkSpawnPoint"));
+        }
+
+        [UnityTest]
+        public IEnumerator OperationsScene_HostSpawnsNetworkPlayerWithoutOfflinePlayers()
+        {
+            NetworkManager[] setupManagers = Object.FindObjectsByType<NetworkManager>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (NetworkManager setupManager in setupManagers)
+            {
+                Object.Destroy(setupManager.gameObject);
+            }
+            if (setupManagers.Length > 0) yield return null;
+
+            AsyncOperation load = SceneManager.LoadSceneAsync(
+                OperationsSceneName, LoadSceneMode.Single);
+            Assert.IsNotNull(load,
+                $"Could not load the '{OperationsSceneName}' scene from Build Settings.");
+            yield return load;
+
+            _multiplayerScene = SceneManager.GetSceneByName(OperationsSceneName);
+            Assert.IsTrue(_multiplayerScene.IsValid() && _multiplayerScene.isLoaded);
+            yield return null;
+
+            string[] rootNames = _multiplayerScene.GetRootGameObjects()
+                .Select(root => root.name)
+                .ToArray();
+            CollectionAssert.DoesNotContain(rootNames, "TAC_Player_Example_FPS");
+            CollectionAssert.DoesNotContain(rootNames, "CAS_Player_Example_FPS");
+
+            GameObject managerObject = Object
+                .FindObjectsByType<NetworkManager>(FindObjectsInactive.Include,
+                    FindObjectsSortMode.None)
+                .Select(manager => manager.gameObject)
+                .FirstOrDefault(candidate =>
+                    candidate.GetComponent<MultiplayerSceneLauncher>() != null);
+            Assert.IsNotNull(managerObject);
+            Assert.IsNotNull(FindBehaviour(managerObject,
+                "UnityServicesSessionBootstrap", rootOnly: true));
+            MultiplayerSceneLauncher sceneLauncher =
+                managerObject.GetComponent<MultiplayerSceneLauncher>();
+            Assert.IsNotNull(sceneLauncher);
+
+            GameObject spawnRoot = _multiplayerScene.GetRootGameObjects()
+                .FirstOrDefault(root => root.name == "Network Spawn Points");
+            Assert.IsNotNull(spawnRoot);
+            Assert.AreEqual(8, spawnRoot.GetComponentsInChildren<Behaviour>(true)
+                .Count(component => component.GetType().Name == "NetworkSpawnPoint"));
+
+            _networkManager = managerObject.GetComponent<NetworkManager>();
+            Assert.IsNotNull(_networkManager);
+            Assert.IsTrue(_networkManager.StartHost());
+
+            NetworkObject localPlayer = _networkManager.SpawnManager.GetLocalPlayerObject();
+            for (int frame = 0; frame < 30 && localPlayer == null; frame++)
+            {
+                yield return null;
+                localPlayer = _networkManager.SpawnManager.GetLocalPlayerObject();
+            }
+
+            Assert.IsNotNull(localPlayer);
+            Assert.IsTrue(sceneLauncher.TryGetAssignedSpawnPose(
+                _networkManager.LocalClientId, out Vector3 assignedPosition,
+                out Quaternion assignedRotation));
+            Assert.Less(Vector3.Distance(localPlayer.transform.position,
+                assignedPosition), 0.001f,
+                "Netcode must create the player at its assigned marker, not at the prefab pose.");
+            Assert.Less(Quaternion.Angle(localPlayer.transform.rotation,
+                assignedRotation), 0.01f);
+
+            NetworkSpawnPoint[] spawnPoints = Object
+                .FindObjectsByType<NetworkSpawnPoint>(FindObjectsSortMode.None);
+            Assert.IsTrue(spawnPoints.Any(point =>
+                    Vector3.Distance(point.Position, assignedPosition) < 0.001f),
+                "The server-assigned player position must come from a NetworkSpawnPoint.");
+
+            for (int frame = 0; frame < 5; frame++) yield return null;
+            Vector2 horizontalPlayer = new Vector2(localPlayer.transform.position.x,
+                localPlayer.transform.position.z);
+            Vector2 horizontalSpawn = new Vector2(assignedPosition.x, assignedPosition.z);
+            Assert.Less(Vector2.Distance(horizontalPlayer, horizontalSpawn), 0.1f,
+                "Player drifted away from its assigned spawn marker without input.");
+
+            Transform tacticalPresentation = localPlayer.transform.Find("Tactical Presentation");
+            Assert.IsNotNull(tacticalPresentation);
+            AssertFiniteHierarchy(tacticalPresentation);
+            AssertOwnerSystems(localPlayer.gameObject, tacticalPresentation.gameObject);
         }
 
         private static void AssertFiniteHierarchy(Transform root)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using FPSProject.Multiplayer.Core.Bootstrap;
 using FPSProject.Multiplayer.Core.Health;
 using FPSProject.Multiplayer.Core.Weapons;
 using Unity.Netcode;
@@ -145,7 +146,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
             if (!IsServer || !IsSpawned) yield break;
 
-            Vector3 spawnPosition = SelectRespawnPosition();
+            SelectRespawnPose(out Vector3 spawnPosition, out Quaternion spawnRotation);
 
             if (weaponState != null)
                 weaponState.ServerResetForRespawn(1);
@@ -155,7 +156,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
             ClearPredictedShotsClientRpc();
 
-            RespawnAtPositionClientRpc(spawnPosition);
+            ApplyServerSpawnPose(spawnPosition, spawnRotation);
+            RespawnAtPoseClientRpc(spawnPosition, spawnRotation);
             _respawnCoroutine = null;
         }
 
@@ -166,18 +168,35 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             yield return null;
 
             if (IsServer && IsSpawned)
-                RespawnAtPositionClientRpc(SelectRespawnPosition());
+            {
+                MultiplayerSceneLauncher launcher = MultiplayerSceneLauncher.Instance;
+                if (launcher == null || !launcher.TryGetAssignedSpawnPose(OwnerClientId,
+                        out Vector3 spawnPosition, out Quaternion spawnRotation))
+                {
+                    SelectRespawnPose(out spawnPosition, out spawnRotation);
+                }
+
+                ApplyServerSpawnPose(spawnPosition, spawnRotation);
+                RespawnAtPoseClientRpc(spawnPosition, spawnRotation);
+            }
 
             _initialSpawnCoroutine = null;
         }
 
         [ClientRpc]
-        private void RespawnAtPositionClientRpc(Vector3 spawnPosition)
+        private void RespawnAtPoseClientRpc(Vector3 spawnPosition,
+            Quaternion spawnRotation)
         {
             if (networkCasPlayer != null)
-                networkCasPlayer.NotifyRespawn(spawnPosition);
+                networkCasPlayer.NotifyRespawn(spawnPosition, spawnRotation);
 
             SetPlayerEnabled(true);
+        }
+
+        private void ApplyServerSpawnPose(Vector3 spawnPosition,
+            Quaternion spawnRotation)
+        {
+            transform.SetPositionAndRotation(spawnPosition, spawnRotation);
         }
 
         [ClientRpc]
@@ -187,7 +206,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 shotRouter.ClearPredictedShots();
         }
 
-        private Vector3 SelectRespawnPosition()
+        private void SelectRespawnPose(out Vector3 position, out Quaternion rotation)
         {
             var spawnPoints = new List<NetworkSpawnPoint>();
             var livingPositions = new List<Vector3>();
@@ -216,9 +235,14 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 spawnPoints, livingPositions);
 
             if (selected != null)
-                return selected.Position;
+            {
+                position = selected.Position;
+                rotation = selected.Rotation;
+                return;
+            }
 
-            return transform.position + Random.insideUnitSphere * 3f;
+            position = transform.position + Random.insideUnitSphere * 3f;
+            rotation = transform.rotation;
         }
     }
 }

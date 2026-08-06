@@ -424,3 +424,80 @@
     background-color: rgb(255, 129, 43);
     color: black;
 }
+
+.ps-multiplayer-overlay {
+    background-color: rgba(3, 3, 3, 0.72);
+}
+
+.ps-multiplayer-panel {
+    width: 690px;
+    min-height: 470px;
+    border-width: 1px;
+    border-color: rgba(122, 96, 80, 0.58);
+    background-color: rgb(22, 22, 22);
+}
+
+.ps-multiplayer-body {
+    padding-top: 28px;
+    padding-right: 30px;
+    padding-bottom: 26px;
+    padding-left: 30px;
+}
+
+.ps-multiplayer-section {
+    min-height: 130px;
+}
+
+.ps-multiplayer-copy {
+    margin-top: 10px;
+    margin-bottom: 14px;
+    color: rgb(232, 200, 160);
+    font-size: 12px;
+    letter-spacing: 0.7px;
+}
+
+.ps-multiplayer-divider {
+    height: 1px;
+    margin-top: 18px;
+    margin-bottom: 22px;
+    background-color: rgba(122, 96, 80, 0.34);
+}
+
+.ps-join-code {
+    width: 280px;
+    height: 40px;
+    margin-bottom: 12px;
+    border-width: 1px;
+    border-color: rgb(82, 62, 49);
+    border-radius: 0;
+    background-color: rgb(12, 12, 12);
+    color: rgb(255, 107, 0);
+    font-size: 18px;
+    letter-spacing: 3px;
+}
+
+.ps-multiplayer-primary {
+    width: 220px;
+    height: 38px;
+    border-width: 1px;
+    border-color: rgb(224, 90, 0);
+    border-radius: 0;
+    background-color: rgb(67, 26, 3);
+    color: rgb(255, 107, 0);
+    font-size: 12px;
+    letter-spacing: 1.4px;
+    -unity-font-style: bold;
+}
+
+.ps-multiplayer-primary:hover,
+.ps-multiplayer-primary:focus {
+    background-color: rgb(255, 107, 0);
+    color: rgb(33, 12, 0);
+}
+
+.ps-multiplayer-error {
+    margin-top: 14px;
+    color: rgb(255, 104, 78);
+    font-size: 11px;
+    letter-spacing: 0.7px;
+}

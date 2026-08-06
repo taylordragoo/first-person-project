@@ -14910,6 +14910,7 @@ var __exports = (() => {
   var RuntimeCS = globalThis.CS;
   var menuBackground = RuntimeCS.UnityEngine.Resources.Load("ProjectSapphire/main_menu_bg");
   var menuFont = RuntimeCS.UnityEngine.Resources.Load("ProjectSapphire/ArialPixel");
+  var menuFontDefinition = RuntimeCS.UnityEngine.UIElements.FontDefinition.FromFont(menuFont);
   function cloneMenuSettings(settings) {
     return {
       ...settings,
@@ -14931,6 +14932,7 @@ var __exports = (() => {
         pickingMode: "Ignore",
         style: {
           unityFont: menuFont,
+          unityFontDefinition: menuFontDefinition,
           color,
           fontSize: size,
           unityTextAlign: align,
@@ -14946,7 +14948,10 @@ var __exports = (() => {
         text,
         className: compact ? "ps-menu-action ps-menu-action--compact" : "ps-menu-action",
         onClick,
-        style: { unityFont: menuFont }
+        style: {
+          unityFont: menuFont,
+          unityFontDefinition: menuFontDefinition
+        }
       }
     );
   }
