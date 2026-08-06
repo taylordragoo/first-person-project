@@ -1175,11 +1175,35 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
             if (IsServer)
             {
-                // Relay can run long enough before NGO starts that the owner submits its first
-                // motion sample from the prefab-authored pose. Initial placement then looks like
-                // an invalid teleport and the host corrects the owner back to that stale baseline.
-                // Remove it so the first sample from the assigned spawn pose becomes authoritative.
-                _hostStates.Remove(OwnerClientId);
+                // Seed the validator at the authoritative spawn pose. Clearing the state creates
+                // a Relay race where a remote owner's in-flight prefab-pose sample can become the
+                // new baseline before that owner receives the respawn RPC.
+                uint baselineSequence = _hostStates.TryGetValue(OwnerClientId,
+                    out HostClientState previousState)
+                    ? previousState.LastAcceptedSequence
+                    : 0u;
+                int networkTick = NetworkManager != null
+                    ? (int)NetworkManager.ServerTime.Tick
+                    : 0;
+                float bodyYaw = spawnRotation.eulerAngles.y;
+
+                _hostStates[OwnerClientId] = new HostClientState
+                {
+                    LastAcceptedPosition = spawnPosition,
+                    LastAcceptedTime = Time.time,
+                    LastAcceptedSequence = baselineSequence,
+                    AcceptedProxyState = new ProxyPresentationState
+                    {
+                        Sequence = baselineSequence,
+                        NetworkTick = networkTick,
+                        Position = spawnPosition,
+                        Velocity = Vector3.zero,
+                        BodyYaw = bodyYaw,
+                        AimYaw = bodyYaw,
+                        IsAlive = true
+                    },
+                    HasPendingBroadcast = true
+                };
                 _hostHitboxHistories.Remove(OwnerClientId);
             }
 

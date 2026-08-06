@@ -347,15 +347,18 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
             response.CreatePlayerObject = true;
             response.Pending = false;
 
-            if (!TrySelectInitialSpawnPoint(out NetworkSpawnPoint spawnPoint)) return;
+            if (!TrySelectInitialSpawnPoint(request.ClientNetworkId,
+                    out NetworkSpawnPoint spawnPoint, out int spawnIndex)) return;
 
-            var pose = new AssignedSpawnPose(spawnPoint.Position, spawnPoint.Rotation);
+            var pose = new AssignedSpawnPose(spawnPoint.Position, spawnPoint.Rotation,
+                spawnIndex);
             _assignedSpawnPoses[request.ClientNetworkId] = pose;
             response.Position = pose.Position;
             response.Rotation = pose.Rotation;
         }
 
-        private bool TrySelectInitialSpawnPoint(out NetworkSpawnPoint selected)
+        private bool TrySelectInitialSpawnPoint(ulong clientId,
+            out NetworkSpawnPoint selected, out int selectedIndex)
         {
             NetworkSpawnPoint[] discovered = FindObjectsByType<NetworkSpawnPoint>(
                 FindObjectsSortMode.None);
@@ -368,19 +371,37 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
                     candidates.Add(spawnPoint);
             }
 
-            var livingPositions = new List<Vector3>();
-            if (networkManager != null && networkManager.SpawnManager != null)
+            selected = null;
+            selectedIndex = -1;
+            if (candidates.Count == 0) return false;
+
+            var usedIndices = new HashSet<int>();
+            foreach (AssignedSpawnPose pose in _assignedSpawnPoses.Values)
+                usedIndices.Add(pose.SpawnIndex);
+
+            // Client 0 is Player 1, client 1 is Player 2, and so on. Prefer that
+            // exact numbered marker instead of distance-based selection.
+            if (clientId < (ulong)candidates.Count)
             {
-                foreach (NetworkObject networkObject in
-                    networkManager.SpawnManager.SpawnedObjects.Values)
+                int preferredIndex = (int)clientId;
+                if (!usedIndices.Contains(preferredIndex)) selectedIndex = preferredIndex;
+            }
+
+            if (selectedIndex < 0)
+            {
+                for (int i = 0; i < candidates.Count; i++)
                 {
-                    if (networkObject != null && networkObject.IsPlayerObject)
-                        livingPositions.Add(networkObject.transform.position);
+                    if (usedIndices.Contains(i)) continue;
+                    selectedIndex = i;
+                    break;
                 }
             }
 
-            selected = NetworkSpawnPoint.SelectSpawnPoint(candidates, livingPositions);
-            return selected != null;
+            // More simultaneous players than markers: reuse deterministically.
+            if (selectedIndex < 0) selectedIndex = (int)(clientId % (ulong)candidates.Count);
+
+            selected = candidates[selectedIndex];
+            return true;
         }
 
         private static int CompareSpawnPoints(NetworkSpawnPoint left,
@@ -396,11 +417,13 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
         {
             public readonly Vector3 Position;
             public readonly Quaternion Rotation;
+            public readonly int SpawnIndex;
 
-            public AssignedSpawnPose(Vector3 position, Quaternion rotation)
+            public AssignedSpawnPose(Vector3 position, Quaternion rotation, int spawnIndex)
             {
                 Position = position;
                 Rotation = rotation;
+                SpawnIndex = spawnIndex;
             }
         }
     }
