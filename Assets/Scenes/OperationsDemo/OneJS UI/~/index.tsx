@@ -670,6 +670,48 @@ function decodeMultiplayerSessionSnapshot(snapshot: string): MultiplayerSessionD
     }
 }
 
+function LoadingScreen({ text }: { text: string }) {
+    const [shown, setShown] = useState(false)
+    const [dotCount, setDotCount] = useState(0)
+    const baseText = text.replace(/\.{2,3}$/, "") || "LOADING"
+
+    useEffect(() => {
+        const fadeFrame = requestAnimationFrame(() => setShown(true))
+        const dotsTimer = setInterval(() => {
+            setDotCount((count) => (count + 1) % 4)
+        }, 375)
+
+        return () => {
+            cancelAnimationFrame(fadeFrame)
+            clearInterval(dotsTimer)
+        }
+    }, [])
+
+    const textStyle = {
+        color: "rgb(255, 107, 0)",
+        fontSize: 20,
+        letterSpacing: 6,
+        whiteSpace: "nowrap" as const,
+        unityFontStyleAndWeight: "bold" as const,
+    }
+
+    return (
+        <View
+            name="project-sapphire-loading"
+            className={shown ? "ps-loading-overlay ps-loading-overlay--shown" : "ps-loading-overlay"}
+        >
+            <View className="ps-loading-copy" pickingMode="Ignore">
+                <Text text={baseText} pickingMode="Ignore" style={textStyle} />
+                <Text
+                    text={".".repeat(dotCount)}
+                    pickingMode="Ignore"
+                    style={{ ...textStyle, width: 42, letterSpacing: 2 }}
+                />
+            </View>
+        </View>
+    )
+}
+
 function MultiplayerSessionPanel({ session }: { session: MultiplayerSessionData }) {
     if (!session.active) return null
 
@@ -747,6 +789,13 @@ function App() {
     const [draft, setDraft] = useState<MenuSettings>(() => readSettings())
     const [defaults, setDefaults] = useState<MenuSettings>(() => readSettings(true))
     const [showHud, setShowHud] = useState(() => readSettings().showHud)
+    const loadingText = multiplayerSession.state === "LOADING"
+        ? "LOADING OPERATION..."
+        : multiplayerSession.state === "STARTING RELAY HOST"
+            ? "ESTABLISHING RELAY..."
+            : multiplayerSession.state === "JOINING RELAY SESSION"
+                ? "JOINING OPERATION..."
+                : ""
 
     useEffect(() => {
         if (!paused) setShowSettings(false)
@@ -806,6 +855,7 @@ function App() {
                     onClose={() => setShowSettings(false)}
                 />
             )}
+            {loadingText && <LoadingScreen text={loadingText} />}
         </View>
     )
 }

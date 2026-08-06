@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button, Image, Slider, Text, TextField, View } from "onejs-react"
 import menuStyles from "./styles/menu.uss"
 
@@ -103,6 +103,36 @@ export function MainMenuScreen({
                 </View>
             </View>
             <PixelText text="TACTICAL OPERATIONS SYSTEM  //  BUILD 01" className="ps-menu-build" />
+        </View>
+    )
+}
+
+export function LoadingScreen({ text = "LOADING..." }: { text?: string }) {
+    const [shown, setShown] = useState(false)
+    const [dotCount, setDotCount] = useState(0)
+    const baseText = text.replace(/\.{2,3}$/, "") || "LOADING"
+
+    useEffect(() => {
+        const fadeFrame = requestAnimationFrame(() => setShown(true))
+        const dotsTimer = setInterval(() => {
+            setDotCount((count) => (count + 1) % 4)
+        }, 375)
+
+        return () => {
+            cancelAnimationFrame(fadeFrame)
+            clearInterval(dotsTimer)
+        }
+    }, [])
+
+    return (
+        <View
+            name="project-sapphire-loading"
+            className={shown ? "ps-loading-overlay ps-loading-overlay--shown" : "ps-loading-overlay"}
+        >
+            <View className="ps-loading-copy" pickingMode="Ignore">
+                <PixelText text={baseText} className="ps-loading-text" />
+                <PixelText text={".".repeat(dotCount)} className="ps-loading-dots" />
+            </View>
         </View>
     )
 }

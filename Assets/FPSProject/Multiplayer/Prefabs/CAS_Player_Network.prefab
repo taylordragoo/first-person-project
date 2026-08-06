@@ -139,13 +139,9 @@ MonoBehaviour:
   timeScale: 1
   weaponPrefabs:
   - {fileID: 3548645422124800404, guid: 9381fd6957d10c34dbb99be5938367c6, type: 3}
-  - {fileID: 6356262942742611153, guid: be25eecb3c1c4e21b419efc1d178f451, type: 3}
-  - {fileID: 6356262942742611153, guid: bf594ec9e9bd2674ea78ce0ae2c44666, type: 3}
   - {fileID: 6491911074622455297, guid: 61507977461de1f4196a9c93c1b4e7a1, type: 3}
-  - {fileID: 8291716542775071706, guid: c048279712e48aa448c96895079317ed, type: 3}
-  - {fileID: 6356262942742611153, guid: 636ac84499d131941962ae4fd702aa8e, type: 3}
   - {fileID: 1531783477257730245, guid: 45c14264dcf446e4badd7d345c91a064, type: 3}
-  - {fileID: 6356262942742611153, guid: 775a34c25dacae34db95cbbb3f031c22, type: 3}
+  - {fileID: 8291716542775071706, guid: c048279712e48aa448c96895079317ed, type: 3}
   fpsCamera: {fileID: 8268370454609447377, guid: b6d4ea9ea9d91294caf1c1199a4a4fc0, type: 3}
   aimIkMotion: {fileID: 11400000, guid: 20cf41039c96f464daaa6a3d253c8935, type: 2}
   fireModeIkMotion: {fileID: 11400000, guid: 3acedeae9d9449441a9d8998f41a6e91, type: 2}
@@ -253,7 +249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3065853542
+  GlobalObjectIdHash: 1211485450
   InScenePlacedSourceGlobalObjectIdHash: 1211485450
   DeferredDespawnTick: 0
   Ownership: 1
@@ -362,7 +358,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: edbd02b9f7927d64d82168fa3e7142a7, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: FPSProject.Multiplayer.Core::FPSProject.Multiplayer.Core.Health.NetworkHealth
   ShowTopMostFoldoutHeaderGroup: 1
   maxHealth: 100
@@ -381,7 +377,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 190542d09e2124146843e31e1b6ead37, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonProject.Integrations.Kinemation.Multiplayer.NetworkPlayerLifecycle
   ShowTopMostFoldoutHeaderGroup: 1
   networkHealth: {fileID: 0}

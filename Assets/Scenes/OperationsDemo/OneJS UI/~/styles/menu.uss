@@ -424,3 +424,27 @@
     background-color: rgb(255, 129, 43);
     color: black;
 }
+
+.ps-loading-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(5, 5, 8);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 600ms;
+    transition-timing-function: ease-in-out;
+}
+
+.ps-loading-overlay--shown {
+    opacity: 1;
+}
+
+.ps-loading-copy {
+    flex-direction: row;
+    align-items: center;
+}

@@ -114,7 +114,7 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
             _pendingMode = mode;
             _pendingJoinCode = joinCode;
             Time.timeScale = 1f;
-            SceneManager.LoadScene(MultiplayerSceneName);
+            SceneManager.LoadSceneAsync(MultiplayerSceneName);
             return true;
         }
     }
@@ -143,7 +143,7 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
         [SerializeField, Min(1f)] private float leaveTimeoutSeconds = 8f;
 
         private MultiplayerLaunchMode _mode;
-        private string _state = "READY";
+        private string _state = "LOADING";
         private string _localError = string.Empty;
         private bool _returningToMenu;
         private readonly Dictionary<ulong, AssignedSpawnPose> _assignedSpawnPoses =

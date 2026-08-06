@@ -2,6 +2,7 @@ import { useState } from "react"
 import { render, View } from "onejs-react"
 import {
     cloneMenuSettings,
+    LoadingScreen,
     MainMenuScreen,
     MultiplayerPanel,
     SettingsPanel,
@@ -19,6 +20,7 @@ function App() {
     const [showMultiplayer, setShowMultiplayer] = useState(false)
     const [joinCode, setJoinCode] = useState("")
     const [multiplayerError, setMultiplayerError] = useState("")
+    const [loadingText, setLoadingText] = useState("")
     const [draft, setDraft] = useState<MenuSettings>(() => readSettings())
     const [defaults, setDefaults] = useState<MenuSettings>(() => readSettings(true))
 
@@ -42,10 +44,12 @@ function App() {
     const startMultiplayerHost = () => {
         if (!__isPlaying) return
         setMultiplayerError("")
+        setLoadingText("ESTABLISHING RELAY...")
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterGameplayMode()
         const launched = RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.LaunchHost()
         if (!launched) {
             RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode()
+            setLoadingText("")
             setMultiplayerError(String(RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.LastError))
         }
     }
@@ -53,11 +57,13 @@ function App() {
     const startMultiplayerClient = () => {
         if (!__isPlaying) return
         setMultiplayerError("")
+        setLoadingText("JOINING OPERATION...")
         const bridge = RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterGameplayMode()
         const launched = bridge.LaunchClient(joinCode)
         if (!launched) {
             RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode()
+            setLoadingText("")
             setMultiplayerError(String(bridge.LastError))
         }
     }
@@ -97,6 +103,7 @@ function App() {
                     onClose={() => setShowSettings(false)}
                 />
             )}
+            {loadingText && <LoadingScreen text={loadingText} />}
         </View>
     )
 }

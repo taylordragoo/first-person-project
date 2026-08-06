@@ -1171,6 +1171,18 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         public void NotifyRespawn(Vector3 spawnPosition, Quaternion spawnRotation)
         {
             _isAlive = true;
+            _isCorrecting = false;
+
+            if (IsServer)
+            {
+                // Relay can run long enough before NGO starts that the owner submits its first
+                // motion sample from the prefab-authored pose. Initial placement then looks like
+                // an invalid teleport and the host corrects the owner back to that stale baseline.
+                // Remove it so the first sample from the assigned spawn pose becomes authoritative.
+                _hostStates.Remove(OwnerClientId);
+                _hostHitboxHistories.Remove(OwnerClientId);
+            }
+
             if (IsOwner)
             {
                 controller.transform.SetPositionAndRotation(spawnPosition, spawnRotation);

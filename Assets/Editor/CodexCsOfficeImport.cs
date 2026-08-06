@@ -4,18 +4,12 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-[InitializeOnLoad]
 internal static class CodexCsOfficeImport
 {
     private const string SourceRoot = "/Users/tdragoo/Downloads/cs-office-with-real-light";
     private const string ModelAssetPath = "Assets/Maps/cs_office/cs_office.fbx";
     private const string TextureAssetFolder = "Assets/Maps/cs_office/Textures";
     private const string MaterialAssetFolder = "Assets/Maps/cs_office/Materials";
-
-    static CodexCsOfficeImport()
-    {
-        EditorApplication.delayCall += Import;
-    }
 
     [MenuItem("Tools/Codex/Import CS Office")]
     private static void ImportFromMenu()

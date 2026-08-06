@@ -127,7 +127,7 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
         [SerializeField] protected bool debugGrounding = false;
         
         [Header("Rotation")] 
-        [SerializeField] public bool isFirstPerson = false;
+        public bool isFirstPerson = true;
         [SerializeField] protected bool orientRotationToMovement = true;
         [SerializeField, Min(0f)] protected float aimingRotationSpeed = 10f;
 
@@ -426,12 +426,6 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
             if(item != null) item.OnAim(_isAiming);
         }
 
-        public virtual void OnTogglePerspective()
-        {
-            isFirstPerson = !isFirstPerson;
-            if (_characterCamera != null) _characterCamera.isFirstPerson = isFirstPerson;
-        }
-
         public virtual void OnChangeItem()
         {
             if (GetActiveItem() == null) return;
@@ -500,6 +494,7 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
 
         protected virtual void Start()
         {
+            isFirstPerson = true;
             _controller = transform.root.GetComponentInChildren<CharacterController>();
             _originalCenter = _controller.center;
             _originalHeight = _controller.height;
