@@ -62,7 +62,7 @@ OpenCode's working Ollama routes remain unchanged:
 |---|---|
 | `cavecrew-investigator` | `ollama/minimax-m3:cloud` |
 | `cavecrew-builder` | `ollama/kimi-k2.7-code:cloud` |
-| `cavecrew-reviewer` | `ollama/glm-5.2:cloud` |
+| `cavecrew-reviewer` | `ollama/deepseek-v4-flash:cloud` |
 
 Escalate only after a concrete failure: unresolved root cause, insufficient evidence, failed verification, or regression. Use Sol High before Sol Max. Never choose Sol Ultra automatically.
 

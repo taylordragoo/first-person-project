@@ -1,7 +1,7 @@
 ---
-description: GLM-backed read-only reviewer for serious correctness, regression, security, and test analysis
+description: DeepSeek Flash-backed read-only reviewer for correctness, regression, security, and test analysis
 mode: subagent
-model: ollama/glm-5.2:cloud
+model: ollama/deepseek-v4-flash:cloud
 temperature: 0.1
 permission:
   edit: deny

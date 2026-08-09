@@ -37,7 +37,7 @@ OpenCode remains on its working Ollama setup:
 |---|---|---|
 | `cavecrew-investigator` | `ollama/minimax-m3:cloud` | Investigation and diagnosis |
 | `cavecrew-builder` | `ollama/kimi-k2.7-code:cloud` | Scoped implementation |
-| `cavecrew-reviewer` | `ollama/glm-5.2:cloud` | Correctness and risk review |
+| `cavecrew-reviewer` | `ollama/deepseek-v4-flash:cloud` | Correctness and risk review |
 
 Do not copy Codex model assignments into `.opencode/agents/`.
 
