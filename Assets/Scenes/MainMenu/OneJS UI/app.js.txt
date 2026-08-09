@@ -14870,12 +14870,26 @@ var __exports = (() => {
   }
   function MultiplayerPanel({
     joinCode,
+    alphaBotCount,
+    bravoBotCount,
+    durationMinutes,
+    hostTeam,
+    joinTeam,
+    matchMap,
     error,
     onJoinCodeChange,
+    onAlphaBotCountChange,
+    onBravoBotCountChange,
+    onDurationMinutesChange,
+    onHostTeamChange,
+    onJoinTeamChange,
+    onMatchMapChange,
     onHost,
     onJoin,
     onClose
   }) {
+    const alphaBotLimit = hostTeam === 1 ? 3 : 4;
+    const bravoBotLimit = hostTeam === 2 ? 3 : 4;
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(View, { name: "project-sapphire-multiplayer", className: "ps-overlay ps-multiplayer-overlay", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(View, { className: "ps-settings-dismiss", onClick: onClose }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(View, { className: "ps-multiplayer-panel", children: [
@@ -14893,16 +14907,59 @@ var __exports = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
               PixelText,
               {
-                text: "Create a Relay session. Share the code shown in-game with other players.",
+                text: "Set bots independently per team. Your selected team reserves one of its four slots for you.",
                 className: "ps-multiplayer-copy"
               }
             ),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(MatchChoiceRow, { label: "MAP", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(StateButton, { text: "DUST2", active: matchMap === 0, onClick: () => onMatchMapChange(0) }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(StateButton, { text: "OFFICE", active: matchMap === 1, onClick: () => onMatchMapChange(1) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(MatchChoiceRow, { label: "YOUR TEAM", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(StateButton, { text: "ALPHA", active: hostTeam === 1, onClick: () => onHostTeamChange(1) }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(StateButton, { text: "BRAVO", active: hostTeam === 2, onClick: () => onHostTeamChange(2) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+              NumberChoiceRow,
+              {
+                label: "ALPHA BOTS",
+                value: alphaBotCount,
+                suffix: `MAX ${alphaBotLimit}`,
+                onDecrease: () => onAlphaBotCountChange(Math.max(0, alphaBotCount - 1)),
+                onIncrease: () => onAlphaBotCountChange(Math.min(alphaBotLimit, alphaBotCount + 1))
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+              NumberChoiceRow,
+              {
+                label: "BRAVO BOTS",
+                value: bravoBotCount,
+                suffix: `MAX ${bravoBotLimit}`,
+                onDecrease: () => onBravoBotCountChange(Math.max(0, bravoBotCount - 1)),
+                onIncrease: () => onBravoBotCountChange(Math.min(bravoBotLimit, bravoBotCount + 1))
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+              NumberChoiceRow,
+              {
+                label: "TIME LIMIT",
+                value: durationMinutes,
+                suffix: "MIN",
+                onDecrease: () => onDurationMinutesChange(Math.max(1, durationMinutes - 1)),
+                onIncrease: () => onDurationMinutesChange(Math.min(60, durationMinutes + 1))
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(MatchChoiceRow, { label: "LOADOUT", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(PixelText, { text: "STANDARD ISSUE // SLOT 01", className: "ps-multiplayer-copy" }) }),
             /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Button, { text: "HOST OPERATION", className: "ps-multiplayer-primary", onClick: onHost })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(View, { className: "ps-multiplayer-divider" }),
           /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(View, { className: "ps-multiplayer-section", children: [
             /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(PixelText, { text: "JOIN", className: "ps-section-title" }),
-            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(PixelText, { text: "Enter the host's session code.", className: "ps-multiplayer-copy" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(PixelText, { text: "Enter the host's session code and choose a side.", className: "ps-multiplayer-copy" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(MatchChoiceRow, { label: "YOUR TEAM", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(StateButton, { text: "ALPHA", active: joinTeam === 1, onClick: () => onJoinTeamChange(1) }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(StateButton, { text: "BRAVO", active: joinTeam === 2, onClick: () => onJoinTeamChange(2) })
+            ] }),
             /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
               TextField,
               {
@@ -14920,6 +14977,28 @@ var __exports = (() => {
           error && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(PixelText, { text: error, className: "ps-multiplayer-error" })
         ] })
       ] })
+    ] });
+  }
+  function MatchChoiceRow({
+    label,
+    children
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(View, { style: { height: 44, flexDirection: "row", alignItems: "center" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(View, { style: { width: 150 }, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(PixelText, { text: label, className: "ps-kicker" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(View, { style: { flexDirection: "row", alignItems: "center" }, children })
+    ] });
+  }
+  function NumberChoiceRow({
+    label,
+    value,
+    suffix,
+    onDecrease,
+    onIncrease
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(MatchChoiceRow, { label, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Button, { text: "-", className: "ps-state-button", onClick: onDecrease }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(View, { style: { width: 116, alignItems: "center" }, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(PixelText, { text: `${value} ${suffix}`, className: "ps-multiplayer-copy" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Button, { text: "+", className: "ps-state-button", onClick: onIncrease })
     ] });
   }
   function TabButton({ tab, activeTab, onSelect }) {
@@ -15139,6 +15218,12 @@ var __exports = (() => {
     const [showSettings, setShowSettings] = (0, import_react10.useState)(false);
     const [showMultiplayer, setShowMultiplayer] = (0, import_react10.useState)(false);
     const [joinCode, setJoinCode] = (0, import_react10.useState)("");
+    const [alphaBotCount, setAlphaBotCount] = (0, import_react10.useState)(3);
+    const [bravoBotCount, setBravoBotCount] = (0, import_react10.useState)(4);
+    const [durationMinutes, setDurationMinutes] = (0, import_react10.useState)(5);
+    const [hostTeam, setHostTeam] = (0, import_react10.useState)(1);
+    const [joinTeam, setJoinTeam] = (0, import_react10.useState)(1);
+    const [matchMap, setMatchMap] = (0, import_react10.useState)(0);
     const [multiplayerError, setMultiplayerError] = (0, import_react10.useState)("");
     const [loadingText, setLoadingText] = (0, import_react10.useState)("");
     const [draft, setDraft] = (0, import_react10.useState)(() => readSettings());
@@ -15154,6 +15239,7 @@ var __exports = (() => {
     };
     const startOperations = () => {
       if (!__isPlaying) return;
+      setLoadingText("LOADING OPERATION...");
       RuntimeCS3.FirstPersonProject.UI.ProjectSapphireBridge.EnterGameplayMode();
       RuntimeCS3.UnityEngine.SceneManagement.SceneManager.LoadScene("OperationsDemo");
     };
@@ -15162,11 +15248,25 @@ var __exports = (() => {
       setMultiplayerError("");
       setLoadingText("ESTABLISHING RELAY...");
       RuntimeCS3.FirstPersonProject.UI.ProjectSapphireBridge.EnterGameplayMode();
-      const launched = RuntimeCS3.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.LaunchHost();
+      const launched = RuntimeCS3.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.LaunchHost(
+        alphaBotCount,
+        bravoBotCount,
+        durationMinutes,
+        hostTeam,
+        matchMap
+      );
       if (!launched) {
         RuntimeCS3.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode();
         setLoadingText("");
         setMultiplayerError(String(RuntimeCS3.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.LastError));
+      }
+    };
+    const changeHostTeam = (team) => {
+      setHostTeam(team);
+      if (team === 1) {
+        setAlphaBotCount((count) => Math.min(3, count));
+      } else if (team === 2) {
+        setBravoBotCount((count) => Math.min(3, count));
       }
     };
     const startMultiplayerClient = () => {
@@ -15175,7 +15275,7 @@ var __exports = (() => {
       setLoadingText("JOINING OPERATION...");
       const bridge = RuntimeCS3.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge;
       RuntimeCS3.FirstPersonProject.UI.ProjectSapphireBridge.EnterGameplayMode();
-      const launched = bridge.LaunchClient(joinCode);
+      const launched = bridge.LaunchClient(joinCode, joinTeam);
       if (!launched) {
         RuntimeCS3.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode();
         setLoadingText("");
@@ -15203,8 +15303,20 @@ var __exports = (() => {
         MultiplayerPanel,
         {
           joinCode,
+          alphaBotCount,
+          bravoBotCount,
+          durationMinutes,
+          hostTeam,
+          joinTeam,
+          matchMap,
           error: multiplayerError,
           onJoinCodeChange: setJoinCode,
+          onAlphaBotCountChange: setAlphaBotCount,
+          onBravoBotCountChange: setBravoBotCount,
+          onDurationMinutesChange: setDurationMinutes,
+          onHostTeamChange: changeHostTeam,
+          onJoinTeamChange: setJoinTeam,
+          onMatchMapChange: setMatchMap,
           onHost: startMultiplayerHost,
           onJoin: startMultiplayerClient,
           onClose: () => setShowMultiplayer(false)

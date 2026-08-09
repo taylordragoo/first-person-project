@@ -363,6 +363,31 @@ namespace FPSProject.Combat.PlayModeTests
         }
 
         [UnityTest]
+        public IEnumerator PlayImpact_SpawnsSurfacePairWithoutApplyingDamage()
+        {
+            _decalPrefab = new GameObject("TestNetworkFleshDecalPrefab");
+            _decalPrefab.SetActive(false);
+            _effectLibrary.fleshPair = new SurfaceEffectPair
+            {
+                decalPrefab = _decalPrefab,
+                impactPrefab = null
+            };
+
+            _runtime.PlayImpact(
+                _effectLibrary,
+                new Vector3(1f, 2f, 3f),
+                Vector3.up,
+                ImpactSurfaceType.Flesh,
+                _targetObject.transform);
+
+            yield return null;
+
+            _spawnedDecal = GameObject.Find(_decalPrefab.name);
+            Assert.IsNotNull(_spawnedDecal);
+            Assert.AreEqual(0, _targetObject.GetComponent<TestDamageable>().ApplyDamageCallCount);
+        }
+
+        [UnityTest]
         public IEnumerator RepeatedSubmitShot_EachCreatesOneShot()
         {
             var damageable = _targetObject.GetComponent<TestDamageable>();

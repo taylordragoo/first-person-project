@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FPSProject.Multiplayer.Core.Bootstrap;
 using FPSProject.Multiplayer.Core.Health;
+using FPSProject.Multiplayer.Core.Match;
 using FPSProject.Multiplayer.Core.Weapons;
 using Unity.Netcode;
 using UnityEngine;
@@ -149,7 +150,12 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             SelectRespawnPose(out Vector3 spawnPosition, out Quaternion spawnRotation);
 
             if (weaponState != null)
-                weaponState.ServerResetForRespawn(1);
+            {
+                ushort defaultWeaponId = TeamDeathmatchManager.Instance != null
+                    ? TeamDeathmatchManager.Instance.DefaultWeaponId.Value
+                    : (ushort)1;
+                weaponState.ServerResetForRespawn(defaultWeaponId);
+            }
 
             if (networkHealth != null)
                 networkHealth.ServerRespawn();
@@ -211,11 +217,31 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             var spawnPoints = new List<NetworkSpawnPoint>();
             var livingPositions = new List<Vector3>();
 
+            NetworkTeamMember teamMember = GetComponent<NetworkTeamMember>();
+            MatchTeam team = teamMember != null
+                ? teamMember.Team.Value
+                : MatchTeam.Unassigned;
+            MatchMap map = TeamDeathmatchManager.Instance != null
+                ? TeamDeathmatchManager.Instance.ActiveMap.Value
+                : MatchMap.Dust2;
+
             var allSpawnPoints = FindObjectsByType<NetworkSpawnPoint>(FindObjectsSortMode.None);
             foreach (var sp in allSpawnPoints)
             {
-                if (sp != null && sp.isActiveAndEnabled)
+                if (sp == null || !sp.isActiveAndEnabled) continue;
+
+                if (!MatchRules.IsPlayableTeam(team))
+                {
                     spawnPoints.Add(sp);
+                    continue;
+                }
+
+                if (MatchSpawnCatalog.TryClassify(sp, out MatchMap pointMap,
+                        out MatchTeam pointTeam, out _)
+                    && pointMap == map && pointTeam == team)
+                {
+                    spawnPoints.Add(sp);
+                }
             }
 
             if (NetworkManager != null)

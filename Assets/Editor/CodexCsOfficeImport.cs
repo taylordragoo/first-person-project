@@ -6,7 +6,7 @@ using UnityEngine;
 
 internal static class CodexCsOfficeImport
 {
-    private const string SourceRoot = "/Users/tdragoo/Downloads/cs-office-with-real-light";
+    private const string SourceRootPreferenceKey = "Codex.CsOfficeImport.SourceRoot";
     private const string ModelAssetPath = "Assets/Maps/cs_office/cs_office.fbx";
     private const string TextureAssetFolder = "Assets/Maps/cs_office/Textures";
     private const string MaterialAssetFolder = "Assets/Maps/cs_office/Materials";
@@ -14,19 +14,27 @@ internal static class CodexCsOfficeImport
     [MenuItem("Tools/Codex/Import CS Office")]
     private static void ImportFromMenu()
     {
-        Import();
+        string initialFolder = EditorPrefs.GetString(SourceRootPreferenceKey,
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+        string sourceRoot = EditorUtility.OpenFolderPanel(
+            "Select CS Office Source Folder", initialFolder, string.Empty);
+        if (string.IsNullOrEmpty(sourceRoot)) return;
+
+        EditorPrefs.SetString(SourceRootPreferenceKey, sourceRoot);
+        Import(sourceRoot);
     }
 
-    private static void Import()
+    private static void Import(string sourceRoot)
     {
         try
         {
-            string sourceModel = Path.Combine(SourceRoot, "source/1.fbx");
-            string sourceTextures = Path.Combine(SourceRoot, "textures");
+            string sourceModel = Path.Combine(sourceRoot, "source/1.fbx");
+            string sourceTextures = Path.Combine(sourceRoot, "textures");
 
             if (!File.Exists(sourceModel) || !Directory.Exists(sourceTextures))
             {
-                Debug.LogError("[CodexCsOfficeImport] Source FBX or texture folder is unavailable.");
+                Debug.LogError(
+                    $"[CodexCsOfficeImport] '{sourceRoot}' must contain source/1.fbx and textures/.");
                 return;
             }
 

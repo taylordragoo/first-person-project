@@ -861,21 +861,6 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
 
         protected virtual void Update()
         {
-#if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (_playerInput.inputIsActive)
-                {
-                    _playerInput.DeactivateInput();
-                }
-                else
-                {
-                    _playerInput.ActivateInput();
-                    Cursor.visible = false;
-                }
-            }
-#endif
-            
             UpdateMovementState();
             UpdateGait();
             UpdateCharacterRotation();

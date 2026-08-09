@@ -139,19 +139,46 @@ export function LoadingScreen({ text = "LOADING..." }: { text?: string }) {
 
 export function MultiplayerPanel({
     joinCode,
+    alphaBotCount,
+    bravoBotCount,
+    durationMinutes,
+    hostTeam,
+    joinTeam,
+    matchMap,
     error,
     onJoinCodeChange,
+    onAlphaBotCountChange,
+    onBravoBotCountChange,
+    onDurationMinutesChange,
+    onHostTeamChange,
+    onJoinTeamChange,
+    onMatchMapChange,
     onHost,
     onJoin,
     onClose,
 }: {
     joinCode: string
+    alphaBotCount: number
+    bravoBotCount: number
+    durationMinutes: number
+    hostTeam: number
+    joinTeam: number
+    matchMap: number
     error: string
     onJoinCodeChange: (code: string) => void
+    onAlphaBotCountChange: (count: number) => void
+    onBravoBotCountChange: (count: number) => void
+    onDurationMinutesChange: (minutes: number) => void
+    onHostTeamChange: (team: number) => void
+    onJoinTeamChange: (team: number) => void
+    onMatchMapChange: (map: number) => void
     onHost: () => void
     onJoin: () => void
     onClose: () => void
 }) {
+    const alphaBotLimit = hostTeam === 1 ? 3 : 4
+    const bravoBotLimit = hostTeam === 2 ? 3 : 4
+
     return (
         <View name="project-sapphire-multiplayer" className="ps-overlay ps-multiplayer-overlay">
             <View className="ps-settings-dismiss" onClick={onClose} />
@@ -168,15 +195,51 @@ export function MultiplayerPanel({
                     <View className="ps-multiplayer-section">
                         <PixelText text="HOST" className="ps-section-title" />
                         <PixelText
-                            text="Create a Relay session. Share the code shown in-game with other players."
+                            text="Set bots independently per team. Your selected team reserves one of its four slots for you."
                             className="ps-multiplayer-copy"
                         />
+                        <MatchChoiceRow label="MAP">
+                            <StateButton text="DUST2" active={matchMap === 0} onClick={() => onMatchMapChange(0)} />
+                            <StateButton text="OFFICE" active={matchMap === 1} onClick={() => onMatchMapChange(1)} />
+                        </MatchChoiceRow>
+                        <MatchChoiceRow label="YOUR TEAM">
+                            <StateButton text="ALPHA" active={hostTeam === 1} onClick={() => onHostTeamChange(1)} />
+                            <StateButton text="BRAVO" active={hostTeam === 2} onClick={() => onHostTeamChange(2)} />
+                        </MatchChoiceRow>
+                        <NumberChoiceRow
+                            label="ALPHA BOTS"
+                            value={alphaBotCount}
+                            suffix={`MAX ${alphaBotLimit}`}
+                            onDecrease={() => onAlphaBotCountChange(Math.max(0, alphaBotCount - 1))}
+                            onIncrease={() => onAlphaBotCountChange(Math.min(alphaBotLimit, alphaBotCount + 1))}
+                        />
+                        <NumberChoiceRow
+                            label="BRAVO BOTS"
+                            value={bravoBotCount}
+                            suffix={`MAX ${bravoBotLimit}`}
+                            onDecrease={() => onBravoBotCountChange(Math.max(0, bravoBotCount - 1))}
+                            onIncrease={() => onBravoBotCountChange(Math.min(bravoBotLimit, bravoBotCount + 1))}
+                        />
+                        <NumberChoiceRow
+                            label="TIME LIMIT"
+                            value={durationMinutes}
+                            suffix="MIN"
+                            onDecrease={() => onDurationMinutesChange(Math.max(1, durationMinutes - 1))}
+                            onIncrease={() => onDurationMinutesChange(Math.min(60, durationMinutes + 1))}
+                        />
+                        <MatchChoiceRow label="LOADOUT">
+                            <PixelText text="STANDARD ISSUE // SLOT 01" className="ps-multiplayer-copy" />
+                        </MatchChoiceRow>
                         <Button text="HOST OPERATION" className="ps-multiplayer-primary" onClick={onHost} />
                     </View>
                     <View className="ps-multiplayer-divider" />
                     <View className="ps-multiplayer-section">
                         <PixelText text="JOIN" className="ps-section-title" />
-                        <PixelText text="Enter the host's session code." className="ps-multiplayer-copy" />
+                        <PixelText text="Enter the host's session code and choose a side." className="ps-multiplayer-copy" />
+                        <MatchChoiceRow label="YOUR TEAM">
+                            <StateButton text="ALPHA" active={joinTeam === 1} onClick={() => onJoinTeamChange(1)} />
+                            <StateButton text="BRAVO" active={joinTeam === 2} onClick={() => onJoinTeamChange(2)} />
+                        </MatchChoiceRow>
                         <TextField
                             value={joinCode}
                             className="ps-join-code"
@@ -192,6 +255,47 @@ export function MultiplayerPanel({
                 </View>
             </View>
         </View>
+    )
+}
+
+function MatchChoiceRow({
+    label,
+    children,
+}: {
+    label: string
+    children: any
+}) {
+    return (
+        <View style={{ height: 44, flexDirection: "row", alignItems: "center" }}>
+            <View style={{ width: 150 }}>
+                <PixelText text={label} className="ps-kicker" />
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>{children}</View>
+        </View>
+    )
+}
+
+function NumberChoiceRow({
+    label,
+    value,
+    suffix,
+    onDecrease,
+    onIncrease,
+}: {
+    label: string
+    value: number
+    suffix: string
+    onDecrease: () => void
+    onIncrease: () => void
+}) {
+    return (
+        <MatchChoiceRow label={label}>
+            <Button text="-" className="ps-state-button" onClick={onDecrease} />
+            <View style={{ width: 116, alignItems: "center" }}>
+                <PixelText text={`${value} ${suffix}`} className="ps-multiplayer-copy" />
+            </View>
+            <Button text="+" className="ps-state-button" onClick={onIncrease} />
+        </MatchChoiceRow>
     )
 }
 

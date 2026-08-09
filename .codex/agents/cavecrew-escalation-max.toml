@@ -1,0 +1,16 @@
+name = "cavecrew-escalation-max"
+description = "Sol Max last-resort escalation after Sol High failed and the task still justifies additional reasoning."
+model_provider = "openai"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "max"
+sandbox_mode = "workspace-write"
+developer_instructions = """
+Use only after Sol High failed or when the user explicitly requests maximum reasoning for a high-consequence task.
+Audit all prior assumptions and evidence before changing code. Do not repeat failed approaches.
+Prefer a minimal, reversible fix. Do not perform irreversible external actions or apply live migrations.
+Return compressed output:
+
+root cause: <short reason>.
+<path:line> - <change or finding>.
+verified: <checks performed and result>.
+"""

@@ -36,7 +36,7 @@ MonoBehaviour:
       tracerPrefab: {fileID: 0}
       tracerSpeed: 200
       tracerLifetime: 0.1
-      impactEffectLibrary: {fileID: 0}
+      impactEffectLibrary: {fileID: 11400000, guid: cbf68163ad9b04f7096d7c03a1b52f8c, type: 2}
     configured: 1
   - weaponId: 2
     displayName: WK-11 Viper
@@ -61,7 +61,7 @@ MonoBehaviour:
       tracerPrefab: {fileID: 0}
       tracerSpeed: 200
       tracerLifetime: 0.1
-      impactEffectLibrary: {fileID: 0}
+      impactEffectLibrary: {fileID: 11400000, guid: cbf68163ad9b04f7096d7c03a1b52f8c, type: 2}
     configured: 1
   - weaponId: 3
     displayName: Herrington 11-87 Police
@@ -86,7 +86,7 @@ MonoBehaviour:
       tracerPrefab: {fileID: 0}
       tracerSpeed: 200
       tracerLifetime: 0.1
-      impactEffectLibrary: {fileID: 0}
+      impactEffectLibrary: {fileID: 11400000, guid: cbf68163ad9b04f7096d7c03a1b52f8c, type: 2}
     configured: 1
   - weaponId: 4
     displayName: Mk14 EBR
@@ -111,5 +111,5 @@ MonoBehaviour:
       tracerPrefab: {fileID: 0}
       tracerSpeed: 200
       tracerLifetime: 0.1
-      impactEffectLibrary: {fileID: 0}
+      impactEffectLibrary: {fileID: 11400000, guid: cbf68163ad9b04f7096d7c03a1b52f8c, type: 2}
     configured: 1

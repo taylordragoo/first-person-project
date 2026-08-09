@@ -210,13 +210,26 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         private void SpawnImpactVfx(NetworkWeaponEntry entry, in NetworkShotImpact impact)
         {
             if (_combatRuntime == null || entry.ballistics.impactEffectLibrary == null) return;
-            // The combat runtime's SpawnImpactEffects is private; we use PlayShotResult with a
-            // per-impact synthesized hit so the impact VFX spawn without re-applying damage.
-            // For now this is a stub that Step 9 / 10 will wire through the impact library.
-            // The host already spawned impacts during resolution; clients see them via the
-            // host's locally-rendered VFX (the host runs the same scene). This is acceptable
-            // for the vertical slice; full client-side VFX from NetworkShotResult is a Step 8
-            // polish item that can be added after the lag-compensation pass.
+
+            ImpactSurfaceType surfaceType = System.Enum.IsDefined(
+                typeof(ImpactSurfaceType), (int)impact.SurfaceType)
+                ? (ImpactSurfaceType)impact.SurfaceType
+                : ImpactSurfaceType.Default;
+
+            Transform hitTransform = null;
+            if (impact.HitTargetNetworkId != 0 && NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                    impact.HitTargetNetworkId, out NetworkObject hitTarget))
+            {
+                hitTransform = hitTarget.transform;
+            }
+
+            _combatRuntime.PlayImpact(
+                entry.ballistics.impactEffectLibrary,
+                impact.Point,
+                impact.Normal,
+                surfaceType,
+                hitTransform);
         }
 
         private static FPSProject.Combat.Runtime.WeaponBallisticsSettings BuildPresentationBallistics(

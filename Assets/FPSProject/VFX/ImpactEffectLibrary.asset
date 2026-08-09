@@ -17,16 +17,16 @@ MonoBehaviour:
     impactPrefab: {fileID: 3100432330703693254, guid: d9f40a03516c3284d9124289d8e7e25c, type: 3}
   metalPair:
     decalPrefab: {fileID: 2462405574108921655, guid: e6d36bb0ebdf6cc4dacdeee8b6e8a0ce, type: 3}
-    impactPrefab: {fileID: 3100432330703693254, guid: d9f40a03516c3284d9124289d8e7e25c, type: 3}
+    impactPrefab: {fileID: 3100432330703693254, guid: 101d537c269e3384d937e0a538fe37ca, type: 3}
   woodPair:
     decalPrefab: {fileID: 2462405574108921655, guid: 49ec6833820c5774ea4015ac770e6801, type: 3}
-    impactPrefab: {fileID: 3100432330703693254, guid: d9f40a03516c3284d9124289d8e7e25c, type: 3}
+    impactPrefab: {fileID: 3100432330703693254, guid: 96589705573e84d4691c037c235eecf0, type: 3}
   grassPair:
     decalPrefab: {fileID: 2462405574108921655, guid: 96098beba501e3247b9452e9455f6189, type: 3}
-    impactPrefab: {fileID: 3100432330703693254, guid: d9f40a03516c3284d9124289d8e7e25c, type: 3}
+    impactPrefab: {fileID: 3100432330703693254, guid: 34d4d141820004f42859ed965f90dc8d, type: 3}
   mudPair:
     decalPrefab: {fileID: 2462405574108921655, guid: 4445bafd3b5e24c4eb41ba27f6a44af4, type: 3}
-    impactPrefab: {fileID: 3100432330703693254, guid: d9f40a03516c3284d9124289d8e7e25c, type: 3}
+    impactPrefab: {fileID: 3100432330703693254, guid: ef6fbfe5d5b78464b93d7991c1e0eb23, type: 3}
   fleshPair:
     decalPrefab: {fileID: 2462405574108921655, guid: 8c95f7225cf58144d86befe4ddc08efb, type: 3}
-    impactPrefab: {fileID: 3100432330703693254, guid: d9f40a03516c3284d9124289d8e7e25c, type: 3}
+    impactPrefab: {fileID: 3100432330703693254, guid: 6d4440c5ab0057a469ae4defbbc11342, type: 3}

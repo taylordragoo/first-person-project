@@ -7,10 +7,22 @@ namespace FPSProject.Multiplayer.Core.Health
     {
         [SerializeField] private float clearanceRadius = 2f;
         [SerializeField] private Color gizmoColor = new Color(0f, 1f, 0f, 0.3f);
+        [SerializeField] private bool hideChildMarkersAtRuntime = true;
 
         public Vector3 Position => transform.position;
         public Quaternion Rotation => transform.rotation;
         public float ClearanceRadius => clearanceRadius;
+
+        private void Awake()
+        {
+            if (!Application.isPlaying || !hideChildMarkersAtRuntime) return;
+
+            Renderer[] markerRenderers = GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer markerRenderer in markerRenderers)
+            {
+                if (markerRenderer != null) markerRenderer.enabled = false;
+            }
+        }
 
         public static NetworkSpawnPoint SelectSpawnPoint(
             IReadOnlyList<NetworkSpawnPoint> candidates,

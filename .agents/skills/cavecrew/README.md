@@ -6,17 +6,20 @@ Decision guide. When to delegate to caveman subagents instead of doing the work 
 
 Tells the main thread when to spawn a caveman-style subagent versus the vanilla equivalent. The win: subagent tool-results inject back into main context verbatim, and caveman output is roughly 1/3 the size of vanilla prose. Across 20 delegations in one session, that is the difference between context exhaustion and finishing the task.
 
-Three subagents:
+Codex agents:
 
-| Subagent | Job | Use when |
-|----------|-----|----------|
-| `cavecrew-investigator` | Locate code (read-only) | "Where is X defined / what calls Y / list uses of Z" |
-| `cavecrew-builder` | Surgical edit, 1-2 files | Scope is obvious, ≤2 files. Refuses 3+ file scope. |
-| `cavecrew-reviewer` | Diff/file review | One-line findings with severity emoji |
+| Agent | Job | Model / effort |
+|---|---|---|
+| `cavecrew-builder` | Normal bug fix or clearly scoped feature | Luna XHigh |
+| `cavecrew-investigator` | Broad repository exploration | Terra Medium |
+| `cavecrew-serious` | Complex or high-consequence work | Sol Medium |
+| `cavecrew-reviewer` | Correctness and risk review | Sol Medium |
+| `cavecrew-escalation-high` | Failed Medium attempt | Sol High |
+| `cavecrew-escalation-max` | Failed High attempt | Sol Max |
 
-Use vanilla `Explore` or `Code Reviewer` when you want prose, architecture commentary, or rationale. Use main thread directly for one-line answers and 3+ file refactors.
+Sol Ultra has no preset and is never selected automatically.
 
-This skill is a decision guide, not a slash command. It activates when the conversation mentions delegation.
+This skill is a decision guide, not a slash command. Invoke it with `$cavecrew` in Codex or by mentioning delegation.
 
 ## How to invoke
 
@@ -24,38 +27,48 @@ Triggers on phrases like "delegate to subagent", "use cavecrew", "spawn investig
 
 ## Example chaining
 
-Locate → fix → verify (most common):
+Unclear task → fix → verify:
 
-1. `cavecrew-investigator` returns site list (`path:line — symbol — note`)
-2. Main thread picks 1-2 sites, hands paths to `cavecrew-builder`
-3. `cavecrew-reviewer` audits the resulting diff
+1. Terra Medium `cavecrew-investigator` maps relevant code.
+2. Luna XHigh `cavecrew-builder` handles clear normal work, or Sol Medium `cavecrew-serious` handles high-consequence work.
+3. Sol Medium `cavecrew-reviewer` audits the resulting diff.
 
 Parallel scout: spawn 2-3 `cavecrew-investigator` calls in one message with different angles (defs, callers, tests). Aggregate in main.
 
-## Model overrides
+After a concrete Medium failure, use `cavecrew-escalation-high`. Use `cavecrew-escalation-max` only if High also fails and more reasoning is justified.
 
-By default, `cavecrew-reviewer` and `cavecrew-investigator` pin `model: haiku` in their frontmatter; `cavecrew-builder` has no `model:` line (uses the API session default). Set env vars in your shell before launching Claude Code to override per-agent:
+## Project model routing
 
-| Env var | Agent |
+This project defines runtime-native Cavecrew agents under `.opencode/agents/` for OpenCode and `.codex/agents/` for Codex:
+
+### Codex
+
+| Agent | Model / effort |
 |---|---|
-| `CAVECREW_REVIEWER_MODEL` | `cavecrew-reviewer` |
-| `CAVECREW_BUILDER_MODEL` | `cavecrew-builder` |
-| `CAVECREW_INVESTIGATOR_MODEL` | `cavecrew-investigator` |
+| `cavecrew-builder` | Luna XHigh |
+| `cavecrew-investigator` | Terra Medium |
+| `cavecrew-serious` | Sol Medium |
+| `cavecrew-reviewer` | Sol Medium |
+| `cavecrew-escalation-high` | Sol High |
+| `cavecrew-escalation-max` | Sol Max |
 
-Example — run reviewer on sonnet, keep others on default:
+Codex agents use the built-in OpenAI provider so native dispatch does not pass through Ollama's incompatible Responses endpoint.
 
-```sh
-export CAVECREW_REVIEWER_MODEL=sonnet
-```
+### OpenCode
 
-Use the same model name strings you'd use in any Claude Code agent frontmatter (e.g. `haiku`, `sonnet`, `opus`).
+OpenCode's working Ollama routes remain unchanged:
 
-Overrides patch only the `model:` line in the installed agent's frontmatter; the prompt body is untouched and keeps receiving upstream updates. Plugin installs only — standalone hook installs have no local agent files to patch. Unset or blank = no change. The patch persists in the installed file until the plugin is updated or reinstalled.
+| Agent | Model |
+|---|---|
+| `cavecrew-investigator` | `ollama/minimax-m3:cloud` |
+| `cavecrew-builder` | `ollama/kimi-k2.7-code:cloud` |
+| `cavecrew-reviewer` | `ollama/glm-5.2:cloud` |
+
+Escalate only after a concrete failure: unresolved root cause, insufficient evidence, failed verification, or regression. Use Sol High before Sol Max. Never choose Sol Ultra automatically.
 
 ## See also
 
 - [`SKILL.md`](./SKILL.md) — full decision matrix and output contracts
-- [`agents/cavecrew-investigator.md`](../../agents/cavecrew-investigator.md)
-- [`agents/cavecrew-builder.md`](../../agents/cavecrew-builder.md)
-- [`agents/cavecrew-reviewer.md`](../../agents/cavecrew-reviewer.md)
-- [Caveman README](../../README.md) — repo overview
+- [Codex Cavecrew agents](../../../.codex/agents/)
+- [OpenCode Cavecrew agents](../../../.opencode/agents/)
+- [Caveman README](../../README.md) — repository overview

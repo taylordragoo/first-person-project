@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FPSProject.Combat.Runtime;
 using FPSProject.Multiplayer.Core.Health;
 using FPSProject.Multiplayer.Core.Movement;
 using FPSProject.Multiplayer.Core.Weapons;
@@ -26,6 +27,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         [SerializeField] private NetworkTacticalShooterPlayer tacticalPlayer;
         [SerializeField] private NetworkWeaponState weaponState;
         [SerializeField] private NetworkHealth networkHealth;
+        [SerializeField] private SkinnedMeshRenderer tacticalHeadRenderer;
 
         [Header("Tuning")]
         [Tooltip("Project-owned tuning asset. If unset, the component tries to load a " +
@@ -84,6 +86,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             if (networkHealth == null) networkHealth = GetComponent<NetworkHealth>();
             if (tuning == null) tuning = ResolveTuning();
 
+            ApplyPerspectiveVisibility();
+
             ResolveCapsuleDimensions();
 
             if (IsOwner)
@@ -124,6 +128,39 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                     NetworkManager.OnClientConnectedCallback -= OnClientConnected;
                     NetworkManager.OnClientConnectedCallback += OnClientConnected;
                 }
+            }
+        }
+
+        public override void OnGainedOwnership()
+        {
+            ApplyPerspectiveVisibility();
+        }
+
+        public override void OnLostOwnership()
+        {
+            ApplyPerspectiveVisibility();
+        }
+
+        private void ApplyPerspectiveVisibility()
+        {
+            if (tacticalHeadRenderer == null)
+            {
+                foreach (SkinnedMeshRenderer candidate in
+                         GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    if (!string.Equals(candidate.gameObject.name, "SK_Head_01a.001",
+                            StringComparison.Ordinal)) continue;
+
+                    tacticalHeadRenderer = candidate;
+                    break;
+                }
+            }
+
+            // Each client evaluates ownership independently: the local FPS player hides its
+            // own head, while every remote proxy renders the complete third-person character.
+            if (tacticalHeadRenderer != null)
+            {
+                tacticalHeadRenderer.enabled = !IsOwner;
             }
         }
 
@@ -1050,7 +1087,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                             Point = playerHitPoint,
                             Normal = -spreadDir,
                             HitTargetNetworkId = hitTargetId,
-                            IsPlayerHit = isPlayerHit
+                            IsPlayerHit = isPlayerHit,
+                            SurfaceType = (byte)ImpactSurfaceType.Flesh
                         };
                         SetImpact(ref result, impactIndex, in impact);
                         result.ImpactCount++;
@@ -1068,6 +1106,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                     {
                         bool isPlayerHit = resolved.Hit.collider != null
                             && resolved.Hit.collider.GetComponentInParent<FPSProject.Combat.Runtime.IDamageable>() != null;
+                        ImpactSurfaceType surfaceType = ImpactSurface.Resolve(resolved.Hit.collider);
 
                         // Enforce the single-pellet-per-target rule and the shotgun damage cap.
                         // ResolveHitscanRay already applied damage via ResolveContact; for the
@@ -1102,7 +1141,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                         {
                             Point = resolved.Hit.point,
                             Normal = resolved.Hit.normal,
-                            IsPlayerHit = isPlayerHit
+                            IsPlayerHit = isPlayerHit,
+                            SurfaceType = (byte)surfaceType
                         };
                         SetImpact(ref result, impactIndex, in impact);
                         result.ImpactCount++;
@@ -1155,7 +1195,9 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 tracerPrefab = b.tracerPrefab,
                 tracerSpeed = b.tracerSpeed,
                 tracerLifetime = b.tracerLifetime,
-                impactEffectLibrary = b.impactEffectLibrary
+                // Authoritative resolution applies damage only. All peers, including the host,
+                // play exactly one impact from the broadcast NetworkShotResult.
+                impactEffectLibrary = null
             };
         }
 

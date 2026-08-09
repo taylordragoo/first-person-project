@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 0d3d5f72d3a63b6448854c4a06c292e8
+timeCreated: 1547092688
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 137126
+  packageName: POLYGON - Prototype Pack - Art by Synty
+  packageVersion: 1.9.1
+  assetPath: Assets/Synty/PolygonPrototype/Materials/PolygonPrototype_Grid_05.mat
+  uploadId: 924218

@@ -168,6 +168,13 @@ namespace FPSProject.Multiplayer.PlayModeTests
             _networkManager = managerObject.GetComponent<NetworkManager>();
             Assert.IsNotNull(_networkManager);
             Assert.IsTrue(_networkManager.StartHost());
+            yield return null;
+
+            SessionSnapshot snapshot = JsonUtility.FromJson<SessionSnapshot>(
+                sceneLauncher.ReadSnapshot());
+            Assert.AreEqual("HOSTING", snapshot.state);
+            Assert.IsTrue(snapshot.host);
+            Assert.AreEqual(1, snapshot.players);
 
             NetworkObject localPlayer = _networkManager.SpawnManager.GetLocalPlayerObject();
             for (int frame = 0; frame < 30 && localPlayer == null; frame++)
@@ -330,6 +337,14 @@ namespace FPSProject.Multiplayer.PlayModeTests
             float magnitudeSquared = value.x * value.x + value.y * value.y
                 + value.z * value.z + value.w * value.w;
             return magnitudeSquared > Mathf.Epsilon;
+        }
+
+        [System.Serializable]
+        private struct SessionSnapshot
+        {
+            public string state;
+            public int players;
+            public bool host;
         }
     }
 }

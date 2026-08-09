@@ -24,12 +24,19 @@ namespace FPSProject.Multiplayer.Core.Weapons
         /// <summary>True when this impact hit a player (for hit-marker presentation).</summary>
         public bool IsPlayerHit;
 
+        /// <summary>
+        /// Serialized <see cref="Combat.Runtime.ImpactSurfaceType"/> value used to select the
+        /// same impact effect on every client without repeating a local physics query.
+        /// </summary>
+        public byte SurfaceType;
+
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref Point);
             serializer.SerializeValue(ref Normal);
             serializer.SerializeValue(ref HitTargetNetworkId);
             serializer.SerializeValue(ref IsPlayerHit);
+            serializer.SerializeValue(ref SurfaceType);
         }
     }
 

@@ -1,0 +1,16 @@
+name = "cavecrew-escalation-high"
+description = "Sol High escalation for a task that Terra Medium or Sol Medium attempted but did not resolve."
+model_provider = "openai"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+developer_instructions = """
+Use only after a Terra Medium or Sol Medium attempt failed, returned insufficient evidence, or produced a regression.
+Start from the prior attempt's concrete evidence. Identify why it failed before trying a different approach.
+Do not repeat the same unsuccessful steps. Make only safe, scoped workspace changes and do not perform irreversible external actions.
+Return compressed output:
+
+failure cause: <short reason>.
+<path:line> - <change or finding>.
+verified: <checks performed and result>.
+"""

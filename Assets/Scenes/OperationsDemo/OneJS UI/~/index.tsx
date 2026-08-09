@@ -13,6 +13,10 @@ import {
     type WeaponHudData,
 } from "./weapon-bridge"
 
+const RuntimeCS = (globalThis as any).CS
+const menuFont = RuntimeCS.UnityEngine.Resources.Load("ProjectSapphire/ArialPixel")
+const menuFontDefinition = RuntimeCS.UnityEngine.UIElements.FontDefinition.FromFont(menuFont)
+
 const colors = {
     cyan: "rgba(34, 211, 238, 1)",
     cyanBright: "rgba(114, 235, 246, 1)",
@@ -376,7 +380,7 @@ function PlayerStatus() {
             style={{
                 position: "absolute",
                 left: 64,
-                bottom: 52,
+                bottom: 64,
                 height: 88,
                 padding: 6,
                 flexDirection: "row",
@@ -485,7 +489,7 @@ function AmmoCounter({ weapon }: { weapon: WeaponHudData }) {
             style={{
                 position: "absolute",
                 right: 64,
-                bottom: 52,
+                bottom: 64,
                 width: 300,
                 height: 118,
                 backgroundColor: colors.dark,
@@ -555,26 +559,11 @@ function Reticle() {
     )
 }
 
-function Chevron({ offset }: { offset: number }) {
-    return (
-        <View {...ignore} style={{ position: "relative", width: 76, height: 82, marginRight: 16, marginLeft: 16, translate: [0, offset] }}>
-            <View {...ignore} style={{ position: "absolute", top: 16, left: 4, width: 48, height: 3, rotate: 63, transformOrigin: [0, "50%"], backgroundColor: colors.cyan }} />
-            <View {...ignore} style={{ position: "absolute", top: 58, right: 4, width: 48, height: 3, rotate: -63, transformOrigin: ["100%", "50%"], backgroundColor: colors.cyan }} />
-            <View {...ignore} style={{ position: "absolute", top: 22, left: 17, width: 31, height: 1, rotate: 63, transformOrigin: [0, "50%"], backgroundColor: colors.cyanLine }} />
-            <View {...ignore} style={{ position: "absolute", top: 49, right: 17, width: 31, height: 1, rotate: -63, transformOrigin: ["100%", "50%"], backgroundColor: colors.cyanLine }} />
-        </View>
-    )
-}
-
 function CenterMarkers() {
     return (
         <View {...ignore} style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}>
             <Reticle />
-            <View {...ignore} style={{ position: "absolute", right: 0, bottom: 130, left: 0, height: 110, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                <Chevron offset={-14} />
-                <Chevron offset={0} />
-                <Chevron offset={-28} />
-            </View>
+
             <View
                 {...ignore}
                 style={{
@@ -623,7 +612,6 @@ function TacticalHud() {
     )
 }
 
-const RuntimeCS = (globalThis as any).CS
 function isPaused(): boolean {
     if (!__isPlaying) return false
 
@@ -641,6 +629,20 @@ type MultiplayerSessionData = {
     error: string
     players: number
     host: boolean
+    matchActive: boolean
+    phase: string
+    map: string
+    team: string
+    alphaScore: number
+    bravoScore: number
+    remainingSeconds: number
+    bots: number
+    alphaBots: number
+    bravoBots: number
+    alphaPlayers: number
+    bravoPlayers: number
+    winner: string
+    weapon: string
 }
 
 const offlineSession: MultiplayerSessionData = {
@@ -650,6 +652,20 @@ const offlineSession: MultiplayerSessionData = {
     error: "",
     players: 0,
     host: false,
+    matchActive: false,
+    phase: "WAITING",
+    map: "DUST2",
+    team: "UNASSIGNED",
+    alphaScore: 0,
+    bravoScore: 0,
+    remainingSeconds: 0,
+    bots: 0,
+    alphaBots: 0,
+    bravoBots: 0,
+    alphaPlayers: 0,
+    bravoPlayers: 0,
+    winner: "UNASSIGNED",
+    weapon: "LOADOUT 01",
 }
 
 function readMultiplayerSessionSnapshot(): string {
@@ -692,6 +708,8 @@ function LoadingScreen({ text }: { text: string }) {
         fontSize: 20,
         letterSpacing: 6,
         whiteSpace: "nowrap" as const,
+        unityFont: menuFont,
+        unityFontDefinition: menuFontDefinition,
         unityFontStyleAndWeight: "bold" as const,
     }
 
@@ -719,6 +737,15 @@ function MultiplayerSessionPanel({ session }: { session: MultiplayerSessionData 
         RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.CopyJoinCode()
     }
 
+    const minutes = Math.floor(Math.max(0, session.remainingSeconds) / 60)
+    const seconds = Math.max(0, session.remainingSeconds) % 60
+    const clock = `${minutes}:${seconds.toString().padStart(2, "0")}`
+    const matchResult = session.phase === "FINISHED"
+        ? session.winner === "UNASSIGNED"
+            ? "DRAW"
+            : `${session.winner} WINS`
+        : ""
+
     return (
         <View
             name="multiplayer-session-status"
@@ -726,7 +753,7 @@ function MultiplayerSessionPanel({ session }: { session: MultiplayerSessionData 
                 position: "absolute",
                 top: 28,
                 right: 58,
-                width: 310,
+                width: 370,
                 paddingTop: 13,
                 paddingRight: 15,
                 paddingBottom: 13,
@@ -738,6 +765,28 @@ function MultiplayerSessionPanel({ session }: { session: MultiplayerSessionData 
         >
             <HudText text="MULTIPLAYER // UNITY RELAY" size={10} color={colors.orange} tracking={1.6} />
             <HudText text={session.state} size={16} color={session.error ? "rgb(255, 104, 78)" : colors.white} tracking={1.3} />
+            {session.matchActive && (
+                <>
+                    <View style={{ height: 1, marginTop: 8, marginBottom: 8, backgroundColor: colors.cyanLine }} />
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                        <HudText text={`ALPHA  ${session.alphaScore}`} size={17} color={colors.cyanBright} tracking={1.4} />
+                        <HudText text={clock} size={23} color={session.phase === "FINISHED" ? colors.orange : colors.white} tracking={1.8} />
+                        <HudText text={`${session.bravoScore}  BRAVO`} size={17} color={colors.orange} tracking={1.4} />
+                    </View>
+                    <HudText
+                        text={matchResult || `${session.map} // TEAM ${session.team}`}
+                        size={10}
+                        color={matchResult ? colors.orange : colors.green}
+                        tracking={1.2}
+                    />
+                    <HudText
+                        text={`ALPHA ${session.alphaPlayers}H/${session.alphaBots}B // BRAVO ${session.bravoPlayers}H/${session.bravoBots}B // ${session.weapon}`}
+                        size={8}
+                        color={colors.cyanBright}
+                        tracking={1.0}
+                    />
+                </>
+            )}
             {session.joinCode && (
                 <>
                     <HudText text={`JOIN CODE  ${session.joinCode}`} size={20} color={colors.cyanBright} tracking={2.2} />
@@ -789,6 +838,7 @@ function App() {
     const [draft, setDraft] = useState<MenuSettings>(() => readSettings())
     const [defaults, setDefaults] = useState<MenuSettings>(() => readSettings(true))
     const [showHud, setShowHud] = useState(() => readSettings().showHud)
+    const [returningToMenu, setReturningToMenu] = useState(false)
     const loadingText = multiplayerSession.state === "LOADING"
         ? "LOADING OPERATION..."
         : multiplayerSession.state === "STARTING RELAY HOST"
@@ -816,10 +866,12 @@ function App() {
     const resume = () => {
         if (!__isPlaying) return
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.SetPaused(false)
+        RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.CaptureGameplayCursor()
     }
 
     const returnToMainMenu = () => {
         if (!__isPlaying) return
+        setReturningToMenu(true)
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode()
         RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.ReturnToMainMenu()
     }
@@ -855,12 +907,14 @@ function App() {
                     onClose={() => setShowSettings(false)}
                 />
             )}
+            {returningToMenu && <LoadingScreen text="RETURNING TO MAIN MENU..." />}
             {loadingText && <LoadingScreen text={loadingText} />}
         </View>
     )
 }
 
 export function onPlay() {
+    if (__isPlaying) RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.CaptureGameplayCursor()
     console.log("[OneJS UI] Tactical HUD and menu overlay started")
 }
 

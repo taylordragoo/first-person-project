@@ -2,6 +2,9 @@ using System;
 using System.Globalization;
 using System.Reflection;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace FirstPersonProject.UI
 {
@@ -20,6 +23,17 @@ namespace FirstPersonProject.UI
         private static object _cachedWeapon;
         private static bool _paused;
         private static float _timeScaleBeforePause = 1f;
+        private static bool _gameplayCursorActive = true;
+#if UNITY_EDITOR
+        private static bool _gameViewFocusScheduled;
+        private static int _gameViewFocusDelayCalls;
+        private static bool _gameViewCursorOverrideSubscribed;
+        private static double _gameViewCursorOverrideUntil;
+        private static UnityEditor.EditorWindow _gameView;
+        private static MethodInfo _allowCursorLockAndHide;
+        private static readonly object[] AllowCursorLockArguments = { true };
+        private static readonly object[] DisallowCursorLockArguments = { false };
+#endif
 
         public static bool PollPauseState()
         {
@@ -28,46 +42,190 @@ namespace FirstPersonProject.UI
                 SetPaused(!_paused);
             }
 
+            // Cursor state can be changed by the Editor, the OS, or UI Toolkit after a
+            // button callback completes. Enforce the desired gameplay state every frame
+            // instead of trusting a one-shot lock request made during the Resume click.
+            ApplyCursorState();
+
             return _paused;
         }
 
         public static void SetPaused(bool paused)
         {
-            if (_paused == paused) return;
-
-            _paused = paused;
-            if (paused)
+            if (paused && !_paused)
             {
                 _timeScaleBeforePause = Mathf.Approximately(Time.timeScale, 0f) ? 1f : Time.timeScale;
-                Time.timeScale = 0f;
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
             }
-            else
-            {
-                Time.timeScale = _timeScaleBeforePause;
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+
+            _paused = paused;
+            Time.timeScale = paused ? 0f : _timeScaleBeforePause;
+            SetGameplayInputActive(!paused);
+            ApplyCursorState();
+#if UNITY_EDITOR
+            if (paused) StopGameViewCursorOverride(true);
+#endif
         }
 
         public static void EnterMenuMode()
         {
+            _gameplayCursorActive = false;
             _paused = false;
             _timeScaleBeforePause = 1f;
             Time.timeScale = 1f;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            SetGameplayInputActive(false);
+            ApplyCursorState();
+#if UNITY_EDITOR
+            StopGameViewCursorOverride(true);
+#endif
         }
 
         public static void EnterGameplayMode()
         {
+            _gameplayCursorActive = true;
             _paused = false;
             _timeScaleBeforePause = 1f;
             Time.timeScale = 1f;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            SetGameplayInputActive(true);
+            CaptureGameplayCursor();
         }
+
+        public static void CaptureGameplayCursor()
+        {
+            _gameplayCursorActive = true;
+            SetGameplayInputActive(true);
+            ApplyCursorState();
+#if UNITY_EDITOR
+            ScheduleGameViewFocus();
+#endif
+        }
+
+        private static void SetGameplayInputActive(bool active)
+        {
+#if ENABLE_INPUT_SYSTEM
+            PlayerInput[] playerInputs = UnityEngine.Object.FindObjectsByType<PlayerInput>(
+                FindObjectsInactive.Exclude,
+                FindObjectsSortMode.None);
+
+            foreach (PlayerInput playerInput in playerInputs)
+            {
+                // Disabled PlayerInput components include presentation rigs and network
+                // proxies. Their owner decides when they become local gameplay input.
+                if (!playerInput.enabled) continue;
+
+                if (active)
+                {
+                    playerInput.ActivateInput();
+                }
+                else if (playerInput.inputIsActive)
+                {
+                    playerInput.DeactivateInput();
+                }
+            }
+#endif
+        }
+
+        private static void ApplyCursorState()
+        {
+            bool shouldLock = _gameplayCursorActive && !_paused;
+            CursorLockMode desiredLockState = shouldLock ? CursorLockMode.Locked : CursorLockMode.None;
+
+            if (Cursor.lockState != desiredLockState)
+            {
+                Cursor.lockState = desiredLockState;
+            }
+
+            Cursor.visible = !shouldLock;
+        }
+
+#if UNITY_EDITOR
+        private static void ScheduleGameViewFocus()
+        {
+            // Let the UI click finish and React remove the pause overlay before focusing
+            // the Game View. Locking the cursor without Game View focus only changes the
+            // reported lock state; Unity still waits for a click before capturing input.
+            _gameViewFocusDelayCalls = 2;
+            if (_gameViewFocusScheduled) return;
+
+            _gameViewFocusScheduled = true;
+            UnityEditor.EditorApplication.delayCall += AdvanceGameViewFocus;
+        }
+
+        private static void AdvanceGameViewFocus()
+        {
+            if (!Application.isPlaying || !_gameplayCursorActive || _paused)
+            {
+                _gameViewFocusScheduled = false;
+                return;
+            }
+
+            if (--_gameViewFocusDelayCalls > 0)
+            {
+                UnityEditor.EditorApplication.delayCall += AdvanceGameViewFocus;
+                return;
+            }
+
+            _gameViewFocusScheduled = false;
+            Type gameViewType = typeof(UnityEditor.EditorWindow).Assembly.GetType("UnityEditor.GameView");
+            if (gameViewType == null) return;
+
+            UnityEditor.EditorWindow gameView = UnityEditor.EditorWindow.GetWindow(gameViewType);
+            gameView.Focus();
+            _gameView = gameView;
+            _allowCursorLockAndHide = gameViewType.GetMethod(
+                "AllowCursorLockAndHide",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            _gameViewCursorOverrideUntil = UnityEditor.EditorApplication.timeSinceStartup + 0.5d;
+
+            if (!_gameViewCursorOverrideSubscribed)
+            {
+                _gameViewCursorOverrideSubscribed = true;
+                UnityEditor.EditorApplication.update += EnforceGameViewCursorCapture;
+            }
+
+            EnforceGameViewCursorCapture();
+        }
+
+        private static void EnforceGameViewCursorCapture()
+        {
+            if (!Application.isPlaying || !_gameplayCursorActive || _paused)
+            {
+                StopGameViewCursorOverride(true);
+                return;
+            }
+
+            if (UnityEditor.EditorApplication.timeSinceStartup >= _gameViewCursorOverrideUntil)
+            {
+                StopGameViewCursorOverride(false);
+                return;
+            }
+
+            if (_gameView == null || _allowCursorLockAndHide == null) return;
+
+            if (UnityEditor.EditorWindow.focusedWindow != _gameView)
+            {
+                _gameView.Focus();
+            }
+
+            _allowCursorLockAndHide.Invoke(_gameView, AllowCursorLockArguments);
+            ApplyCursorState();
+        }
+
+        private static void StopGameViewCursorOverride(bool revokeCursorLockPermission)
+        {
+            if (_gameViewCursorOverrideSubscribed)
+            {
+                UnityEditor.EditorApplication.update -= EnforceGameViewCursorCapture;
+                _gameViewCursorOverrideSubscribed = false;
+            }
+
+            if (revokeCursorLockPermission && _gameView != null && _allowCursorLockAndHide != null)
+            {
+                _allowCursorLockAndHide.Invoke(_gameView, DisallowCursorLockArguments);
+            }
+
+            _gameViewCursorOverrideUntil = 0d;
+        }
+#endif
 
         public static string ReadWeaponHudSnapshot()
         {

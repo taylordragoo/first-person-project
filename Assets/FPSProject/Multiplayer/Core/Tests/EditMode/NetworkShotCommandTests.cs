@@ -100,7 +100,8 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
                     Point = new Vector3(10, 20, 30),
                     Normal = new Vector3(0, 1, 0),
                     HitTargetNetworkId = 99,
-                    IsPlayerHit = true
+                    IsPlayerHit = true,
+                    SurfaceType = 5
                 }
             };
 
@@ -115,6 +116,7 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
             Assert.AreEqual(original.Impact0.Normal, roundtrip.Impact0.Normal);
             Assert.AreEqual(original.Impact0.HitTargetNetworkId, roundtrip.Impact0.HitTargetNetworkId);
             Assert.AreEqual(original.Impact0.IsPlayerHit, roundtrip.Impact0.IsPlayerHit);
+            Assert.AreEqual(original.Impact0.SurfaceType, roundtrip.Impact0.SurfaceType);
             Assert.AreEqual(default(NetworkShotImpact), roundtrip.Impact1);
         }
 

@@ -7,6 +7,7 @@ compileStyleSheet(menuStyles, "project-sapphire-menu.uss")
 const RuntimeCS = (globalThis as any).CS
 const menuBackground = RuntimeCS.UnityEngine.Resources.Load("ProjectSapphire/main_menu_bg")
 const menuFont = RuntimeCS.UnityEngine.Resources.Load("ProjectSapphire/ArialPixel")
+const menuFontDefinition = RuntimeCS.UnityEngine.UIElements.FontDefinition.FromFont(menuFont)
 
 export type ResolutionOption = {
     label: string
@@ -50,6 +51,7 @@ function PixelText({
             pickingMode="Ignore"
             style={{
                 unityFont: menuFont,
+                unityFontDefinition: menuFontDefinition,
                 color,
                 fontSize: size,
                 unityTextAlign: align,
@@ -65,7 +67,7 @@ function MenuAction({ text, onClick, compact = false }: { text: string, onClick:
             text={text}
             className={compact ? "ps-menu-action ps-menu-action--compact" : "ps-menu-action"}
             onClick={onClick}
-            style={{ unityFont: menuFont }}
+            style={{ unityFont: menuFont, unityFontDefinition: menuFontDefinition }}
         />
     )
 }

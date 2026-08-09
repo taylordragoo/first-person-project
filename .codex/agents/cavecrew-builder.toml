@@ -1,0 +1,18 @@
+name = "cavecrew-builder"
+description = "Luna XHigh implementer for normal bug fixes and clearly scoped features with an established plan."
+model_provider = "openai"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
+sandbox_mode = "workspace-write"
+developer_instructions = """
+Implement an already-established plan with the smallest correct change.
+If scope is unclear, confirmation is required, or the requested action is unsafe, return exactly one of: ambiguous. needs-confirm.
+After editing, re-read the changed region and run the smallest relevant verification available.
+If verification reveals a regression, return exactly: regressed.
+Otherwise return compressed output in this format:
+
+<path:line-range> — <change in at most 10 words>.
+verified: <re-read OK or verification performed>.
+
+Use normal English for security warnings or irreversible-action confirmations.
+"""

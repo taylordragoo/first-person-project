@@ -606,13 +606,36 @@ namespace FPSProject.Combat.Runtime
             }
         }
 
+        /// <summary>
+        /// Plays a presentation-only impact from authoritative hit data. This does not raycast
+        /// or apply damage and is safe to call when replaying a confirmed network shot.
+        /// </summary>
+        public void PlayImpact(
+            ImpactEffectLibrary library,
+            Vector3 point, Vector3 normal,
+            ImpactSurfaceType surfaceType,
+            Transform hitTransform = null)
+        {
+            SpawnImpactEffects(library, point, normal, surfaceType, hitTransform);
+        }
+
         private void SpawnImpactEffects(
             in WeaponShotRequest request,
             Vector3 point, Vector3 normal,
             ImpactSurfaceType surfaceType,
             Transform hitTransform)
         {
-            var library = request.Ballistics.impactEffectLibrary;
+            SpawnImpactEffects(
+                request.Ballistics.impactEffectLibrary,
+                point, normal, surfaceType, hitTransform);
+        }
+
+        private void SpawnImpactEffects(
+            ImpactEffectLibrary library,
+            Vector3 point, Vector3 normal,
+            ImpactSurfaceType surfaceType,
+            Transform hitTransform)
+        {
             if (library == null) return;
 
             var pair = library.GetPair(surfaceType);

@@ -19,6 +19,12 @@ function App() {
     const [showSettings, setShowSettings] = useState(false)
     const [showMultiplayer, setShowMultiplayer] = useState(false)
     const [joinCode, setJoinCode] = useState("")
+    const [alphaBotCount, setAlphaBotCount] = useState(3)
+    const [bravoBotCount, setBravoBotCount] = useState(4)
+    const [durationMinutes, setDurationMinutes] = useState(5)
+    const [hostTeam, setHostTeam] = useState(1)
+    const [joinTeam, setJoinTeam] = useState(1)
+    const [matchMap, setMatchMap] = useState(0)
     const [multiplayerError, setMultiplayerError] = useState("")
     const [loadingText, setLoadingText] = useState("")
     const [draft, setDraft] = useState<MenuSettings>(() => readSettings())
@@ -37,6 +43,7 @@ function App() {
 
     const startOperations = () => {
         if (!__isPlaying) return
+        setLoadingText("LOADING OPERATION...")
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterGameplayMode()
         RuntimeCS.UnityEngine.SceneManagement.SceneManager.LoadScene("OperationsDemo")
     }
@@ -46,11 +53,26 @@ function App() {
         setMultiplayerError("")
         setLoadingText("ESTABLISHING RELAY...")
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterGameplayMode()
-        const launched = RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.LaunchHost()
+        const launched = RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.LaunchHost(
+            alphaBotCount,
+            bravoBotCount,
+            durationMinutes,
+            hostTeam,
+            matchMap,
+        )
         if (!launched) {
             RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode()
             setLoadingText("")
             setMultiplayerError(String(RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.LastError))
+        }
+    }
+
+    const changeHostTeam = (team: number) => {
+        setHostTeam(team)
+        if (team === 1) {
+            setAlphaBotCount((count) => Math.min(3, count))
+        } else if (team === 2) {
+            setBravoBotCount((count) => Math.min(3, count))
         }
     }
 
@@ -60,7 +82,7 @@ function App() {
         setLoadingText("JOINING OPERATION...")
         const bridge = RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterGameplayMode()
-        const launched = bridge.LaunchClient(joinCode)
+        const launched = bridge.LaunchClient(joinCode, joinTeam)
         if (!launched) {
             RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode()
             setLoadingText("")
@@ -87,8 +109,20 @@ function App() {
             {showMultiplayer && (
                 <MultiplayerPanel
                     joinCode={joinCode}
+                    alphaBotCount={alphaBotCount}
+                    bravoBotCount={bravoBotCount}
+                    durationMinutes={durationMinutes}
+                    hostTeam={hostTeam}
+                    joinTeam={joinTeam}
+                    matchMap={matchMap}
                     error={multiplayerError}
                     onJoinCodeChange={setJoinCode}
+                    onAlphaBotCountChange={setAlphaBotCount}
+                    onBravoBotCountChange={setBravoBotCount}
+                    onDurationMinutesChange={setDurationMinutes}
+                    onHostTeamChange={changeHostTeam}
+                    onJoinTeamChange={setJoinTeam}
+                    onMatchMapChange={setMatchMap}
                     onHost={startMultiplayerHost}
                     onJoin={startMultiplayerClient}
                     onClose={() => setShowMultiplayer(false)}

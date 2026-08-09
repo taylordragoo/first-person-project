@@ -140,6 +140,7 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
             Assert.AreEqual(20, mk14.magazineCapacity);
             Assert.IsTrue(mk14.supportsAuto);
             Assert.AreEqual(35f, mk14.ballistics.damage);
+
         }
 
         [Test]

@@ -1,4 +1,5 @@
 using FPSProject.Combat.Runtime;
+using FPSProject.Multiplayer.Core.Match;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ namespace FPSProject.Multiplayer.Core.Health
         public bool IsDead => CurrentHealth.Value <= 0f;
 
         public event System.Action OnDeath;
+        public event System.Action<DamageInfo> OnKilled;
         public event System.Action OnRespawn;
         public event System.Action<float, float> OnHealthChanged;
 
@@ -33,6 +35,7 @@ namespace FPSProject.Multiplayer.Core.Health
             if (IsDead) return;
 
             if (damageInfo.InstigatorOwner == gameObject) return;
+            if (MatchTeamResolver.AreFriendly(damageInfo.InstigatorOwner, gameObject)) return;
 
             float newHealth = Mathf.Max(0f, CurrentHealth.Value - damageInfo.Amount);
             CurrentHealth.Value = newHealth;
@@ -41,6 +44,7 @@ namespace FPSProject.Multiplayer.Core.Health
 
             if (newHealth <= 0f)
             {
+                OnKilled?.Invoke(damageInfo);
                 OnDeath?.Invoke();
             }
         }
