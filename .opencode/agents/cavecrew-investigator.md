@@ -1,7 +1,7 @@
 ---
 description: MiniMax-backed investigator for locating code, tracing behavior, and diagnosing problems without editing files
 mode: subagent
-model: ollama/minimax-m3:cloud
+model: ollama/kimi-k2.7-code:cloud
 temperature: 0.1
 permission:
   edit: deny

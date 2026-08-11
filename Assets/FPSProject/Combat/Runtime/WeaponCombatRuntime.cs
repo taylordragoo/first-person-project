@@ -307,6 +307,27 @@ namespace FPSProject.Combat.Runtime
             Vector3 spreadDirection,
             Vector3 muzzlePosition)
         {
+            AuthoritativeShotResult result = DetectHitscanRay(
+                request, cameraOrigin, spreadDirection, muzzlePosition);
+
+            if (result.HasHit)
+            {
+                ResolveContact(request, result.Hit);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Resolve hitscan geometry without applying damage or spawning presentation. Callers that
+        /// impose aggregate damage rules can inspect the contact before explicitly resolving it.
+        /// </summary>
+        public AuthoritativeShotResult DetectHitscanRay(
+            in WeaponShotRequest request,
+            Vector3 cameraOrigin,
+            Vector3 spreadDirection,
+            Vector3 muzzlePosition)
+        {
             var result = new AuthoritativeShotResult
             {
                 MuzzlePosition = muzzlePosition,
@@ -385,11 +406,6 @@ namespace FPSProject.Combat.Runtime
                 result.HasHit = true;
                 result.Hit = cameraAimHit.Value;
                 result.Endpoint = cameraAimHit.Value.point;
-            }
-
-            if (result.HasHit)
-            {
-                ResolveContact(request, result.Hit);
             }
 
             return result;
@@ -614,9 +630,10 @@ namespace FPSProject.Combat.Runtime
             ImpactEffectLibrary library,
             Vector3 point, Vector3 normal,
             ImpactSurfaceType surfaceType,
-            Transform hitTransform = null)
+            Transform hitTransform = null,
+            bool spawnDecal = true)
         {
-            SpawnImpactEffects(library, point, normal, surfaceType, hitTransform);
+            SpawnImpactEffects(library, point, normal, surfaceType, hitTransform, spawnDecal);
         }
 
         private void SpawnImpactEffects(
@@ -634,7 +651,8 @@ namespace FPSProject.Combat.Runtime
             ImpactEffectLibrary library,
             Vector3 point, Vector3 normal,
             ImpactSurfaceType surfaceType,
-            Transform hitTransform)
+            Transform hitTransform,
+            bool spawnDecal = true)
         {
             if (library == null) return;
 
@@ -645,7 +663,7 @@ namespace FPSProject.Combat.Runtime
             Quaternion surfaceRotation = Quaternion.FromToRotation(Vector3.forward, surfaceNormal);
 
             // Spawn decal
-            if (pair.decalPrefab != null)
+            if (spawnDecal && pair.decalPrefab != null)
             {
                 var decal = _poolManager.RentDecal(pair.decalPrefab);
                 if (decal != null)
@@ -713,11 +731,12 @@ namespace FPSProject.Combat.Runtime
                     impact.transform.position = point;
                     impact.transform.rotation = surfaceRotation;
 
-                    // Restart particle systems
-                    var particleSystems = impact.GetComponentsInChildren<ParticleSystem>();
+                    // Pooled impact prefabs may contain child systems configured to destroy
+                    // themselves when stopped. Normalize that setting before every replay so
+                    // returning the root to the pool never destroys a child permanently.
+                    var particleSystems = PrepareImpactParticleSystems(impact);
                     foreach (var ps in particleSystems)
                     {
-                        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
                         ps.Play();
                     }
 
@@ -820,12 +839,8 @@ namespace FPSProject.Combat.Runtime
 
                 if (impact.lifetime <= 0f)
                 {
-                    // Stop particles before returning
-                    var particleSystems = impact.instance.GetComponentsInChildren<ParticleSystem>();
-                    foreach (var ps in particleSystems)
-                    {
-                        ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                    }
+                    // Clear all particles before returning so the next renter starts clean.
+                    StopAndClearImpactParticleSystems(impact.instance);
 
                     _poolManager.ReturnImpact(impact.prefab, impact.instance);
                     _activeImpacts.RemoveAt(i);
@@ -834,6 +849,31 @@ namespace FPSProject.Combat.Runtime
                 {
                     _activeImpacts[i] = impact;
                 }
+            }
+        }
+
+        private static ParticleSystem[] PrepareImpactParticleSystems(GameObject instance)
+        {
+            var allParticleSystems = instance.GetComponentsInChildren<ParticleSystem>(true);
+            foreach (var ps in allParticleSystems)
+            {
+                var main = ps.main;
+                main.stopAction = ParticleSystemStopAction.None;
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+
+            // Keep the original replay behavior: only active child systems are played.
+            return instance.GetComponentsInChildren<ParticleSystem>();
+        }
+
+        private static void StopAndClearImpactParticleSystems(GameObject instance)
+        {
+            var particleSystems = instance.GetComponentsInChildren<ParticleSystem>(true);
+            foreach (var ps in particleSystems)
+            {
+                var main = ps.main;
+                main.stopAction = ParticleSystemStopAction.None;
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             }
         }
 

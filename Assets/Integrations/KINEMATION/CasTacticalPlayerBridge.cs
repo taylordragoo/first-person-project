@@ -8,6 +8,9 @@ using KINEMATION.TacticalShooterPack.Scripts.Player;
 using KINEMATION.TacticalShooterPack.Scripts.Weapon;
 using UnityEngine;
 using UnityEngine.InputSystem;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace FirstPersonProject.Integrations.Kinemation
 {
@@ -62,6 +65,40 @@ namespace FirstPersonProject.Integrations.Kinemation
             "root/pelvis/thigh_r/calf_r/foot_r/ball_r"
         };
 
+        private static readonly string[] DebugLeftLegPaths =
+        {
+            "root",
+            "root/pelvis",
+            "root/pelvis/thigh_l",
+            "root/pelvis/thigh_l/calf_l",
+            "root/pelvis/thigh_l/calf_l/foot_l",
+            "root/pelvis/thigh_l/calf_l/foot_l/ball_l"
+        };
+
+        private static readonly string[] DebugRightLegPaths =
+        {
+            "root",
+            "root/pelvis",
+            "root/pelvis/thigh_r",
+            "root/pelvis/thigh_r/calf_r",
+            "root/pelvis/thigh_r/calf_r/foot_r",
+            "root/pelvis/thigh_r/calf_r/foot_r/ball_r"
+        };
+
+        private static readonly string[] DebugComparisonPaths =
+        {
+            "root",
+            "root/pelvis",
+            "root/pelvis/thigh_l",
+            "root/pelvis/thigh_l/calf_l",
+            "root/pelvis/thigh_l/calf_l/foot_l",
+            "root/pelvis/thigh_l/calf_l/foot_l/ball_l",
+            "root/pelvis/thigh_r",
+            "root/pelvis/thigh_r/calf_r",
+            "root/pelvis/thigh_r/calf_r/foot_r",
+            "root/pelvis/thigh_r/calf_r/foot_r/ball_r"
+        };
+
         [Header("CAS pose source")]
         [SerializeField] private FPSExampleController casController;
         [SerializeField] private CharacterCamera casCamera;
@@ -72,8 +109,14 @@ namespace FirstPersonProject.Integrations.Kinemation
         [SerializeField] private TacticalProceduralAnimation tacticalAnimation;
         [SerializeField] private Transform tacticalSkeleton;
 
-        [Header("Crouch presentation")]
-        [SerializeField, Min(0.01f)] private float crouchHeightSmoothTime = 0.06f;
+        [Header("Skeleton comparison debug")]
+        [SerializeField] private bool drawSkeletonComparison;
+        [SerializeField] private bool drawSkeletonLabels = true;
+        [SerializeField, Min(0.001f)] private float debugJointRadius = 0.015f;
+        [SerializeField, Min(0f)] private float debugMismatchTolerance = 0.015f;
+        [SerializeField] private Color casDebugColor = Color.cyan;
+        [SerializeField] private Color tacticalDebugColor = Color.magenta;
+        [SerializeField] private Color mismatchDebugColor = new Color(1f, 0.55f, 0f, 1f);
 
         private readonly List<BoneLink> _boneLinks = new List<BoneLink>();
         private readonly List<LocalTransformBindPose> _tacticalIkBindPose
@@ -81,17 +124,9 @@ namespace FirstPersonProject.Integrations.Kinemation
 
         private LowerBodyFrameLink _rootLink;
         private LowerBodyFrameLink _pelvisLink;
-        private Transform _tacticalPresentationRoot;
         private Transform _tacticalSpine;
         private Transform _tacticalWeaponIkRoot;
-        private Transform _tacticalLeftFoot;
-        private Transform _tacticalRightFoot;
-        private Vector3 _tacticalPresentationBindPosition;
         private float _lowerBodyTranslationScale = 1f;
-        private float _standingTacticalFootHeight;
-        private float _presentationHeightOffset;
-        private float _presentationHeightVelocity;
-        private bool _hasStandingTacticalFootHeight;
         private bool _tacticalAimState;
         private bool _reportedInvalidPresentationState;
 
@@ -100,12 +135,9 @@ namespace FirstPersonProject.Integrations.Kinemation
             ResolveReferences();
             BuildBoneLinks();
 
-            _tacticalPresentationRoot = tacticalPlayer == null ? null : tacticalPlayer.transform;
             if (tacticalSkeleton != null)
             {
                 _tacticalSpine = tacticalSkeleton.Find("root/pelvis/spine_01");
-                _tacticalLeftFoot = tacticalSkeleton.Find("root/pelvis/thigh_l/calf_l/foot_l");
-                _tacticalRightFoot = tacticalSkeleton.Find("root/pelvis/thigh_r/calf_r/foot_r");
             }
 
             Transform ikHandGun = tacticalAnimation == null ? null : tacticalAnimation.bones.ikHandGun;
@@ -116,11 +148,6 @@ namespace FirstPersonProject.Integrations.Kinemation
             {
                 CacheTacticalIkBindPose(tacticalAnimation.bones.ikRightHand);
                 CacheTacticalIkBindPose(tacticalAnimation.bones.ikLeftHand);
-            }
-
-            if (_tacticalPresentationRoot != null)
-            {
-                _tacticalPresentationBindPosition = _tacticalPresentationRoot.localPosition;
             }
         }
 
@@ -133,6 +160,103 @@ namespace FirstPersonProject.Integrations.Kinemation
             {
                 tacticalAnimation = GetComponentInChildren<TacticalProceduralAnimation>(true);
             }
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (!drawSkeletonComparison || casSkeleton == null || tacticalSkeleton == null) return;
+
+            float radius = Mathf.Max(0.001f, debugJointRadius);
+            DrawDebugSkeleton(casSkeleton, casDebugColor, radius);
+            DrawDebugSkeleton(tacticalSkeleton, tacticalDebugColor, radius);
+            DrawPoseMismatchLines(radius);
+            DrawFootWidthComparison(radius);
+        }
+
+        private static void DrawDebugSkeleton(Transform skeleton, Color color, float radius)
+        {
+            DrawDebugChain(skeleton, DebugLeftLegPaths, color, radius);
+            DrawDebugChain(skeleton, DebugRightLegPaths, color, radius);
+        }
+
+        private static void DrawDebugChain(Transform skeleton, string[] paths, Color color,
+            float radius)
+        {
+            Transform previous = null;
+            Gizmos.color = color;
+            foreach (string path in paths)
+            {
+                Transform current = skeleton.Find(path);
+                if (current == null)
+                {
+                    previous = null;
+                    continue;
+                }
+
+                Gizmos.DrawSphere(current.position, radius);
+                if (previous != null) Gizmos.DrawLine(previous.position, current.position);
+                previous = current;
+            }
+        }
+
+        private void DrawPoseMismatchLines(float radius)
+        {
+            float tolerance = Mathf.Max(0f, debugMismatchTolerance);
+            Gizmos.color = mismatchDebugColor;
+            foreach (string path in DebugComparisonPaths)
+            {
+                Transform source = casSkeleton.Find(path);
+                Transform target = tacticalSkeleton.Find(path);
+                if (source == null || target == null
+                    || Vector3.Distance(source.position, target.position) <= tolerance)
+                {
+                    continue;
+                }
+
+                Gizmos.DrawLine(source.position, target.position);
+                Gizmos.DrawWireSphere(target.position, radius * 1.5f);
+            }
+        }
+
+        private void DrawFootWidthComparison(float radius)
+        {
+            Transform casLeft = casSkeleton.Find("root/pelvis/thigh_l/calf_l/foot_l");
+            Transform casRight = casSkeleton.Find("root/pelvis/thigh_r/calf_r/foot_r");
+            Transform tacticalLeft = tacticalSkeleton.Find("root/pelvis/thigh_l/calf_l/foot_l");
+            Transform tacticalRight = tacticalSkeleton.Find("root/pelvis/thigh_r/calf_r/foot_r");
+            if (casLeft == null || casRight == null || tacticalLeft == null || tacticalRight == null)
+            {
+                return;
+            }
+
+            Gizmos.color = casDebugColor;
+            Gizmos.DrawLine(casLeft.position, casRight.position);
+            Gizmos.DrawWireSphere(casLeft.position, radius * 2f);
+            Gizmos.DrawWireSphere(casRight.position, radius * 2f);
+
+            Gizmos.color = tacticalDebugColor;
+            Gizmos.DrawLine(tacticalLeft.position, tacticalRight.position);
+            Gizmos.DrawWireSphere(tacticalLeft.position, radius * 2f);
+            Gizmos.DrawWireSphere(tacticalRight.position, radius * 2f);
+
+#if UNITY_EDITOR
+            if (!drawSkeletonLabels) return;
+
+            Vector3 lateralAxis = transform.right;
+            float casWidth = Mathf.Abs(Vector3.Dot(casRight.position - casLeft.position,
+                lateralAxis));
+            float tacticalWidth = Mathf.Abs(Vector3.Dot(
+                tacticalRight.position - tacticalLeft.position, lateralAxis));
+            Vector3 labelPosition = (casLeft.position + casRight.position
+                + tacticalLeft.position + tacticalRight.position) * 0.25f;
+            labelPosition += Vector3.up * Mathf.Max(0.08f, radius * 5f);
+            float gait = casController == null ? 0f : casController.Gait;
+
+            Handles.color = Color.white;
+            Handles.Label(labelPosition,
+                $"CAS {casWidth:F3} m | Tactical {tacticalWidth:F3} m | "
+                + $"Delta {tacticalWidth - casWidth:+0.000;-0.000;0.000} m | Gait {gait:F2}");
+#endif
         }
 
         private void CacheTacticalIkBindPose(Transform target)
@@ -423,7 +547,6 @@ namespace FirstPersonProject.Integrations.Kinemation
                 _tacticalWeaponIkRoot.rotation = tacticalWeaponIkRootRotation;
             }
 
-            UpdateCrouchPresentationHeight();
             _reportedInvalidPresentationState = false;
         }
 
@@ -521,63 +644,6 @@ namespace FirstPersonProject.Integrations.Kinemation
             return true;
         }
 
-        private void UpdateCrouchPresentationHeight()
-        {
-            if (casController == null || _tacticalPresentationRoot == null
-                || !TryGetLowestTacticalFootHeight(out float currentFootHeight)) return;
-
-            // Measure the authored standing contact once the Animator has evaluated. Bone pivots
-            // are not at the boot soles, but matching the same foot-pivot height in both poses
-            // reproduces the standing mesh's known-good ground contact.
-            bool canCalibrateStandingContact = !casController.IsCrouching
-                && casController.Gait <= 0.01f
-                && Mathf.Abs(_presentationHeightOffset) <= 0.005f;
-            if (canCalibrateStandingContact && (!_hasStandingTacticalFootHeight
-                || currentFootHeight < _standingTacticalFootHeight))
-            {
-                _standingTacticalFootHeight = currentFootHeight;
-                _hasStandingTacticalFootHeight = true;
-            }
-
-            if (!_hasStandingTacticalFootHeight) return;
-
-            // Remove the root offset already applied on the previous frame before calculating the
-            // next target; otherwise the correction feeds back into itself. The lower of the two
-            // feet is the planted foot during crouch locomotion and turn-in-place animation.
-            float uncorrectedFootHeight = currentFootHeight - _presentationHeightOffset;
-            float targetOffset = casController.IsCrouching
-                ? Mathf.Min(0f, _standingTacticalFootHeight - uncorrectedFootHeight)
-                : 0f;
-            _presentationHeightOffset = Mathf.SmoothDamp(_presentationHeightOffset, targetOffset,
-                ref _presentationHeightVelocity, crouchHeightSmoothTime);
-            if (!float.IsFinite(_presentationHeightOffset)
-                || !float.IsFinite(_presentationHeightVelocity))
-            {
-                _presentationHeightOffset = 0f;
-                _presentationHeightVelocity = 0f;
-                return;
-            }
-
-            Vector3 localPosition = _tacticalPresentationBindPosition;
-            localPosition.y += _presentationHeightOffset;
-            if (IsFinite(localPosition)) _tacticalPresentationRoot.localPosition = localPosition;
-        }
-
-        private bool TryGetLowestTacticalFootHeight(out float height)
-        {
-            height = 0f;
-            if (_tacticalLeftFoot == null || _tacticalRightFoot == null) return false;
-
-            float leftHeight = casController.transform
-                .InverseTransformPoint(_tacticalLeftFoot.position).y;
-            float rightHeight = casController.transform
-                .InverseTransformPoint(_tacticalRightFoot.position).y;
-            if (!float.IsFinite(leftHeight) || !float.IsFinite(rightHeight)) return false;
-
-            height = Mathf.Min(leftHeight, rightHeight);
-            return true;
-        }
-
         private bool RetargetRotation(BoneLink link)
         {
             // Transfer each joint's animation relative to its own bind pose. Folding pelvis yaw
@@ -613,11 +679,6 @@ namespace FirstPersonProject.Integrations.Kinemation
         private void OnDisable()
         {
             if (tacticalPlayer != null) tacticalPlayer.ReleaseExternalGait();
-
-            if (_tacticalPresentationRoot != null)
-            {
-                _tacticalPresentationRoot.localPosition = _tacticalPresentationBindPosition;
-            }
 
             StopTacticalFiring();
         }

@@ -134,7 +134,7 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
             }
 
             Time.timeScale = 1f;
-            SceneManager.LoadScene(MainMenuSceneName);
+            SceneManager.LoadSceneAsync(MainMenuSceneName);
         }
 
         internal static bool TryConsumeLaunch(
@@ -231,6 +231,7 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
         private void Awake()
         {
             Instance = this;
+            MatchSpawnCatalog.InvalidateCache();
             if (servicesBootstrap == null)
                 servicesBootstrap = GetComponent<UnityServicesSessionBootstrap>();
             if (networkManager == null) networkManager = GetComponent<NetworkManager>();
@@ -426,6 +427,9 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
             _state = "LEAVING SESSION";
             Time.timeScale = 1f;
 
+            LoadingCamera loadingCamera = FindAnyObjectByType<LoadingCamera>();
+            if (loadingCamera != null) loadingCamera.EnableForTransition();
+
             if (servicesBootstrap != null)
             {
                 servicesBootstrap.Stop();
@@ -437,11 +441,38 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
                 }
             }
 
-            if (networkManager != null && networkManager.IsListening)
-                networkManager.Shutdown();
+            Scene gameplayScene = SceneManager.GetActiveScene();
+            NetworkManager singleton = NetworkManager.Singleton;
+            ReleaseNetworkManagerForSceneUnload(networkManager, gameplayScene);
+            if (singleton != networkManager)
+                ReleaseNetworkManagerForSceneUnload(singleton, gameplayScene);
+
+            // NetworkManager marks its GameObject DontDestroyOnLoad. Give Destroy one
+            // frame to run OnDestroy and clear Singleton before the menu can launch a
+            // fresh multiplayer scene.
+            yield return null;
 
             MultiplayerMenuBridge.SetLastError(string.Empty);
             SceneManager.LoadSceneAsync(MultiplayerMenuBridge.MainMenuSceneName);
+        }
+
+        private static void ReleaseNetworkManagerForSceneUnload(NetworkManager manager,
+            Scene gameplayScene)
+        {
+            if (manager == null) return;
+
+            if (manager.IsListening && !manager.ShutdownInProgress)
+                manager.Shutdown();
+
+            GameObject managerObject = manager.gameObject;
+            if (gameplayScene.IsValid() && gameplayScene.isLoaded
+                && managerObject.transform.parent == null
+                && managerObject.scene != gameplayScene)
+            {
+                SceneManager.MoveGameObjectToScene(managerObject, gameplayScene);
+            }
+
+            Destroy(manager);
         }
 
         private void OnClientDisconnected(ulong clientId)

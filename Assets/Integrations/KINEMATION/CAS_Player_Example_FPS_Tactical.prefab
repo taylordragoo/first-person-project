@@ -326,6 +326,7 @@ MonoBehaviour:
   casSkeleton: {fileID: 7927251424174288404}
   tacticalPlayer: {fileID: 8722518329490941363}
   tacticalSkeleton: {fileID: 6137121028858772552}
+  drawSkeletonComparison: 1
 --- !u!4 &7927251424174288404 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2406176263375443202, guid: 0328d1f4bc342d34c8064f42e388dfc6, type: 3}

@@ -19,6 +19,15 @@ namespace FPSProject.Multiplayer.Core.Weapons
         /// <summary>Accepted body yaw in degrees at this time.</summary>
         public float BodyYaw;
 
+        /// <summary>Accepted camera aim yaw in degrees at this time.</summary>
+        public float AimYaw;
+
+        /// <summary>Accepted camera aim pitch in degrees at this time.</summary>
+        public float AimPitch;
+
+        /// <summary>Whether the host accepted ADS as active at this time.</summary>
+        public bool IsAiming;
+
         /// <summary>Capsule center in world space at this time.</summary>
         public Vector3 CapsuleCenter;
 
@@ -115,6 +124,18 @@ namespace FPSProject.Multiplayer.Core.Weapons
         public bool TryGetCapsule(float time, out HistoricalCapsule capsule)
         {
             capsule = default;
+            if (!TryGetPose(time, out HitboxPoseSample pose)) return false;
+            capsule = BuildCapsule(pose);
+            return true;
+        }
+
+        /// <summary>
+        /// Reconstruct the complete accepted pose at a historical time. This is used to validate
+        /// shot aim against the same server-accepted timeline used for hitbox rewind.
+        /// </summary>
+        public bool TryGetPose(float time, out HitboxPoseSample pose)
+        {
+            pose = default;
             if (_samples.Count == 0) return false;
             if (time < OldestTime || time > NewestTime) return false;
             if (NewestTime - time > _historyDuration) return false;
@@ -124,7 +145,7 @@ namespace FPSProject.Multiplayer.Core.Weapons
             if (upper <= 0)
             {
                 // time is at or before the oldest sample; clamp to oldest.
-                capsule = BuildCapsule(_samples[0]);
+                pose = _samples[0];
                 return true;
             }
 
@@ -134,17 +155,21 @@ namespace FPSProject.Multiplayer.Core.Weapons
             float t = span > 0.0001f ? (time - a.Time) / span : 0f;
             t = Mathf.Clamp01(t);
 
-            HitboxPoseSample interp = new HitboxPoseSample
+            pose = new HitboxPoseSample
             {
                 Time = time,
                 Position = Vector3.Lerp(a.Position, b.Position, t),
                 BodyYaw = Mathf.LerpAngle(a.BodyYaw, b.BodyYaw, t),
+                AimYaw = Mathf.LerpAngle(a.AimYaw, b.AimYaw, t),
+                AimPitch = Mathf.LerpAngle(a.AimPitch, b.AimPitch, t),
                 CapsuleCenter = Vector3.Lerp(a.CapsuleCenter, b.CapsuleCenter, t),
                 CapsuleHeight = Mathf.Lerp(a.CapsuleHeight, b.CapsuleHeight, t),
                 CapsuleRadius = Mathf.Lerp(a.CapsuleRadius, b.CapsuleRadius, t),
-                IsCrouching = t < 0.5f ? a.IsCrouching : b.IsCrouching
+                IsCrouching = t < 0.5f ? a.IsCrouching : b.IsCrouching,
+                // Discrete fire state must never be granted before the accepted sample that
+                // contains it. At the upper sample's exact timestamp, use that newer value.
+                IsAiming = t < 1f ? a.IsAiming : b.IsAiming
             };
-            capsule = BuildCapsule(interp);
             return true;
         }
 

@@ -62,6 +62,14 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 return;
             }
 
+            // The reload animation owns the weapon until its completion event refills the
+            // authoritative magazine. Suppress local prediction as well as the server command.
+            if (_weaponState != null
+                && _weaponState.ActiveReloadState.Value != ReloadState.None)
+            {
+                return;
+            }
+
             // Use the router-owned sequence if the caller passed 0, otherwise trust the caller.
             // The caller (WeaponProp path) does not own the sequence; the router does.
             uint seq = _shotSequence + 1;
@@ -87,6 +95,34 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             };
 
             SubmitShotServerRpc(command);
+        }
+
+        /// <summary>
+        /// Route the active network weapon's reload request to its owning NetworkBehaviour.
+        /// The host validates the equipped weapon and current ammo before starting reload.
+        /// </summary>
+        public bool RequestReload()
+        {
+            if (_networkCasPlayer == null || !_networkCasPlayer.IsOwner || _weaponState == null)
+                return false;
+
+            var presentation = _tacticalPlayer?.GetActiveNetworkWeaponPresentation();
+            presentation?.StopNetworkFiring();
+            _networkCasPlayer.RequestReload(_weaponState.EquippedWeaponId.Value);
+            return true;
+        }
+
+        /// <summary>
+        /// Complete the active reload when the Tactical reload animation event fires. Ammo is
+        /// changed only by the host; clients receive the resulting NetworkList update.
+        /// </summary>
+        public bool CompleteReload()
+        {
+            if (_networkCasPlayer == null || !_networkCasPlayer.IsOwner || _weaponState == null)
+                return false;
+
+            _networkCasPlayer.CompleteReload(_weaponState.EquippedWeaponId.Value);
+            return true;
         }
 
         /// <summary>
@@ -229,7 +265,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 impact.Point,
                 impact.Normal,
                 surfaceType,
-                hitTransform);
+                hitTransform,
+                spawnDecal: !impact.IsPlayerHit);
         }
 
         private static FPSProject.Combat.Runtime.WeaponBallisticsSettings BuildPresentationBallistics(

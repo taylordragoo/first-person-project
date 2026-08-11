@@ -5,6 +5,7 @@ using KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Camera;
 using KINEMATION.CharacterAnimationSystem.Scripts.Runtime.Core;
 using KINEMATION.ProceduralRecoilAnimationSystem.Runtime;
 using KINEMATION.Shared.KAnimationCore.Runtime.Core;
+using FirstPersonProject.Integrations.Kinemation.Presentation;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,6 +25,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
         private PlayerSimulationMode _simulationMode = PlayerSimulationMode.Disabled;
         private bool _isOwnerInitialized;
+        private readonly LocomotionPresentationEvaluator _presentationEvaluator
+            = new LocomotionPresentationEvaluator();
 
         // Cached owner-only components so we can disable/re-enable them on spawn/despawn/death.
         private PlayerInput _cachedPlayerInput;
@@ -33,19 +36,12 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         private RecoilAnimation _cachedRecoilAnimation;
         private bool _didCacheOwnerComponents;
 
-        // Previous-frame state for edge detection in ApplyRemotePresentationState.
-        private bool _proxyWasMoving;
-        private bool _proxyWasInAir;
-        private bool _proxyWasCrouching;
-        private bool _proxyWasAiming;
-        private bool _proxyWasSprinting;
-        private bool _proxyWasGrounded;
-        private float _proxyPrevGait;
-        private bool _proxyFirstApply = true;
-
         // The host writes the accepted pose here for the NetworkCasPlayer to broadcast.
         private ProxyPresentationState _acceptedProxyState;
         private bool _hasAcceptedProxyState;
+
+        protected override bool UseExternalLocomotionPresentation => true;
+        protected override bool UseExternalAimPresentation => true;
 
         /// <summary>
         /// Override Awake so the base input-activation path does not run before we know whether
@@ -85,6 +81,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             // Animator, CharacterAnimationComponent, ProceduralAnimationComponent, items,
             // CharacterCamera, and cursor state.
             base.Start();
+            _presentationEvaluator.Reset();
 
             // Activate input now that the controller is wired up.
             if (_playerInput != null) _playerInput.ActivateInput();
@@ -111,6 +108,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             _characterAnimation = GetComponentInChildren<CharacterAnimationComponent>();
             _proceduralAnimation = GetComponentInChildren<ProceduralAnimationComponent>();
             _controller = GetComponentInChildren<CharacterController>();
+            InitializeProxyCasPoseSettings();
             if (_controller != null)
             {
                 _originalCenter = _controller.center;
@@ -133,7 +131,27 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
             _aimRotation = transform.rotation;
             _isOwnerInitialized = true;
+            _presentationEvaluator.Reset();
             SetSimulationMode(PlayerSimulationMode.RemoteProxy);
+        }
+
+        private void InitializeProxyCasPoseSettings()
+        {
+            // Local players get this setup from CharacterExampleController.Start. Proxies skip
+            // that method to avoid owner-only input/camera/cursor effects, but their CAS graph
+            // still needs the same active prop's base pose, overlay, and procedural settings.
+            _items.Clear();
+            _items.AddRange(GetComponentsInChildren<CasProp>());
+            foreach (CasProp item in _items) item.SetVisibility(false);
+
+            CasProp activeItem = GetActiveItem();
+            if (activeItem == null) return;
+
+            activeItem.SetVisibility(true);
+            if (_characterAnimation != null && activeItem.animationSettings != null)
+            {
+                _characterAnimation.UpdateAnimationSettings(activeItem.animationSettings);
+            }
         }
 
         /// <summary>
@@ -144,8 +162,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         {
             if (_simulationMode == mode) return;
 
-            PlayerSimulationMode previous = _simulationMode;
             _simulationMode = mode;
+            _presentationEvaluator.Reset();
 
             switch (mode)
             {
@@ -156,7 +174,6 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 case PlayerSimulationMode.RemoteProxy:
                     EnsureOwnerComponentsDisabled();
                     if (_controller != null) _controller.enabled = false;
-                    _proxyFirstApply = true;
                     break;
                 case PlayerSimulationMode.Disabled:
                     EnsureOwnerComponentsDisabled();
@@ -238,24 +255,35 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             return _hasAcceptedProxyState;
         }
 
-        /// <summary>
-        /// Proxy path: apply a sampled, interpolated remote presentation state to the hidden CAS
-        /// source rig. Writes animator parameters directly instead of calling the full base
-        /// controller update, and detects movement/crouch/jump/landing/aim state edges so the
-        /// existing CAS procedural transition modifiers still fire once.
-        /// </summary>
+        /// <summary>Apply a sampled remote state and preserve the human proxy root wrapper.</summary>
         public void ApplyRemotePresentationState(in ProxyInterpolationBuffer.SampledState state)
+        {
+            ApplyRemotePresentationStateInternal(state, applyRootTransform: true);
+        }
+
+        /// <summary>
+        /// Apply remote animation and procedural state without writing this GameObject's root
+        /// transform. Use when another component, such as a NavMeshAgent or NetworkTransform,
+        /// owns root motion.
+        /// </summary>
+        public void ApplyRemotePresentationStateWithoutRootMotion(
+            in ProxyInterpolationBuffer.SampledState state)
+        {
+            ApplyRemotePresentationStateInternal(state, applyRootTransform: false);
+        }
+
+        private void ApplyRemotePresentationStateInternal(
+            in ProxyInterpolationBuffer.SampledState state, bool applyRootTransform)
         {
             if (_simulationMode != PlayerSimulationMode.RemoteProxy) return;
             if (_animator == null) return;
 
-            // Drive the body transform to the interpolated position. The CharacterController is
-            // disabled on proxies, so we set the transform directly.
-            transform.position = state.Position;
-
-            // Body yaw rotates the whole character. Aim yaw/pitch feed the camera bone and the
-            // bridge's Tactical pitch input.
-            transform.rotation = Quaternion.Euler(0f, state.BodyYaw, 0f);
+            if (applyRootTransform)
+            {
+                // Human remote proxies have no active motor; interpolation owns their root.
+                transform.position = state.Position;
+                transform.rotation = Quaternion.Euler(0f, state.BodyYaw, 0f);
+            }
 
             if (_characterCamera != null)
             {
@@ -271,9 +299,9 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             _isAiming = state.IsAiming;
             _isCrouching = state.IsCrouching;
             _isInAir = state.IsInAir;
+            _isGrounded = state.IsGrounded;
             _moveInput = new Vector2(state.MoveX, state.MoveY);
             _gait = state.Gait;
-            _animatorGait = state.Gait;
 
             // The base class derives IsSprinting from _movementState, not from a dedicated
             // sprint flag. The bridge reads IsSprinting to drive the Tactical sprint pose
@@ -288,85 +316,103 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             else
                 _movementState = CharacterMovementState.Idle;
 
-            // Edge detection so CAS procedural transition modifiers fire once on state changes.
-            bool isMoving = state.IsMoving;
-            bool isGrounded = state.IsGrounded;
-            bool isInAir = state.IsInAir;
-            bool isCrouching = state.IsCrouching;
-            bool isAiming = state.IsAiming;
-            bool isSprinting = state.IsSprinting;
-
-            if (_proxyFirstApply)
+            ApplySharedPresentation(new LocomotionPresentationInput
             {
-                _proxyWasMoving = !isMoving;
-                _proxyWasInAir = !isInAir;
-                _proxyWasCrouching = !isCrouching;
-                _proxyWasAiming = !isAiming;
-                _proxyWasSprinting = !isSprinting;
-                _proxyWasGrounded = !isGrounded;
-                _proxyPrevGait = state.Gait;
-                _proxyFirstApply = false;
-            }
+                MoveAxes = _moveInput,
+                GaitSource = GaitSource.ResolvedRawGait,
+                RawGait = state.Gait,
+                IsMoving = state.IsMoving,
+                IsGrounded = state.IsGrounded,
+                IsInAir = state.IsInAir,
+                IsCrouching = state.IsCrouching,
+                IsSprinting = state.IsSprinting,
+                IsAiming = state.IsAiming,
+                IsAlive = state.IsAlive,
+                IsFirstPerson = false,
+                ViewWeight = _characterCamera != null ? _characterCamera.ViewWeight : 0f,
+                AimingWeight = state.IsAiming ? 1f : 0f
+            }, Time.deltaTime);
+        }
 
-            // Crouch transition fires the crouch modifier once.
-            if (isCrouching != _proxyWasCrouching)
+        /// <summary>
+        /// Applies shared CAS presentation without touching the controller's root transform.
+        /// Bot adapters use this path while NavMeshAgent/NetworkTransform owns the root.
+        /// </summary>
+        public void ApplySharedPresentationWithoutRootMotion(
+            in LocomotionPresentationInput input)
+        {
+            if (_simulationMode != PlayerSimulationMode.RemoteProxy) return;
+            ApplySharedPresentationWithoutRootMotion(input, Time.deltaTime);
+        }
+
+        public void ApplySharedPresentationWithoutRootMotion(
+            in LocomotionPresentationInput input, float deltaTime)
+        {
+            if (_simulationMode != PlayerSimulationMode.RemoteProxy) return;
+            _moveInput = input.MoveAxes;
+            _isGrounded = input.IsGrounded;
+            _isInAir = input.IsInAir;
+            _isCrouching = input.IsCrouching;
+            _isAiming = input.IsAiming;
+            _movementState = input.IsSprinting
+                ? CharacterMovementState.Sprint
+                : input.IsCrouching
+                    ? CharacterMovementState.CrouchWalk
+                    : input.IsMoving ? CharacterMovementState.Jog : CharacterMovementState.Idle;
+            ApplySharedPresentation(input, deltaTime);
+        }
+
+        private void ApplySharedPresentation(
+            LocomotionPresentationInput input, float deltaTime)
+        {
+            if (_animator == null) return;
+
+            LocomotionPresentationOutput output = _presentationEvaluator.Evaluate(
+                input, BuildPresentationSettings(), deltaTime);
+            _gait = output.RawPresentationGait;
+            _animatorGait = output.SmoothedAnimatorGait;
+            _animator.SetFloat(Animator_Move_X, output.SmoothedAnimatorMoveAxes.x);
+            _animator.SetFloat(Animator_Move_Y, output.SmoothedAnimatorMoveAxes.y);
+            _animator.SetFloat(Animator_Gait, output.SmoothedAnimatorGait);
+            _animator.SetFloat(Animator_ViewWeight, output.AnimatorViewWeight);
+            _animator.SetFloat(Animator_AimingWeight, output.AnimatorAimingWeight);
+            _animator.SetBool(Animator_IsFirstPerson, output.AnimatorIsFirstPerson);
+            _animator.SetBool(Animator_IsInAir, output.AnimatorIsInAir);
+            _animator.SetBool(Animator_IsMoving, output.AnimatorIsMoving);
+            _animator.SetBool(Animator_Crouch, output.AnimatorIsCrouching);
+            if (_motionWarping != null)
+                _animator.SetBool(Animator_IsTraversing, _motionWarping.IsActive());
+
+            if (output.MovementStarted) OnMovementChange(true);
+            if (output.MovementStopped) OnMovementChange(false);
+            if (output.CrouchStarted && _isGrounded && !output.AnimatorIsMoving
+                && _proceduralAnimation != null)
             {
-                _animator.SetBool(Animator_Crouch, isCrouching);
-                if (_proceduralAnimation != null && isGrounded && !isMoving)
-                {
-                    _proceduralAnimation.UpdateAnimationModifier(isCrouching ? stepCrouch : stepUncrouch);
-                }
+                _proceduralAnimation.UpdateAnimationModifier(stepCrouch);
             }
-
-            // Jump trigger fires once when we transition from grounded to in-air.
-            if (isInAir && !_proxyWasInAir)
+            if (output.CrouchStopped && _isGrounded && !output.AnimatorIsMoving
+                && _proceduralAnimation != null)
             {
-                _animator.SetTrigger(Animator_Jumped);
+                _proceduralAnimation.UpdateAnimationModifier(stepUncrouch);
             }
-
-            // Landing fires the landing momentum path once when we return to ground from air.
-            if (isGrounded && !_proxyWasGrounded && _proxyWasInAir)
+            if (output.Jumped) _animator.SetTrigger(Animator_Jumped);
+            if ((output.AimStarted || output.AimStopped) && _proceduralAnimation != null)
             {
-                // ApplyLandingMomentum is protected on the base class; we cannot call it from
-                // a proxy state sample because the proxy does not own velocity integration.
-                // The animator IsInAir flag below handles the visual landing transition.
+                _proceduralAnimation.UpdateAnimationModifier(aimingMotion);
             }
+        }
 
-            // Moving state edge fires the start/stop moving modifier once.
-            if (isMoving != _proxyWasMoving)
+        private LocomotionPresentationSettings BuildPresentationSettings()
+        {
+            return new LocomotionPresentationSettings
             {
-                if (_proceduralAnimation != null && isGrounded)
-                {
-                    _proceduralAnimation.UpdateAnimationModifier(isMoving ? startMoving : stopMoving);
-                }
-            }
-
-            // Write animator parameters directly. This mirrors UpdateAnimatorParameters but
-            // without the local-input-dependent move-input remap.
-            Vector2 proxyMoveInput = new Vector2(state.MoveX, state.MoveY);
-            // When not aiming and orient-to-movement is on, the base controller remaps move
-            // input to a forward-only magnitude. Proxies receive the already-resolved body yaw,
-            // so we feed the raw input and let the animator blend tree handle it.
-            float moveAlpha = KMath.ExpDecayAlpha(animatorMoveInterpSpeed, Time.deltaTime);
-            Vector2 animatorMove = Vector2.Lerp(
-                new Vector2(_animator.GetFloat(Animator_Move_X), _animator.GetFloat(Animator_Move_Y)),
-                proxyMoveInput, moveAlpha);
-            _animator.SetFloat(Animator_Move_X, animatorMove.x);
-            _animator.SetFloat(Animator_Move_Y, animatorMove.y);
-            _animator.SetFloat(Animator_Gait, _animatorGait);
-            _animator.SetFloat(Animator_ViewWeight, _characterCamera != null ? _characterCamera.ViewWeight : 0f);
-            _animator.SetFloat(Animator_AimingWeight, isAiming ? 1f : 0f);
-            _animator.SetBool(Animator_IsFirstPerson, false);
-            _animator.SetBool(Animator_IsInAir, isInAir);
-            _animator.SetBool(Animator_IsMoving, isMoving);
-
-            _proxyWasMoving = isMoving;
-            _proxyWasInAir = isInAir;
-            _proxyWasCrouching = isCrouching;
-            _proxyWasAiming = isAiming;
-            _proxyWasSprinting = isSprinting;
-            _proxyWasGrounded = isGrounded;
-            _proxyPrevGait = state.Gait;
+                WalkSpeed = walkGait.velocity,
+                JogSpeed = jogGait.velocity,
+                SprintSpeed = sprintGait.velocity,
+                AnimGaitSmoothing = animGaitSmoothing,
+                AnimatorMoveInterpSpeed = animatorMoveInterpSpeed,
+                OrientRotationToMovement = orientRotationToMovement
+            };
         }
 
         /// <summary>
@@ -381,6 +427,28 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             // The base Update path runs input, grounding, gait, rotation, movement, and
             // animator parameters exactly as in the offline single-player rig.
             base.Update();
+        }
+
+        protected override void ApplyFinalPresentation()
+        {
+            if (_simulationMode != PlayerSimulationMode.LocalOwner) return;
+
+            ApplySharedPresentation(new LocomotionPresentationInput
+            {
+                MoveAxes = _moveInput,
+                GaitSource = GaitSource.ResolvedRawGait,
+                RawGait = _gait,
+                IsMoving = HasMoveInputs(),
+                IsGrounded = IsGrounded,
+                IsInAir = _isInAir,
+                IsCrouching = _isCrouching,
+                IsSprinting = IsSprinting,
+                IsAiming = _isAiming,
+                IsAlive = true,
+                IsFirstPerson = isFirstPerson,
+                ViewWeight = _characterCamera != null ? _characterCamera.ViewWeight : 0f,
+                AimingWeight = AimingWeight
+            }, Time.deltaTime);
         }
 
         /// <summary>
@@ -426,14 +494,12 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         /// </summary>
         public void ResetProxyState()
         {
-            _proxyFirstApply = true;
-            _proxyWasMoving = false;
-            _proxyWasInAir = false;
-            _proxyWasCrouching = false;
-            _proxyWasAiming = false;
-            _proxyWasSprinting = false;
-            _proxyWasGrounded = false;
-            _proxyPrevGait = 0f;
+            _presentationEvaluator.Reset();
+        }
+
+        private void OnDisable()
+        {
+            _presentationEvaluator.Reset();
         }
     }
 }

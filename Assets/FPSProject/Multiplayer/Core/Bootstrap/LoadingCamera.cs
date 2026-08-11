@@ -22,16 +22,20 @@ namespace FPSProject.Multiplayer.Core.Bootstrap
         private void Update()
         {
             if (loadingCamera == null) return;
-            if (!loadingCamera.enabled) return;
 
-            if (NetworkManager.Singleton == null) return;
-            if (!NetworkManager.Singleton.IsListening) return;
+            NetworkManager networkManager = NetworkManager.Singleton;
+            bool localPlayerSpawned = networkManager != null
+                && networkManager.IsListening
+                && networkManager.LocalClient != null
+                && networkManager.LocalClient.PlayerObject != null;
 
-            if (NetworkManager.Singleton.LocalClient != null &&
-                NetworkManager.Singleton.LocalClient.PlayerObject != null)
-            {
-                loadingCamera.enabled = false;
-            }
+            loadingCamera.enabled = !localPlayerSpawned;
+        }
+
+        public void EnableForTransition()
+        {
+            if (loadingCamera == null) loadingCamera = GetComponent<Camera>();
+            if (loadingCamera != null) loadingCamera.enabled = true;
         }
     }
 }

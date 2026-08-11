@@ -16,6 +16,9 @@ namespace FPSProject.Combat.PlayModeTests
         private GameObject _targetObject;
         private GameObject _decalPrefab;
         private GameObject _spawnedDecal;
+        private GameObject _impactPrefab;
+        private GameObject _spawnedImpact;
+        private ParticleSystem _spawnedImpactParticleSystem;
         private GameObject _tracerPrefab;
         private ImpactEffectLibrary _effectLibrary;
 
@@ -59,7 +62,9 @@ namespace FPSProject.Combat.PlayModeTests
         public void TearDown()
         {
             if (_spawnedDecal != null) Object.DestroyImmediate(_spawnedDecal);
+            if (_spawnedImpact != null) Object.DestroyImmediate(_spawnedImpact);
             if (_decalPrefab != null) Object.DestroyImmediate(_decalPrefab);
+            if (_impactPrefab != null) Object.DestroyImmediate(_impactPrefab);
             if (_tracerPrefab != null) Object.DestroyImmediate(_tracerPrefab);
             Object.DestroyImmediate(_runtimeGo);
             Object.DestroyImmediate(_camera.gameObject);
@@ -114,6 +119,61 @@ namespace FPSProject.Combat.PlayModeTests
             yield return null;
 
             Assert.Less(Vector3.Distance(worldPosition, _spawnedDecal.transform.position), 0.0001f);
+        }
+
+        [UnityTest]
+        public IEnumerator ImpactPool_NormalizesDestructiveStopActionAcrossReuse()
+        {
+            _impactPrefab = new GameObject("TestImpactPrefab");
+            var dust = new GameObject("Dust");
+            dust.transform.SetParent(_impactPrefab.transform);
+            var prefabParticleSystem = dust.AddComponent<ParticleSystem>();
+            var prefabMain = prefabParticleSystem.main;
+            prefabMain.playOnAwake = false;
+            prefabMain.stopAction = ParticleSystemStopAction.Destroy;
+            _impactPrefab.SetActive(false);
+
+            _effectLibrary.defaultPair = new SurfaceEffectPair
+            {
+                decalPrefab = null,
+                impactPrefab = _impactPrefab
+            };
+
+            _runtime.PlayImpact(
+                _effectLibrary,
+                Vector3.zero,
+                Vector3.forward,
+                ImpactSurfaceType.Default,
+                null,
+                false);
+
+            _spawnedImpact = GameObject.Find(_impactPrefab.name);
+            Assert.IsNotNull(_spawnedImpact);
+            _spawnedImpactParticleSystem = _spawnedImpact.transform.Find("Dust")
+                .GetComponent<ParticleSystem>();
+            Assert.IsNotNull(_spawnedImpactParticleSystem);
+            Assert.AreEqual(ParticleSystemStopAction.None,
+                _spawnedImpactParticleSystem.main.stopAction);
+
+            // Let the runtime return this instance, then rent it again to verify the child
+            // survived and is reset for the next replay.
+            yield return new WaitForSeconds(2.1f);
+            Assert.IsFalse(_spawnedImpact.activeSelf);
+            Assert.IsNotNull(_spawnedImpactParticleSystem);
+
+            _runtime.PlayImpact(
+                _effectLibrary,
+                Vector3.zero,
+                Vector3.forward,
+                ImpactSurfaceType.Default,
+                null,
+                false);
+
+            Assert.IsTrue(_spawnedImpact.activeSelf);
+            Assert.AreSame(_spawnedImpactParticleSystem,
+                _spawnedImpact.transform.Find("Dust").GetComponent<ParticleSystem>());
+            Assert.AreEqual(ParticleSystemStopAction.None,
+                _spawnedImpactParticleSystem.main.stopAction);
         }
 
         [UnityTest]
@@ -385,6 +445,31 @@ namespace FPSProject.Combat.PlayModeTests
             _spawnedDecal = GameObject.Find(_decalPrefab.name);
             Assert.IsNotNull(_spawnedDecal);
             Assert.AreEqual(0, _targetObject.GetComponent<TestDamageable>().ApplyDamageCallCount);
+        }
+
+        [UnityTest]
+        public IEnumerator PlayImpact_WhenDecalSuppressed_DoesNotSpawnDecal()
+        {
+            _decalPrefab = new GameObject("SuppressedCharacterDecalPrefab");
+            _decalPrefab.SetActive(false);
+            _effectLibrary.fleshPair = new SurfaceEffectPair
+            {
+                decalPrefab = _decalPrefab,
+                impactPrefab = null
+            };
+
+            _runtime.PlayImpact(
+                _effectLibrary,
+                new Vector3(1f, 2f, 3f),
+                Vector3.up,
+                ImpactSurfaceType.Flesh,
+                _targetObject.transform,
+                spawnDecal: false);
+
+            yield return null;
+
+            _spawnedDecal = GameObject.Find(_decalPrefab.name);
+            Assert.IsNull(_spawnedDecal);
         }
 
         [UnityTest]

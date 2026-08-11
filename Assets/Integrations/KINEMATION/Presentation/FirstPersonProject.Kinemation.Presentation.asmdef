@@ -1,0 +1,14 @@
+{
+    "name": "FirstPersonProject.Kinemation.Presentation",
+    "rootNamespace": "FirstPersonProject.Integrations.Kinemation.Presentation",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

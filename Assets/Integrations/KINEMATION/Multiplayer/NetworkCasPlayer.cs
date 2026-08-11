@@ -121,12 +121,16 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             if (IsServer)
             {
                 _hostStates.Clear();
+                _hostLastShotSequence.Clear();
+                _hostHitboxHistory?.Clear();
                 // Wire the late-join callback so that when a new client connects, the host sends
                 // one reliable current snapshot for every existing player to that client.
                 if (NetworkManager != null)
                 {
                     NetworkManager.OnClientConnectedCallback -= OnClientConnected;
                     NetworkManager.OnClientConnectedCallback += OnClientConnected;
+                    NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+                    NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
                 }
             }
         }
@@ -176,6 +180,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             if (IsServer && NetworkManager != null)
             {
                 NetworkManager.OnClientConnectedCallback -= OnClientConnected;
+                NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
             }
 
             if (weaponState != null)
@@ -187,9 +192,12 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 weaponState.AmmoState.OnListChanged -= OnAmmoListChanged;
             }
 
+            controller?.ResetProxyState();
             controller?.SetSimulationMode(PlayerSimulationMode.Disabled);
             _proxyBuffer?.Clear(ProxyInterpolationBuffer.ClearReason.ManualReset);
             _hostStates.Clear();
+            _hostLastShotSequence.Clear();
+            _hostHitboxHistory?.Clear();
         }
 
         // ─────────────────────────────────────────────────────────────────────────────
@@ -225,6 +233,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             if (current == PlayerLifeState.Dead)
             {
                 _isAlive = false;
+                controller?.ResetProxyState();
                 controller?.SetSimulationMode(PlayerSimulationMode.Disabled);
             }
             else if (current == PlayerLifeState.Alive && previous != PlayerLifeState.Alive)
@@ -255,6 +264,14 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             // Find every spawned NetworkCasPlayer and send its accepted state to the new client.
             // Each player sends its own snapshot; this component sends its own.
             SendLateJoinSnapshot(clientId);
+        }
+
+        private void OnClientDisconnected(ulong clientId)
+        {
+            if (!IsServer || clientId != OwnerClientId) return;
+            _hostStates.Remove(clientId);
+            _hostLastShotSequence.Remove(clientId);
+            _hostHitboxHistory?.Clear();
         }
 
         private void Update()
@@ -351,6 +368,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                     HasPendingBroadcast = true
                 };
                 _hostStates[clientId] = state;
+                RecordHitboxHistory(clientId, in sample);
                 if (debugMotion) Debug.Log($"[Host] Accepted first sample seq={sample.Sequence} from {clientId} at {sample.Position}.");
                 return;
             }
@@ -537,6 +555,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         {
             if (controller == null) return;
             controller.transform.position = target;
+            controller.ResetProxyState();
             _proxyBuffer?.Clear(ProxyInterpolationBuffer.ClearReason.HardCorrection);
             _isCorrecting = false;
         }
@@ -722,13 +741,9 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         // stale/duplicate/out-of-order shot commands.
         private readonly Dictionary<ulong, uint> _hostLastShotSequence = new Dictionary<ulong, uint>();
 
-        // Host-side per-client hitbox history for lag-compensated hitscan. Keyed by ClientId.
-        private readonly Dictionary<ulong, NetworkHitboxHistory> _hostHitboxHistories
-            = new Dictionary<ulong, NetworkHitboxHistory>();
-
-        // Per-shot set of targets damaged this shot, enforcing the single-pellet-per-target
-        // rule for the shotgun. Reset at the start of each HostResolveShot.
-        private readonly HashSet<ulong> _shotgunDamagedTargetsThisShot = new HashSet<ulong>();
+        // Each spawned player owns only its accepted history. Shooters query every active player
+        // instance, so lifecycle follows NetworkObject spawn/despawn and cannot leak across sessions.
+        private NetworkHitboxHistory _hostHitboxHistory;
 
         private FPSProject.Combat.Runtime.WeaponCombatRuntime _combatRuntime;
         private NetworkWeaponShotRouter _shotRouter;
@@ -740,12 +755,11 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
         private void RecordHitboxHistory(ulong clientId, in OwnerMotionSample sample)
         {
-            if (tuning == null) return;
+            if (tuning == null || clientId != OwnerClientId) return;
 
-            if (!_hostHitboxHistories.TryGetValue(clientId, out NetworkHitboxHistory history))
+            if (_hostHitboxHistory == null)
             {
-                history = new NetworkHitboxHistory(tuning.rewindDuration);
-                _hostHitboxHistories[clientId] = history;
+                _hostHitboxHistory = new NetworkHitboxHistory(tuning.rewindDuration);
             }
 
             float hostTime = (float)NetworkManager.ServerTime.Time;
@@ -758,12 +772,15 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 Time = hostTime,
                 Position = sample.Position,
                 BodyYaw = sample.BodyYaw,
+                AimYaw = sample.AimYaw,
+                AimPitch = sample.AimPitch,
+                IsAiming = sample.IsAiming,
                 CapsuleCenter = capsuleCenter,
                 CapsuleHeight = capsuleHeight,
                 CapsuleRadius = _capsuleRadius,
                 IsCrouching = sample.IsCrouching
             };
-            history.Record(hostTime, in poseSample);
+            _hostHitboxHistory.Record(hostTime, in poseSample);
         }
 
         /// <summary>
@@ -774,10 +791,9 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         public bool TryGetHistoricalCapsule(ulong targetClientId, float hostTime, out HistoricalCapsule capsule)
         {
             capsule = default;
-            if (!IsServer) return false;
-            if (!_hostHitboxHistories.TryGetValue(targetClientId, out NetworkHitboxHistory history))
+            if (!IsServer || targetClientId != OwnerClientId || _hostHitboxHistory == null)
                 return false;
-            return history.TryGetCapsule(hostTime, out capsule);
+            return _hostHitboxHistory.TryGetCapsule(hostTime, out capsule);
         }
 
         /// <summary>
@@ -807,23 +823,21 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             ulong closestClientId = ulong.MaxValue;
             ulong closestNetId = ulong.MaxValue;
 
-            foreach (var kvp in _hostHitboxHistories)
+            if (NetworkManager == null) return false;
+            foreach (var kvp in NetworkManager.SpawnManager.SpawnedObjects)
             {
-                ulong targetClientId = kvp.Key;
+                NetworkObject targetNetObj = kvp.Value;
+                NetworkCasPlayer targetPlayer = targetNetObj.GetComponent<NetworkCasPlayer>();
+                if (targetPlayer == null || !targetPlayer.IsSpawned) continue;
+
+                ulong targetClientId = targetNetObj.OwnerClientId;
                 if (targetClientId == shooterClientId) continue; // No self-damage this milestone.
 
-                // Skip dead players. The host disables collision on death; dead players cannot
-                // be hit. Check the target's NetworkHealth via the spawned NetworkObject.
-                ulong targetNetId = ResolveNetworkObjectIdForClient(targetClientId);
-                if (targetNetId == ulong.MaxValue) continue;
-                if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(targetNetId, out var targetNetObj))
-                {
-                    var targetHealth = targetNetObj.GetComponentInChildren<NetworkHealth>();
-                    if (targetHealth != null && targetHealth.IsDead) continue;
-                }
+                var targetHealth = targetNetObj.GetComponentInChildren<NetworkHealth>();
+                if (targetHealth != null && targetHealth.IsDead) continue;
 
-                var history = kvp.Value;
-                if (!history.TryGetCapsule(hostTime, out var capsule)) continue;
+                if (!targetPlayer.TryGetHistoricalCapsule(targetClientId, hostTime,
+                        out HistoricalCapsule capsule)) continue;
 
                 if (NetworkHitboxHistory.RaycastCapsule(rayOrigin, rayDirection, in capsule,
                     maxDistance, out float playerHitDist))
@@ -832,7 +846,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                     {
                         closestPlayerDist = playerHitDist;
                         closestClientId = targetClientId;
-                        closestNetId = targetNetId;
+                        closestNetId = kvp.Key;
                     }
                 }
             }
@@ -860,24 +874,6 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             hitDistance = closestPlayerDist;
             hitPoint = rayOrigin + rayDirection * closestPlayerDist;
             return true;
-        }
-
-        /// <summary>
-        /// Host-only: resolve the spawned NetworkObjectId owned by the given client. Returns
-        /// ulong.MaxValue when no matching spawned player is found.
-        /// </summary>
-        private ulong ResolveNetworkObjectIdForClient(ulong clientId)
-        {
-            if (NetworkManager == null) return ulong.MaxValue;
-            foreach (var kvp in NetworkManager.SpawnManager.SpawnedObjects)
-            {
-                if (kvp.Value.OwnerClientId == clientId
-                    && kvp.Value.GetComponent<NetworkCasPlayer>() != null)
-                {
-                    return kvp.Key;
-                }
-            }
-            return ulong.MaxValue;
         }
 
         /// <summary>
@@ -918,6 +914,124 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 damage, hitPoint, -travelDirection, travelDirection, gameObject, gameObject);
             health.ApplyDamage(damageInfo);
         }
+
+        private bool TryGetAcceptedAimState(
+            float hostShotTime, out Vector3 direction, out bool isAiming)
+        {
+            direction = default;
+            isAiming = false;
+            if (_hostHitboxHistory == null) return false;
+
+            float yaw;
+            float pitch;
+            if (_hostHitboxHistory.TryGetPose(hostShotTime, out HitboxPoseSample pose))
+            {
+                yaw = pose.AimYaw;
+                pitch = pose.AimPitch;
+                isAiming = pose.IsAiming;
+            }
+            else
+            {
+                // A shot can arrive just after the latest unreliable motion sample. Permit the
+                // latest accepted aim only for that small forward gap, never for an old rewind.
+                const float latestAimGraceSeconds = 0.1f;
+                if (hostShotTime < _hostHitboxHistory.NewestTime
+                    || hostShotTime - _hostHitboxHistory.NewestTime > latestAimGraceSeconds
+                    || !_hostStates.TryGetValue(OwnerClientId, out HostClientState state))
+                {
+                    return false;
+                }
+
+                yaw = state.AcceptedProxyState.AimYaw;
+                pitch = state.AcceptedProxyState.AimPitch;
+                isAiming = state.AcceptedProxyState.IsAiming;
+            }
+
+            if (!float.IsFinite(yaw) || !float.IsFinite(pitch)) return false;
+            direction = Quaternion.Euler(pitch, yaw, 0f) * Vector3.forward;
+            return IsFinite(direction) && direction.sqrMagnitude > 0.999f;
+        }
+
+        private NetworkHealth GetHistoricalDamageTarget(ulong targetNetworkObjectId)
+        {
+            if (NetworkManager == null
+                || !NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(
+                    targetNetworkObjectId, out NetworkObject netObj))
+            {
+                return null;
+            }
+
+            NetworkHealth health = netObj.GetComponentInChildren<NetworkHealth>();
+            return health != null && !health.IsDead ? health : null;
+        }
+
+        private static FPSProject.Combat.Runtime.IDamageable GetDamageable(Collider collider)
+        {
+            if (collider == null) return null;
+            return collider.GetComponent<FPSProject.Combat.Runtime.IDamageable>()
+                ?? collider.GetComponentInParent<FPSProject.Combat.Runtime.IDamageable>();
+        }
+
+        private static bool ShouldApplyDamage(
+            bool isShotgun,
+            FPSProject.Combat.Runtime.IDamageable damageable,
+            NetworkShotDamageBudget<FPSProject.Combat.Runtime.IDamageable> shotgunDamageBudget,
+            float damage)
+        {
+            if (damageable == null) return false;
+            if (!isShotgun) return true;
+            return shotgunDamageBudget != null
+                && shotgunDamageBudget.TryReserve(damageable, damage);
+        }
+
+        /// <summary>
+        /// Owner-side reload entry point. The RPC lives on this NetworkBehaviour so reload works
+        /// for remote owners as well as a host-owned player.
+        /// </summary>
+        public void RequestReload(ushort weaponId)
+        {
+            if (!IsOwner) return;
+            RequestReloadServerRpc(weaponId);
+        }
+
+        /// <summary>
+        /// Owner-side reload completion invoked by the Tactical reload animation event.
+        /// </summary>
+        public void CompleteReload(ushort weaponId)
+        {
+            if (!IsOwner) return;
+            CompleteReloadServerRpc(weaponId);
+        }
+
+        [ServerRpc(Delivery = RpcDelivery.Reliable, RequireOwnership = true)]
+        private void RequestReloadServerRpc(ushort weaponId,
+            ServerRpcParams rpcParams = default)
+        {
+            if (!IsServer || weaponState == null || weaponState.Catalog == null) return;
+            if (rpcParams.Receive.SenderClientId != OwnerClientId) return;
+            if (weaponState.LifeState.Value != PlayerLifeState.Alive) return;
+            if (weaponId != weaponState.EquippedWeaponId.Value) return;
+            if (!weaponState.Catalog.Contains(weaponId)) return;
+            if (weaponState.ActiveReloadState.Value != ReloadState.None) return;
+            if (weaponState.GetAmmoFor(weaponId) >= weaponState.GetEquippedCapacity()) return;
+
+            weaponState.ServerSetReloadState(ReloadState.Reloading);
+        }
+
+        [ServerRpc(Delivery = RpcDelivery.Reliable, RequireOwnership = true)]
+        private void CompleteReloadServerRpc(ushort weaponId,
+            ServerRpcParams rpcParams = default)
+        {
+            if (!IsServer || weaponState == null || weaponState.Catalog == null) return;
+            if (rpcParams.Receive.SenderClientId != OwnerClientId) return;
+            if (weaponState.LifeState.Value != PlayerLifeState.Alive) return;
+            if (weaponId != weaponState.EquippedWeaponId.Value) return;
+            if (weaponState.ActiveReloadState.Value != ReloadState.Reloading) return;
+
+            weaponState.ServerRefillAmmo(weaponId);
+            weaponState.ServerSetReloadState(ReloadState.None);
+        }
+
         // owner submits a NetworkShotCommand. The host validates the command against the
         // catalog, accepted pose, cadence, and ammunition, then resolves damage exactly once
         // and broadcasts NetworkShotResult to every client.
@@ -934,7 +1048,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         {
             if (!IsServer) return;
             if (clientId != OwnerClientId) return;
-            if (weaponState == null || weaponState.Catalog == null) return;
+            if (weaponState == null || weaponState.Catalog == null || tuning == null
+                || NetworkManager == null) return;
 
             // Validate the sender owns this player.
             if (clientId != OwnerClientId) return;
@@ -949,11 +1064,37 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             // Player must be alive.
             if (weaponState.LifeState.Value != PlayerLifeState.Alive) return;
 
+            // Reload owns the weapon until its animation event completes and the host refills
+            // the authoritative magazine. Do not accept predicted shots during that interval.
+            if (weaponState.ActiveReloadState.Value != ReloadState.None) return;
+
             // The requested weapon must be the currently-equipped weapon.
             if (command.WeaponId != weaponState.EquippedWeaponId.Value) return;
 
             // Validate the weapon ID against the catalog.
             if (!weaponState.Catalog.TryGetEntry(command.WeaponId, out var entry)) return;
+
+            // Validate the rewind timestamp before consuming cadence or ammunition.
+            float hostShotTime = ClientTickToHostTime(command.NetworkTick);
+            float currentServerTime = (float)NetworkManager.ServerTime.Time;
+            if (!float.IsFinite(hostShotTime)) return;
+            if (hostShotTime > currentServerTime + 0.05f) return;
+            if (currentServerTime - hostShotTime > tuning.rewindDuration) return;
+
+            // Aim must be a finite, approximately normalized direction aligned with the
+            // server-accepted aim timeline. The submitted yaw/pitch are not used for resolution.
+            float aimMagnitudeSq = command.AimDirection.sqrMagnitude;
+            if (!IsFinite(command.AimDirection) || !float.IsFinite(aimMagnitudeSq)
+                || aimMagnitudeSq < 0.25f || aimMagnitudeSq > 2.25f)
+            {
+                return;
+            }
+
+            Vector3 baseAim = command.AimDirection.normalized;
+            if (!TryGetAcceptedAimState(hostShotTime, out Vector3 acceptedAim,
+                    out bool acceptedIsAiming)) return;
+            const float maxAimDeviationDegrees = 20f;
+            if (Vector3.Angle(acceptedAim, baseAim) > maxAimDeviationDegrees) return;
 
             // Cadence validation. The host enforces fire rate; the owner's local prediction may
             // fire faster but the host rejects shots that arrive before cadence has elapsed.
@@ -970,22 +1111,20 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             // Record the accepted sequence.
             _hostLastShotSequence[clientId] = command.ShotSequence;
 
-            // Reconstruct a trusted WeaponShotRequest from the catalog and the accepted player
-            // pose. The host uses the accepted body yaw and the submitted aim direction (the
-            // owner's camera direction at fire time). The aim direction is validated against
-            // the accepted player aim in Step 9 (lag compensation); for now we trust it within
-            // a basic tolerance.
+            // Reconstruct a trusted WeaponShotRequest from catalog data and validated aim.
             Vector3 cameraOrigin = controller != null ? controller.transform.position : transform.position;
             cameraOrigin += Vector3.up * 1.6f; // approximate eye height
 
             // Build a WeaponBallisticsSettings from the catalog entry for the authoritative
             // resolution. This avoids trusting the owner's local CAS WeaponSettings.
-            var ballistics = BuildAuthoritativeBallistics(entry, command.IsAiming);
+            // ADS is derived from the accepted host timeline. command.IsAiming is presentation
+            // input only and cannot reduce authoritative spread when forged.
+            var ballistics = BuildAuthoritativeBallistics(entry, acceptedIsAiming);
 
             // Resolve the muzzle position from the Tactical presentation if available, else
             // fall back to the owner root.
             Vector3 muzzlePos = cameraOrigin;
-            Quaternion muzzleRot = Quaternion.Euler(command.AimPitch, command.AimYaw, 0f);
+            Quaternion muzzleRot = Quaternion.LookRotation(baseAim, Vector3.up);
 
             // Damage cap for the shotgun: 8 pellets * 12 damage = 96 close-range max.
             const float shotgunDamageCap = 96f;
@@ -996,16 +1135,18 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             if (pelletCount > NetworkShotResult.Capacity) pelletCount = NetworkShotResult.Capacity;
             if (pelletCount > maxPellets) pelletCount = maxPellets;
 
-            float halfAngle = command.IsAiming
+            float halfAngle = acceptedIsAiming
                 ? entry.ballistics.adsSpreadDegrees
                 : entry.ballistics.hipSpreadDegrees;
 
-            // Track per-target damage applied this shot so a single pellet damages a target at
-            // most once. Keyed by the hit collider reference.
-            var damagedTargets = new System.Collections.Generic.HashSet<Collider>();
-            float totalDamageThisShot = 0f;
+            // Duplicate resolution is scoped to one pellet/contact path. The damage budget remains
+            // shot-wide, allowing distinct pellets to damage the same target up to the 96 cap.
+            NetworkShotDamageBudget<FPSProject.Combat.Runtime.IDamageable> shotgunDamageBudget =
+                entry.isShotgun
+                    ? new NetworkShotDamageBudget<FPSProject.Combat.Runtime.IDamageable>(
+                        shotgunDamageCap)
+                    : null;
             float perPelletDamage = entry.ballistics.damage;
-            _shotgunDamagedTargetsThisShot.Clear();
 
             var result = new NetworkShotResult
             {
@@ -1016,22 +1157,13 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 ImpactCount = 0
             };
 
-            Vector3 baseAim = command.AimDirection.sqrMagnitude > 0.0001f
-                ? command.AimDirection.normalized
-                : Quaternion.Euler(command.AimPitch, command.AimYaw, 0f) * Vector3.forward;
-
             if (_combatRuntime == null)
                 _combatRuntime = GetComponentInChildren<FPSProject.Combat.Runtime.WeaponCombatRuntime>(true);
             if (_combatRuntime == null) return;
 
-            // Shot tick age validation. Reject shots in the future or older than the rewind window.
-            float hostShotTime = ClientTickToHostTime(command.NetworkTick);
-            float currentServerTime = (float)NetworkManager.ServerTime.Time;
-            if (hostShotTime > currentServerTime + 0.05f) return; // future shot (with small tolerance)
-            if (currentServerTime - hostShotTime > tuning.rewindDuration) return; // older than 250 ms window
-
             for (int pellet = 0; pellet < pelletCount; pellet++)
             {
+                shotgunDamageBudget?.BeginContactPath();
                 Vector3 spreadDir = DeterministicShotRandom.SpreadCone(
                     clientId, command.WeaponId, command.ShotSequence, pellet,
                     baseAim, halfAngle);
@@ -1057,29 +1189,12 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                     int impactIndex = result.ImpactCount;
                     if (impactIndex < NetworkShotResult.Capacity)
                     {
-                        // Apply damage to the historical target's current NetworkHealth (Step 10
-                        // adds NetworkHealth; for now the damage is applied via the IDamageable on
-                        // the target's current collider, found by NetworkObjectId).
-                        ApplyDamageToHistoricalTarget(hitTargetId, entry.ballistics.damage,
-                            playerHitPoint, spreadDir);
-
-                        bool isPlayerHit = true;
-
-                        // Enforce the single-pellet-per-target rule and the shotgun damage cap.
-                        if (entry.isShotgun)
+                        NetworkHealth targetHealth = GetHistoricalDamageTarget(hitTargetId);
+                        if (ShouldApplyDamage(entry.isShotgun, targetHealth,
+                                shotgunDamageBudget, perPelletDamage))
                         {
-                            if (!_shotgunDamagedTargetsThisShot.Add(hitTargetId))
-                            {
-                                isPlayerHit = false;
-                            }
-                            else if (totalDamageThisShot + perPelletDamage > shotgunDamageCap)
-                            {
-                                isPlayerHit = false;
-                            }
-                            else
-                            {
-                                totalDamageThisShot += perPelletDamage;
-                            }
+                            ApplyDamageToHistoricalTarget(hitTargetId, perPelletDamage,
+                                playerHitPoint, spreadDir);
                         }
 
                         var impact = new NetworkShotImpact
@@ -1087,7 +1202,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                             Point = playerHitPoint,
                             Normal = -spreadDir,
                             HitTargetNetworkId = hitTargetId,
-                            IsPlayerHit = isPlayerHit,
+                            IsPlayerHit = true,
                             SurfaceType = (byte)ImpactSurfaceType.Flesh
                         };
                         SetImpact(ref result, impactIndex, in impact);
@@ -1097,50 +1212,41 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 }
 
                 // No historical player hit: fall back to environment hitscan at current host time.
-                var resolved = _combatRuntime.ResolveHitscanRay(shotRequest, cameraOrigin, spreadDir, muzzlePos);
+                var resolved = _combatRuntime.DetectHitscanRay(
+                    shotRequest, cameraOrigin, spreadDir, muzzlePos);
 
                 if (resolved.HasHit)
                 {
                     int impactIndex = result.ImpactCount;
                     if (impactIndex < NetworkShotResult.Capacity)
                     {
-                        bool isPlayerHit = resolved.Hit.collider != null
-                            && resolved.Hit.collider.GetComponentInParent<FPSProject.Combat.Runtime.IDamageable>() != null;
+                        Collider hitCollider = resolved.Hit.collider;
+                        NetworkHealth hitNetworkHealth = FindNetworkHealthTarget(hitCollider);
+                        FPSProject.Combat.Runtime.IDamageable damageable =
+                            hitNetworkHealth != null
+                                ? hitNetworkHealth
+                                : GetDamageable(hitCollider);
+                        NetworkObject hitNetworkObject = hitNetworkHealth != null
+                            ? hitNetworkHealth.NetworkObject
+                            : null;
+                        bool isPlayerHit = hitNetworkHealth != null;
                         ImpactSurfaceType surfaceType = ImpactSurface.Resolve(resolved.Hit.collider);
 
-                        // Enforce the single-pellet-per-target rule and the shotgun damage cap.
-                        // ResolveHitscanRay already applied damage via ResolveContact; for the
-                        // shotgun we need to track per-target damage so we cap it. The plan says a
-                        // single pellet damages a target at most once, but separate pellets may
-                        // each apply damage up to the 96 cap.
-                        if (entry.isShotgun && isPlayerHit && resolved.Hit.collider != null)
+                        // Damage is applied only after aggregate shotgun rules pass. The impact is
+                        // still recorded when a duplicate pellet contacts the same target.
+                        if (ShouldApplyDamage(entry.isShotgun, damageable,
+                                shotgunDamageBudget, perPelletDamage))
                         {
-                            Collider hitCollider = resolved.Hit.collider;
-                            if (!damagedTargets.Add(hitCollider))
-                            {
-                                // This pellet hit a target already damaged this shot. The damage
-                                // was already applied by ResolveContact; we cannot roll it back
-                                // here, so we mark the impact as non-player for presentation but
-                                // still record the point for tracer/impact VFX.
-                                isPlayerHit = false;
-                            }
-                            else if (totalDamageThisShot + perPelletDamage > shotgunDamageCap)
-                            {
-                                // The plan caps total close-range damage at 96 before falloff.
-                                // ResolveContact already applied the full per-pellet damage; we
-                                // only stop recording further hits beyond the cap.
-                                isPlayerHit = false;
-                            }
-                            else
-                            {
-                                totalDamageThisShot += perPelletDamage;
-                            }
+                            _combatRuntime.ResolveContact(shotRequest, resolved.Hit);
                         }
 
                         var impact = new NetworkShotImpact
                         {
                             Point = resolved.Hit.point,
                             Normal = resolved.Hit.normal,
+                            HitTargetNetworkId = hitNetworkObject != null
+                                ? hitNetworkObject.NetworkObjectId
+                                : 0,
                             IsPlayerHit = isPlayerHit,
                             SurfaceType = (byte)surfaceType
                         };
@@ -1151,6 +1257,13 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             }
 
             BroadcastShotResultClientRpc(result);
+        }
+
+        private static NetworkHealth FindNetworkHealthTarget(Collider hitCollider)
+        {
+            return hitCollider != null
+                ? hitCollider.GetComponentInParent<NetworkHealth>()
+                : null;
         }
 
         private static void SetImpact(ref NetworkShotResult result, int index, in NetworkShotImpact impact)
@@ -1205,6 +1318,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         public void NotifyDeath()
         {
             _isAlive = false;
+            controller?.ResetProxyState();
             controller?.SetSimulationMode(PlayerSimulationMode.Disabled);
             _proxyBuffer?.Clear(ProxyInterpolationBuffer.ClearReason.ManualReset);
         }
@@ -1246,12 +1360,13 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                     },
                     HasPendingBroadcast = true
                 };
-                _hostHitboxHistories.Remove(OwnerClientId);
+                _hostHitboxHistory?.Clear();
             }
 
             if (IsOwner)
             {
                 controller.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
+                controller.ResetProxyState();
                 controller.SetSimulationMode(PlayerSimulationMode.LocalOwner);
             }
             else

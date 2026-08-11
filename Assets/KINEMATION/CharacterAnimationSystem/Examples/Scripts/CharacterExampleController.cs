@@ -61,6 +61,9 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
         public Quaternion AimRotation => _aimRotation;
         public bool IsAiming => _isAiming;
         public bool IsGrounded => !_isInAir;
+        public bool IsSurfaceGrounded => _isGrounded;
+
+        protected virtual bool UseExternalLocomotionPresentation => false;
 
         [Tab("Controller")]
         [SerializeField, Range(0f, 1f)] protected float timeScale = 1f;
@@ -260,11 +263,14 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
             if (!wantsToCrouch && !CanUnCrouch()) return;
 
             _isCrouching = wantsToCrouch;
-            _animator.SetBool(Animator_Crouch, _isCrouching);
+            if (!UseExternalLocomotionPresentation)
+            {
+                _animator.SetBool(Animator_Crouch, _isCrouching);
+            }
 
             if (_characterCamera != null) _characterCamera.isCrouching = _isCrouching;
             
-            if (_isGrounded && !HasMoveInputs())
+            if (!UseExternalLocomotionPresentation && _isGrounded && !HasMoveInputs())
             {
                 _proceduralAnimation.UpdateAnimationModifier(_isCrouching ? stepCrouch : stepUncrouch);
             }
@@ -663,7 +669,10 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
             bool canJumpNow = _isGrounded || _timeSinceLastGrounded <= jumpCoyoteTime;
             if (_wantsToJump && canJumpNow)
             {
-                _animator.SetTrigger(Animator_Jumped);
+                if (!UseExternalLocomotionPresentation)
+                {
+                    _animator.SetTrigger(Animator_Jumped);
+                }
                 _velocity.y = Mathf.Sqrt(Mathf.Max(0f, 2f * gravity * jumpHeight));
                 
                 _isGrounded = false;
@@ -741,7 +750,10 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
             {
                 _gait = 2f + Mathf.InverseLerp(jogSpeed, sprintSpeed, Mathf.Min(speed, sprintSpeed));
             }
-            _animatorGait = KMath.FloatInterp(_animatorGait, _gait, animGaitSmoothing, Time.deltaTime);
+            if (!UseExternalLocomotionPresentation)
+            {
+                _animatorGait = KMath.FloatInterp(_animatorGait, _gait, animGaitSmoothing, Time.deltaTime);
+            }
         }
 
         protected virtual void UpdateCharacterMovement()
@@ -859,12 +871,9 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
             if(_isGrounded) _proceduralAnimation.UpdateAnimationModifier(isMoving ? startMoving : stopMoving);
         }
 
-        protected virtual void Update()
+        protected virtual void ApplyFinalPresentation()
         {
-            UpdateMovementState();
-            UpdateGait();
-            UpdateCharacterRotation();
-            UpdateCharacterMovement();
+            if (UseExternalLocomotionPresentation) return;
 
             bool isMoving = HasMoveInputs();
 
@@ -874,8 +883,16 @@ namespace KINEMATION.CharacterAnimationSystem.Examples.Scripts
             }
 
             _wasMoving = isMoving;
-            
             UpdateAnimatorParameters();
+        }
+
+        protected virtual void Update()
+        {
+            UpdateMovementState();
+            UpdateGait();
+            UpdateCharacterRotation();
+            UpdateCharacterMovement();
+            ApplyFinalPresentation();
         }
     }
 }

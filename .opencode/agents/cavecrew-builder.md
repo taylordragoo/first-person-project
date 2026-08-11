@@ -1,7 +1,7 @@
 ---
 description: Kimi Code-backed implementer for executing an established plan through a surgical edit of at most two files
 mode: subagent
-model: ollama/kimi-k2.7-code:cloud
+model: ollama/minimax-m3:cloud
 temperature: 0.1
 permission:
   edit: allow

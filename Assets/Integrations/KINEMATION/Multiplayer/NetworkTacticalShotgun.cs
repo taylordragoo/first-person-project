@@ -14,6 +14,25 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
     /// </summary>
     public class NetworkTacticalShotgun : TacticalShotgun, INetworkTacticalWeaponPresentation
     {
+        private NetworkWeaponShotRouter ResolveShotRouter()
+        {
+            return GetComponentInParent<NetworkWeaponShotRouter>();
+        }
+
+        public override void Reload()
+        {
+            NetworkWeaponShotRouter router = ResolveShotRouter();
+            if (router != null && router.RequestReload()) return;
+            base.Reload();
+        }
+
+        public override void ReloadWeapon()
+        {
+            NetworkWeaponShotRouter router = ResolveShotRouter();
+            if (router != null && router.CompleteReload()) return;
+            base.ReloadWeapon();
+        }
+
         /// <summary>
         /// Play one fire presentation frame. The Herrington Police consumes one shell and resolves
         /// eight pellets on the host; this method only plays the visible/audible fire presentation.

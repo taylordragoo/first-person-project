@@ -869,11 +869,24 @@ function App() {
         RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.CaptureGameplayCursor()
     }
 
-    const returnToMainMenu = () => {
+    const returnToMainMenu = async () => {
         if (!__isPlaying) return
         setReturningToMenu(true)
-        RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode()
-        RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.ReturnToMainMenu()
+
+        try {
+            RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.EnterMenuMode()
+            await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+            RuntimeCS.FPSProject.Multiplayer.Core.Bootstrap.MultiplayerMenuBridge.ReturnToMainMenu()
+        } catch (error) {
+            console.error(`[OneJS UI] Failed to return to main menu: ${String(error)}`)
+            setReturningToMenu(false)
+
+            try {
+                RuntimeCS.FirstPersonProject.UI.ProjectSapphireBridge.SetPaused(true)
+            } catch (restoreError) {
+                console.error(`[OneJS UI] Failed to restore pause state: ${String(restoreError)}`)
+            }
+        }
     }
 
     const quit = () => {

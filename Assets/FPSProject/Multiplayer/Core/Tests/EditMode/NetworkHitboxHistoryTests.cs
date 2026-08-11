@@ -7,13 +7,17 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
     public class NetworkHitboxHistoryTests
     {
         private static HitboxPoseSample CreateSample(float t, Vector3 pos, float yaw = 0f,
-            float height = 1.8f, float radius = 0.3f, bool crouch = false)
+            float height = 1.8f, float radius = 0.3f, bool crouch = false,
+            float aimYaw = 0f, float aimPitch = 0f, bool isAiming = false)
         {
             return new HitboxPoseSample
             {
                 Time = t,
                 Position = pos,
                 BodyYaw = yaw,
+                AimYaw = aimYaw,
+                AimPitch = aimPitch,
+                IsAiming = isAiming,
                 CapsuleCenter = pos + new Vector3(0f, height * 0.5f, 0f),
                 CapsuleHeight = height,
                 CapsuleRadius = radius,
@@ -82,6 +86,36 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
             Assert.AreEqual(5f, cap.Center.x, 0.01f);
             Assert.AreEqual(0.9f, cap.Center.y, 0.01f);
             Assert.AreEqual(0f, cap.Center.z, 0.01f);
+        }
+
+        [Test]
+        public void TryGetPose_InterpolatesAcceptedAim()
+        {
+            var h = new NetworkHitboxHistory(2f);
+            var s1 = CreateSample(1f, Vector3.zero, aimYaw: 10f, aimPitch: -20f);
+            var s2 = CreateSample(2f, Vector3.zero, aimYaw: 50f, aimPitch: 20f);
+            h.Record(1f, in s1);
+            h.Record(2f, in s2);
+
+            Assert.IsTrue(h.TryGetPose(1.5f, out HitboxPoseSample pose));
+            Assert.AreEqual(30f, pose.AimYaw, 0.01f);
+            Assert.AreEqual(0f, pose.AimPitch, 0.01f);
+        }
+
+        [Test]
+        public void TryGetPose_UsesHistoricalAcceptedAimingState()
+        {
+            var h = new NetworkHitboxHistory(2f);
+            var hip = CreateSample(1f, Vector3.zero, isAiming: false);
+            var ads = CreateSample(2f, Vector3.zero, isAiming: true);
+            h.Record(1f, in hip);
+            h.Record(2f, in ads);
+
+            Assert.IsTrue(h.TryGetPose(1.5f, out HitboxPoseSample beforeAdsSample));
+            Assert.IsFalse(beforeAdsSample.IsAiming,
+                "ADS must not be granted before the host accepted the ADS sample.");
+            Assert.IsTrue(h.TryGetPose(2f, out HitboxPoseSample atAdsSample));
+            Assert.IsTrue(atAdsSample.IsAiming);
         }
 
         [Test]

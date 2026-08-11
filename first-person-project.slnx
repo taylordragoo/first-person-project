@@ -11,8 +11,8 @@
   <Project Path="CAS.Addons.FPS.Runtime.csproj" />
   <Project Path="KAnimationCore.Runtime.csproj" />
   <Project Path="CAS.Editor.csproj" />
-  <Project Path="CAS.Examples.Editor.csproj" />
   <Project Path="FPSProject.Multiplayer.Core.csproj" />
+  <Project Path="CAS.Examples.Editor.csproj" />
   <Project Path="ScriptableWidget.Editor.csproj" />
   <Project Path="FPSProject.Multiplayer.Core.EditModeTests.csproj" />
   <Project Path="SingularityGroup.HotReload.Runtime.Public.csproj" />
@@ -23,7 +23,9 @@
   <Project Path="FPSProject.Combat.Runtime.csproj" />
   <Project Path="FPSProject.Combat.PlayModeTests.csproj" />
   <Project Path="ScriptableWidget.Runtime.csproj" />
+  <Project Path="FirstPersonProject.Kinemation.Presentation.csproj" />
   <Project Path="CAS.Addons.FPS.Editor.csproj" />
   <Project Path="RecoilAnimation.Runtime.csproj" />
   <Project Path="FPSProject.Multiplayer.PlayModeTests.csproj" />
+  <Project Path="FirstPersonProject.Kinemation.Presentation.EditModeTests.csproj" />
 </Solution>

@@ -3,6 +3,10 @@
   "provider": {
     "ollama": {
       "models": {
+        "deepseek-v4-flash:cloud": {
+          "_launch": true,
+          "name": "deepseek-v4-flash:cloud"
+        },
         "glm-5.2:cloud": {
           "name": "GLM 5.2 Cloud"
         },
@@ -11,11 +15,52 @@
         },
         "kimi-k2.7-code:cloud": {
           "name": "Kimi K2.7 Code Cloud"
-        },
-        "deepseek-v4-flash:cloud": {
-          "name": "DeepSeek V4 Flash Cloud"
         }
+      },
+      "name": "Ollama",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://127.0.0.1:11434/v1"
       }
+    }
+  },
+  "mcp": {
+    "unityMCP": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8080/mcp",
+      "enabled": true
+    }
+  },
+  "plugin": [
+    "./plugins/caveman/plugin.js"
+  ],
+  "default_agent": "orchestrator",
+  "agent": {
+    "build": {
+      "disable": true
+    },
+    "plan": {
+      "disable": true
+    },
+    "orchestrator": {
+      "description": "Plan, Orchestrate and delegate implementation or research work to specialized subagents.",
+      "mode": "primary",
+      "model": "ollama/glm-5.2:cloud"
+    },
+    "builder": {
+      "description": "Implement planned changes, run commands, and verify the result.",
+      "mode": "subagent",
+      "model": "ollama/minimax-m3:cloud"
+    },
+    "reviewer": {
+      "description": "Handle general research and multi-step supporting tasks.",
+      "mode": "subagent",
+      "model": "ollama/deepseek-v4-flash:cloud"
+    },
+    "investigator": {
+      "description": "Quickly inspect and search the codebase without modifying files.",
+      "mode": "subagent",
+      "model": "ollama/kimi-k2.7-code:cloud"
     }
   }
 }

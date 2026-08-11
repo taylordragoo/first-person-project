@@ -15,6 +15,25 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
     /// </summary>
     public class NetworkTacticalShooterWeapon : TacticalShooterWeapon, INetworkTacticalWeaponPresentation
     {
+        private NetworkWeaponShotRouter ResolveShotRouter()
+        {
+            return GetComponentInParent<NetworkWeaponShotRouter>();
+        }
+
+        public override void Reload()
+        {
+            NetworkWeaponShotRouter router = ResolveShotRouter();
+            if (router != null && router.RequestReload()) return;
+            base.Reload();
+        }
+
+        public override void ReloadWeapon()
+        {
+            NetworkWeaponShotRouter router = ResolveShotRouter();
+            if (router != null && router.CompleteReload()) return;
+            base.ReloadWeapon();
+        }
+
         /// <summary>
         /// Play one fire presentation frame: muzzle flash, casing, recoil, camera shake, fire
         /// animation, and fire audio. Does NOT decrement ammo and does NOT schedule the next
@@ -48,7 +67,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         public void PlayNetworkReloadPresentation()
         {
             // Mirror the vendor Reload() presentation without changing _activeAmmo. The host
-            // decrements ammunition authoritatively; presentation reads it via SetNetworkAmmo.
+            // refills ammunition when the reload animation event completes.
             PlayCharacterWeaponAnimation(_activeAmmo == 0
                 ? TacShooterUtility.Animator_ReloadEmpty.hash
                 : TacShooterUtility.Animator_ReloadTac.hash);

@@ -21,7 +21,10 @@ namespace FPSProject.Multiplayer.Core.Weapons
         /// </summary>
         public ulong HitTargetNetworkId;
 
-        /// <summary>True when this impact hit a player (for hit-marker presentation).</summary>
+        /// <summary>
+        /// True when this impact hit a networked combat actor (human player or bot). Used for
+        /// hit-marker presentation and to suppress world-surface decals on moving characters.
+        /// </summary>
         public bool IsPlayerHit;
 
         /// <summary>

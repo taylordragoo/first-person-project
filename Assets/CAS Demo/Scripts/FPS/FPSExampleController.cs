@@ -12,6 +12,7 @@ namespace CAS_Demo.Scripts.FPS
     {
         public bool IsCrouching => _isCrouching;
         public bool IsSprinting => _movementState == CharacterMovementState.Sprint;
+        protected virtual bool UseExternalAimPresentation => false;
 
         [Header("IK Motions")]
         [SerializeField] protected IkMotionSettings aimingMotion;
@@ -127,7 +128,10 @@ namespace CAS_Demo.Scripts.FPS
             if (value.isPressed && IsSprinting) return;
 
             base.OnAim(value);
-            _proceduralAnimation.UpdateAnimationModifier(aimingMotion);
+            if (!UseExternalAimPresentation)
+            {
+                _proceduralAnimation.UpdateAnimationModifier(aimingMotion);
+            }
             mouseSensitivity = _isAiming ? _defaultMouseSensitivity * 0.7f : _defaultMouseSensitivity;
 
             if (!isFirstPerson && !_isAiming) GetActiveItem().StopUsingItem();
@@ -141,7 +145,10 @@ namespace CAS_Demo.Scripts.FPS
             if (_characterCamera != null) _characterCamera.isAiming = false;
 
             GetActiveItem()?.OnAim(false);
-            if (_proceduralAnimation != null) _proceduralAnimation.UpdateAnimationModifier(aimingMotion);
+            if (!UseExternalAimPresentation && _proceduralAnimation != null)
+            {
+                _proceduralAnimation.UpdateAnimationModifier(aimingMotion);
+            }
             mouseSensitivity = _defaultMouseSensitivity;
         }
         
