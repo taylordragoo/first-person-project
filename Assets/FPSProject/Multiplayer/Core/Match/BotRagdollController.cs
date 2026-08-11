@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FPSProject.Combat.Runtime;
+using FPSProject.Multiplayer.Core.Health;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -19,6 +20,9 @@ namespace FPSProject.Multiplayer.Core.Match
         [SerializeField, Min(0f)] private float impactImpulseScale = 0.15f;
         [SerializeField, Min(0f)] private float minimumImpactImpulse = 1.5f;
         [SerializeField, Min(0f)] private float maximumImpactImpulse = 12f;
+        [SerializeField, Min(0f)] private float headDamageMultiplier = 2f;
+        [SerializeField, Min(0f)] private float torsoDamageMultiplier = 1f;
+        [SerializeField, Min(0f)] private float limbDamageMultiplier = 0.75f;
 
         private readonly List<Rigidbody> _bodies = new List<Rigidbody>(12);
         private readonly List<Collider> _ragdollColliders = new List<Collider>(12);
@@ -82,30 +86,32 @@ namespace FPSProject.Multiplayer.Core.Match
             }
 
             Rigidbody pelvisBody = AddCapsuleBody(pelvis, chest, null,
-                0.42f, 8f, 20f, 30f);
+                0.42f, 8f, 20f, 30f, torsoDamageMultiplier, false);
             Rigidbody chestBody = AddCapsuleBody(chest, upperChest, pelvisBody,
-                0.48f, 7f, 20f, 35f);
-            AddSphereBody(head, chestBody, 0.13f, 3f, 20f, 25f);
+                0.48f, 7f, 20f, 35f, torsoDamageMultiplier, false);
+            AddSphereBody(head, chestBody, 0.13f, 3f, 20f, 25f,
+                headDamageMultiplier, true);
 
             Rigidbody leftUpperArmBody = AddCapsuleBody(leftUpperArm, leftLowerArm,
-                chestBody, 0.28f, 2f, 35f, 60f);
+                chestBody, 0.28f, 2f, 35f, 60f, limbDamageMultiplier, false);
             AddCapsuleBody(leftLowerArm, leftHand, leftUpperArmBody,
-                0.24f, 1.5f, 15f, 45f);
+                0.24f, 1.5f, 15f, 45f, limbDamageMultiplier, false);
             Rigidbody rightUpperArmBody = AddCapsuleBody(rightUpperArm, rightLowerArm,
-                chestBody, 0.28f, 2f, 35f, 60f);
+                chestBody, 0.28f, 2f, 35f, 60f, limbDamageMultiplier, false);
             AddCapsuleBody(rightLowerArm, rightHand, rightUpperArmBody,
-                0.24f, 1.5f, 15f, 45f);
+                0.24f, 1.5f, 15f, 45f, limbDamageMultiplier, false);
 
             Rigidbody leftThighBody = AddCapsuleBody(leftThigh, leftCalf,
-                pelvisBody, 0.3f, 5f, 25f, 40f);
+                pelvisBody, 0.3f, 5f, 25f, 40f, limbDamageMultiplier, false);
             AddCapsuleBody(leftCalf, leftFoot, leftThighBody,
-                0.24f, 3f, 10f, 55f);
+                0.24f, 3f, 10f, 55f, limbDamageMultiplier, false);
             Rigidbody rightThighBody = AddCapsuleBody(rightThigh, rightCalf,
-                pelvisBody, 0.3f, 5f, 25f, 40f);
+                pelvisBody, 0.3f, 5f, 25f, 40f, limbDamageMultiplier, false);
             AddCapsuleBody(rightCalf, rightFoot, rightThighBody,
-                0.24f, 3f, 10f, 55f);
+                0.24f, 3f, 10f, 55f, limbDamageMultiplier, false);
 
             IgnoreSelfCollisions();
+            MarkBroadGameplayCapsuleAsRaycastPassthrough();
             _initialized = _bodies.Count == 11;
             return IsReady;
         }
@@ -189,7 +195,8 @@ namespace FPSProject.Multiplayer.Core.Match
 
         private Rigidbody AddCapsuleBody(Transform bone, Transform end,
             Rigidbody connectedBody, float radiusScale, float mass,
-            float twistLimit, float swingLimit)
+            float twistLimit, float swingLimit, float damageMultiplier,
+            bool guaranteedLethal)
         {
             Vector3 localEnd = bone.InverseTransformPoint(end.position);
             float length = localEnd.magnitude;
@@ -201,31 +208,35 @@ namespace FPSProject.Multiplayer.Core.Match
             collider.center = localEnd * 0.5f;
             collider.radius = radius;
             collider.height = Mathf.Max(radius * 2f, length + radius * 2f);
-            collider.enabled = false;
+            collider.enabled = true;
             _ragdollColliders.Add(collider);
 
-            return AddBody(bone, connectedBody, mass, twistLimit, swingLimit);
+            return AddBody(bone, connectedBody, mass, twistLimit, swingLimit,
+                damageMultiplier, guaranteedLethal);
         }
 
         private Rigidbody AddSphereBody(Transform bone, Rigidbody connectedBody,
-            float radius, float mass, float twistLimit, float swingLimit)
+            float radius, float mass, float twistLimit, float swingLimit,
+            float damageMultiplier, bool guaranteedLethal)
         {
             SphereCollider collider = bone.gameObject.AddComponent<SphereCollider>();
             collider.radius = radius;
-            collider.enabled = false;
+            collider.enabled = true;
             _ragdollColliders.Add(collider);
 
-            return AddBody(bone, connectedBody, mass, twistLimit, swingLimit);
+            return AddBody(bone, connectedBody, mass, twistLimit, swingLimit,
+                damageMultiplier, guaranteedLethal);
         }
 
         private Rigidbody AddBody(Transform bone, Rigidbody connectedBody,
-            float mass, float twistLimit, float swingLimit)
+            float mass, float twistLimit, float swingLimit, float damageMultiplier,
+            bool guaranteedLethal)
         {
             Rigidbody body = bone.gameObject.AddComponent<Rigidbody>();
             body.mass = mass;
             body.useGravity = true;
             body.isKinematic = true;
-            body.detectCollisions = false;
+            body.detectCollisions = true;
             body.interpolation = RigidbodyInterpolation.Interpolate;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
             body.linearDamping = 0.05f;
@@ -233,6 +244,10 @@ namespace FPSProject.Multiplayer.Core.Match
             body.maxAngularVelocity = 20f;
             body.maxDepenetrationVelocity = 2f;
             _bodies.Add(body);
+
+            BotDamageHitbox hitbox = bone.gameObject.AddComponent<BotDamageHitbox>();
+            hitbox.Initialize(GetComponent<NetworkHealth>(), damageMultiplier,
+                guaranteedLethal);
 
             if (connectedBody == null) return body;
 
@@ -251,6 +266,16 @@ namespace FPSProject.Multiplayer.Core.Match
             joint.swing1Limit = CreateLimit(swingLimit);
             joint.swing2Limit = CreateLimit(swingLimit);
             return body;
+        }
+
+        private void MarkBroadGameplayCapsuleAsRaycastPassthrough()
+        {
+            CapsuleCollider broadCapsule = GetComponent<CapsuleCollider>();
+            if (broadCapsule == null) return;
+
+            broadCapsule.enabled = true;
+            if (broadCapsule.GetComponent<CombatRaycastPassthrough>() == null)
+                broadCapsule.gameObject.AddComponent<CombatRaycastPassthrough>();
         }
 
         private void ApplyImpactImpulse(in DamageInfo damageInfo)

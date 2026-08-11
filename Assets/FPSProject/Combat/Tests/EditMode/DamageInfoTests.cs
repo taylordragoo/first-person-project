@@ -143,4 +143,25 @@ namespace FPSProject.Combat.EditModeTests
         {
         }
     }
+
+    public class CombatRaycastPolicyTests
+    {
+        [Test]
+        public void ShouldSkip_OnlyMarkedCollider()
+        {
+            var go = new GameObject("BroadGameplayCollider");
+            try
+            {
+                var collider = go.AddComponent<CapsuleCollider>();
+                Assert.IsFalse(CombatRaycastPolicy.ShouldSkip(collider));
+
+                go.AddComponent<CombatRaycastPassthrough>();
+                Assert.IsTrue(CombatRaycastPolicy.ShouldSkip(collider));
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+            }
+        }
+    }
 }

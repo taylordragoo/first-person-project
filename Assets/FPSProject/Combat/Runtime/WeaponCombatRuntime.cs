@@ -182,6 +182,7 @@ namespace FPSProject.Combat.Runtime
                 var hit = cameraHits[i];
                 if (IsOwnerOrDescendant(hit.transform, request.OwnerRoot))
                     continue;
+                if (CombatRaycastPolicy.ShouldSkip(hit.collider)) continue;
 
                 if (hit.distance < nearestCamDist)
                 {
@@ -222,6 +223,7 @@ namespace FPSProject.Combat.Runtime
                 var hit = muzzleHits[i];
                 if (IsOwnerOrDescendant(hit.transform, request.OwnerRoot))
                     continue;
+                if (CombatRaycastPolicy.ShouldSkip(hit.collider)) continue;
 
                 if (hit.distance < nearestMuzzleDist)
                 {
@@ -357,6 +359,7 @@ namespace FPSProject.Combat.Runtime
             {
                 var hit = cameraHits[i];
                 if (IsOwnerOrDescendant(hit.transform, request.OwnerRoot)) continue;
+                if (CombatRaycastPolicy.ShouldSkip(hit.collider)) continue;
                 if (hit.distance < nearestCamDist)
                 {
                     nearestCamDist = hit.distance;
@@ -389,6 +392,7 @@ namespace FPSProject.Combat.Runtime
             {
                 var hit = muzzleHits[i];
                 if (IsOwnerOrDescendant(hit.transform, request.OwnerRoot)) continue;
+                if (CombatRaycastPolicy.ShouldSkip(hit.collider)) continue;
                 if (hit.distance < nearestMuzzleDist)
                 {
                     nearestMuzzleDist = hit.distance;

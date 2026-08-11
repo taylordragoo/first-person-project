@@ -142,6 +142,7 @@ namespace FPSProject.Combat.Runtime
                 var hit = hits[i];
                 if (IsOwnerOrDescendant(hit.transform))
                     continue;
+                if (CombatRaycastPolicy.ShouldSkip(hit.collider)) continue;
 
                 if (hit.distance < nearestDistance)
                 {
@@ -196,6 +197,7 @@ namespace FPSProject.Combat.Runtime
                 var col = overlaps[i];
                 if (IsOwnerOrDescendant(col.transform))
                     continue;
+                if (CombatRaycastPolicy.ShouldSkip(col)) continue;
 
                 Vector3 closestPoint = col.ClosestPoint(transform.position);
                 float dist = Vector3.Distance(transform.position, closestPoint);

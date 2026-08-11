@@ -1,4 +1,5 @@
 using FPSProject.Combat.Runtime;
+using FPSProject.Multiplayer.Core.Health;
 using FPSProject.Multiplayer.Core.Match;
 using NUnit.Framework;
 using UnityEngine;
@@ -16,19 +17,48 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
         }
 
         [Test]
-        public void InitializeAndActivate_BuildsElevenBodyDisabledThenLiveRig()
+        public void InitializeAndActivate_BuildsLiveHitboxesThenDynamicRagdoll()
         {
             _root = BuildBotSkeleton();
+            var health = _root.AddComponent<NetworkHealth>();
+            var broadCapsule = _root.AddComponent<CapsuleCollider>();
             var ragdoll = _root.AddComponent<BotRagdollController>();
             ragdoll.Initialize();
 
             Assert.IsTrue(ragdoll.IsReady);
             Assert.AreEqual(11, ragdoll.BodyCount);
+            Assert.IsTrue(broadCapsule.enabled);
+            Assert.IsTrue(CombatRaycastPolicy.ShouldSkip(broadCapsule));
+            Assert.AreEqual(11, _root.GetComponentsInChildren<BotDamageHitbox>(true).Length);
             foreach (Rigidbody body in _root.GetComponentsInChildren<Rigidbody>(true))
             {
                 Assert.IsTrue(body.isKinematic);
-                Assert.IsFalse(body.detectCollisions);
+                Assert.IsTrue(body.detectCollisions);
+                Assert.IsTrue(body.GetComponent<Collider>().enabled);
             }
+
+            Transform rigRoot = _root.transform.Find("Tactical Presentation/SKM_Operator/root");
+            BotDamageHitbox headHitbox = rigRoot.Find(
+                "pelvis/spine_01/spine_02/spine_03/spine_04/spine_05/neck_01/neck_02/head")
+                .GetComponent<BotDamageHitbox>();
+            BotDamageHitbox chestHitbox = rigRoot.Find(
+                "pelvis/spine_01/spine_02/spine_03").GetComponent<BotDamageHitbox>();
+            BotDamageHitbox armHitbox = rigRoot.Find(
+                "pelvis/spine_01/spine_02/spine_03/spine_04/spine_05/"
+                + "clavicle_l/upperarm_l").GetComponent<BotDamageHitbox>();
+            Assert.AreEqual(2f, headHitbox.DamageMultiplier);
+            Assert.IsTrue(headHitbox.IsGuaranteedLethal);
+            Assert.AreEqual(1f, chestHitbox.DamageMultiplier);
+            Assert.IsFalse(chestHitbox.IsGuaranteedLethal);
+            Assert.AreEqual(0.75f, armHitbox.DamageMultiplier);
+            Assert.IsFalse(armHitbox.IsGuaranteedLethal);
+
+            var zoneDamage = new DamageInfo(10f, Vector3.up, Vector3.up,
+                Vector3.forward, null, null);
+            armHitbox.ApplyDamage(zoneDamage);
+            Assert.AreEqual(92.5f, health.CurrentHealth.Value);
+            headHitbox.ApplyDamage(zoneDamage);
+            Assert.AreEqual(0f, health.CurrentHealth.Value);
 
             Transform weapon = _root.transform.Find(
                 "Tactical Presentation/SKM_Operator/root/ik_hand_root/ik_hand_gun/Weapon");
