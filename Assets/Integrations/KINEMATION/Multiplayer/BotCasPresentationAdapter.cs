@@ -64,6 +64,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         private bool _restoreCursorVisible;
         private CursorLockMode _restoreCursorLock;
         private int _restoreTargetFrameRate;
+        private bool _isStandalone;
 
         public NetworkFPSExampleController Controller => controller;
         public bool IsPresentationReady { get; private set; }
@@ -79,6 +80,24 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
         }
 
         public override void OnNetworkSpawn()
+        {
+            BeginPresentation();
+        }
+
+        /// <summary>
+        /// Starts the same presentation pipeline for an Operations bot instantiated without a
+        /// network session. Network ownership remains disabled; NavMesh still owns the root.
+        /// </summary>
+        public void InitializeStandalone()
+        {
+            if (IsSpawned || (NetworkManager.Singleton != null
+                && NetworkManager.Singleton.IsListening)) return;
+
+            _isStandalone = true;
+            BeginPresentation();
+        }
+
+        private void BeginPresentation()
         {
             ResolveReferences();
             DisableOwnerOnlyComponents();
@@ -109,7 +128,7 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
         private void Update()
         {
-            if (!IsSpawned || controller == null
+            if (!IsPresentationActive || controller == null
                 || controller.SimulationMode != PlayerSimulationMode.RemoteProxy)
             {
                 return;
@@ -152,7 +171,8 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
 
         private Vector3 ReadWorldVelocity()
         {
-            if (IsServer && _agent != null && _agent.enabled && _agent.isOnNavMesh)
+            if ((IsServer || _isStandalone) && _agent != null && _agent.enabled
+                && _agent.isOnNavMesh)
                 return _agent.velocity;
 
             if (!_hasPreviousPosition || Time.deltaTime <= Mathf.Epsilon)
@@ -222,20 +242,20 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
                 // Match NetworkCasPlayer staging: CAS evaluates first, then procedural playable,
                 // then weapon creation/settings while Tactical Animator stays paused.
                 yield return null;
-                if (!IsSpawned) yield break;
+                if (!IsPresentationActive) yield break;
 
                 CaptureAnimatorState();
                 _tacticalAnimator.enabled = false;
 
                 tacticalAnimation.enabled = true;
                 yield return null;
-                if (!IsSpawned) yield break;
+                if (!IsPresentationActive) yield break;
 
                 CaptureGlobalDemoState();
                 tacticalPlayer.enabled = true;
                 yield return null;
 
-                if (!IsSpawned) yield break;
+                if (!IsPresentationActive) yield break;
 
                 // Weapon prefab was instantiated during TacticalShooterPlayer.Start; neutralize
                 // any camera/listener/input components carried by that prefab as well.
@@ -347,7 +367,10 @@ namespace FirstPersonProject.Integrations.Kinemation.Multiplayer
             _timeSincePhysicalGrounded = 0f;
             _previousPosition = transform.position;
             _hasPreviousPosition = false;
+            _isStandalone = false;
             if (tacticalPlayer != null) tacticalPlayer.ReleaseExternalGait();
         }
+
+        private bool IsPresentationActive => IsSpawned || _isStandalone;
     }
 }

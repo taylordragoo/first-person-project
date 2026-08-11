@@ -38,6 +38,7 @@ namespace FPSProject.Multiplayer.Core.Match
         private Vector3 _lastPosition;
         private Vector3 _lastDestination;
         private bool _hasLastDestination;
+        private bool _isStandalone;
 
         public bool IsNavigating => _currentState == State.Moving;
 
@@ -59,6 +60,22 @@ namespace FPSProject.Multiplayer.Core.Match
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
+
+            BeginNavigation();
+        }
+
+        public void InitializeStandalone(BotExplorationArea area)
+        {
+            if (IsSpawned || (NetworkManager.Singleton != null
+                && NetworkManager.Singleton.IsListening)) return;
+
+            _isStandalone = true;
+            explorationArea = area;
+            BeginNavigation();
+        }
+
+        private void BeginNavigation()
+        {
 
             if (_agent != null)
             {
@@ -84,7 +101,8 @@ namespace FPSProject.Multiplayer.Core.Match
 
         private void Update()
         {
-            if (!IsServer || _agent == null || !_agent.enabled || !_agent.isOnNavMesh
+            if ((!IsServer && !_isStandalone) || _agent == null || !_agent.enabled
+                || !_agent.isOnNavMesh
                 || !gameObject.activeInHierarchy) return;
 
             switch (_currentState)
@@ -272,6 +290,14 @@ namespace FPSProject.Multiplayer.Core.Match
                     return;
                 }
             }
+        }
+
+        private void OnDisable()
+        {
+            if (!_isStandalone || _agent == null) return;
+            if (_agent.enabled && _agent.isOnNavMesh) _agent.isStopped = true;
+            _agent.enabled = false;
+            _currentState = State.Idle;
         }
     }
 }

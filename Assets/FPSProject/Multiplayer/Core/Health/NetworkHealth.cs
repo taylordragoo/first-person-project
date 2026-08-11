@@ -6,7 +6,7 @@ using UnityEngine;
 namespace FPSProject.Multiplayer.Core.Health
 {
     [DisallowMultipleComponent]
-    public class NetworkHealth : NetworkBehaviour, IDamageable
+    public class NetworkHealth : NetworkBehaviour, IDamageable, IImpactDecalSuppressor
     {
         [SerializeField] private float maxHealth = 100f;
 
@@ -15,6 +15,8 @@ namespace FPSProject.Multiplayer.Core.Health
 
         public float MaxHealth => maxHealth;
         public bool IsDead => CurrentHealth.Value <= 0f;
+        public bool HasStandaloneAuthority => !IsSpawned
+            && (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsListening);
 
         public event System.Action OnDeath;
         public event System.Action<DamageInfo> OnKilled;
@@ -29,9 +31,20 @@ namespace FPSProject.Multiplayer.Core.Health
             }
         }
 
+        /// <summary>
+        /// Resets this health receiver for a scene-local bot. Standalone authority is available
+        /// only while no network session is listening, so an unspawned network prefab can be
+        /// reused safely by Operations without weakening the server-authoritative path.
+        /// </summary>
+        public void InitializeStandalone()
+        {
+            if (!HasStandaloneAuthority) return;
+            CurrentHealth.Value = maxHealth;
+        }
+
         public void ApplyDamage(in DamageInfo damageInfo)
         {
-            if (!IsServer) return;
+            if (!IsServer && !HasStandaloneAuthority) return;
             if (IsDead) return;
 
             if (damageInfo.InstigatorOwner == gameObject) return;

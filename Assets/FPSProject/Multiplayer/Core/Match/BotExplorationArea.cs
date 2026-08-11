@@ -13,6 +13,13 @@ namespace FPSProject.Multiplayer.Core.Match
 
         public string MapName => mapName;
 
+        public void ConfigureWorldBounds(Bounds worldBounds, string activeMapName)
+        {
+            center = transform.InverseTransformPoint(worldBounds.center);
+            size = worldBounds.size;
+            mapName = activeMapName;
+        }
+
         public bool IsActiveForMap(string activeMapName)
         {
             return !string.IsNullOrEmpty(mapName)

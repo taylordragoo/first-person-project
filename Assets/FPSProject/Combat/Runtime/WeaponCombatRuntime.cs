@@ -273,7 +273,8 @@ namespace FPSProject.Combat.Runtime
             if (result.HasHit && request.Ballistics.shotType == WeaponShotType.Hitscan)
             {
                 ImpactSurfaceType surfaceType = ImpactSurface.Resolve(result.Hit.collider);
-                SpawnImpactEffects(request, result.Hit.point, result.Hit.normal, surfaceType, result.Hit.transform);
+                SpawnImpactEffects(request, result.Hit.point, result.Hit.normal, surfaceType,
+                    result.Hit.transform, ImpactDecalPolicy.ShouldSpawnDecal(result.Hit.collider));
             }
             else if (request.Ballistics.shotType == WeaponShotType.Projectile)
             {
@@ -431,7 +432,8 @@ namespace FPSProject.Combat.Runtime
 
             // Resolve surface type and spawn effects
             ImpactSurfaceType surfaceType = ImpactSurface.Resolve(hit.collider);
-            SpawnImpactEffects(request, hit.point, hit.normal, surfaceType, hit.transform);
+            SpawnImpactEffects(request, hit.point, hit.normal, surfaceType, hit.transform,
+                ImpactDecalPolicy.ShouldSpawnDecal(hit.collider));
         }
 
         /// <summary>
@@ -458,7 +460,8 @@ namespace FPSProject.Combat.Runtime
             ApplyDamage(hit.collider, damageInfo);
 
             ImpactSurfaceType surfaceType = ImpactSurface.Resolve(hit.collider);
-            SpawnImpactEffects(request, hit.point, hit.normal, surfaceType, hit.transform);
+            SpawnImpactEffects(request, hit.point, hit.normal, surfaceType, hit.transform,
+                ImpactDecalPolicy.ShouldSpawnDecal(hit.collider));
 
             projectile.ReturnToPool();
         }
@@ -486,7 +489,8 @@ namespace FPSProject.Combat.Runtime
             ApplyDamage(collider, damageInfo);
 
             ImpactSurfaceType surfaceType = ImpactSurface.Resolve(collider);
-            SpawnImpactEffects(request, point, normal, surfaceType, collider.transform);
+            SpawnImpactEffects(request, point, normal, surfaceType, collider.transform,
+                ImpactDecalPolicy.ShouldSpawnDecal(collider));
 
             projectile.ReturnToPool();
         }
@@ -640,11 +644,12 @@ namespace FPSProject.Combat.Runtime
             in WeaponShotRequest request,
             Vector3 point, Vector3 normal,
             ImpactSurfaceType surfaceType,
-            Transform hitTransform)
+            Transform hitTransform,
+            bool spawnDecal = true)
         {
             SpawnImpactEffects(
                 request.Ballistics.impactEffectLibrary,
-                point, normal, surfaceType, hitTransform);
+                point, normal, surfaceType, hitTransform, spawnDecal);
         }
 
         private void SpawnImpactEffects(

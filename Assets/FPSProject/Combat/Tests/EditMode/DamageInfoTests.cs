@@ -111,4 +111,36 @@ namespace FPSProject.Combat.EditModeTests
             }
         }
     }
+
+    public class ImpactDecalPolicyTests
+    {
+        [Test]
+        public void CharacterMarkerOnParent_SuppressesChildColliderDecal()
+        {
+            var root = new GameObject("CharacterRoot");
+            var child = new GameObject("HitCollider");
+            child.transform.SetParent(root.transform);
+            root.AddComponent<TestImpactDecalSuppressor>();
+            var collider = child.AddComponent<BoxCollider>();
+
+            Assert.IsFalse(ImpactDecalPolicy.ShouldSpawnDecal(collider));
+
+            Object.DestroyImmediate(root);
+        }
+
+        [Test]
+        public void OrdinarySurface_AllowsDecal()
+        {
+            var surface = new GameObject("OrdinarySurface");
+            var collider = surface.AddComponent<BoxCollider>();
+
+            Assert.IsTrue(ImpactDecalPolicy.ShouldSpawnDecal(collider));
+
+            Object.DestroyImmediate(surface);
+        }
+
+        private class TestImpactDecalSuppressor : MonoBehaviour, IImpactDecalSuppressor
+        {
+        }
+    }
 }

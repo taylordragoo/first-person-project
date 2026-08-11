@@ -473,6 +473,46 @@ namespace FPSProject.Combat.PlayModeTests
         }
 
         [UnityTest]
+        public IEnumerator OfflineHitscan_OnCharacterSuppressesDecalButKeepsImpact()
+        {
+            _targetObject.AddComponent<TestImpactDecalSuppressor>();
+            _decalPrefab = new GameObject("OfflineCharacterDecalPrefab");
+            _decalPrefab.SetActive(false);
+            _impactPrefab = new GameObject("OfflineCharacterImpactPrefab");
+            _impactPrefab.SetActive(false);
+            _effectLibrary.defaultPair = new SurfaceEffectPair
+            {
+                decalPrefab = _decalPrefab,
+                impactPrefab = _impactPrefab
+            };
+
+            var ballistics = new WeaponBallisticsSettings
+            {
+                combatEnabled = true,
+                shotType = WeaponShotType.Hitscan,
+                damage = 25f,
+                maxRange = 100f,
+                hitMask = ~0,
+                triggerInteraction = QueryTriggerInteraction.Ignore,
+                impactEffectLibrary = _effectLibrary
+            };
+            var request = new WeaponShotRequest(
+                ballistics, _ownerRoot, _weaponObject,
+                new Vector3(0f, 0f, 0.5f), Quaternion.identity,
+                Vector3.zero, Vector3.forward);
+
+            _runtime.SubmitShot(request);
+            yield return null;
+
+            _spawnedDecal = GameObject.Find(_decalPrefab.name);
+            _spawnedImpact = GameObject.Find(_impactPrefab.name);
+            Assert.IsNull(_spawnedDecal);
+            Assert.IsNotNull(_spawnedImpact);
+            Assert.AreEqual(1,
+                _targetObject.GetComponent<TestDamageable>().ApplyDamageCallCount);
+        }
+
+        [UnityTest]
         public IEnumerator RepeatedSubmitShot_EachCreatesOneShot()
         {
             var damageable = _targetObject.GetComponent<TestDamageable>();
@@ -519,6 +559,10 @@ namespace FPSProject.Combat.PlayModeTests
                 ApplyDamageCallCount++;
                 LastDamageAmount = damageInfo.Amount;
             }
+        }
+
+        private class TestImpactDecalSuppressor : MonoBehaviour, IImpactDecalSuppressor
+        {
         }
     }
 }

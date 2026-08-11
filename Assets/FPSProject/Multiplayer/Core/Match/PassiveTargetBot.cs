@@ -21,6 +21,9 @@ namespace FPSProject.Multiplayer.Core.Match
             NetworkVariableWritePermission.Server);
 
         public MatchTeam TeamValue => Team.Value;
+        public bool IsStandalone { get; private set; }
+
+        public event System.Action<PassiveTargetBot, DamageInfo> OnStandaloneKilled;
 
         private void Awake()
         {
@@ -52,10 +55,38 @@ namespace FPSProject.Multiplayer.Core.Match
                 MatchLaunchSettings.MaxHumansPerTeam - 1);
         }
 
+        public void InitializeStandalone(MatchTeam team, int spawnSlot)
+        {
+            if (IsSpawned || (NetworkManager.Singleton != null
+                && NetworkManager.Singleton.IsListening)) return;
+
+            IsStandalone = true;
+            Team.Value = team;
+            SpawnSlot.Value = (byte)Mathf.Clamp(spawnSlot, 0, byte.MaxValue - 1);
+            ApplyTeamTint(team);
+
+            if (networkHealth != null)
+            {
+                networkHealth.OnKilled -= HandleKilled;
+                networkHealth.OnKilled += HandleKilled;
+            }
+        }
+
         private void HandleKilled(DamageInfo damageInfo)
         {
-            if (!IsServer) return;
-            TeamDeathmatchManager.Instance?.ServerHandleBotKilled(this, damageInfo);
+            if (IsServer)
+            {
+                TeamDeathmatchManager.Instance?.ServerHandleBotKilled(this, damageInfo);
+                return;
+            }
+
+            if (IsStandalone) OnStandaloneKilled?.Invoke(this, damageInfo);
+        }
+
+        private void OnDisable()
+        {
+            if (IsStandalone && networkHealth != null)
+                networkHealth.OnKilled -= HandleKilled;
         }
 
         private void HandleTeamChanged(MatchTeam previous, MatchTeam current)
