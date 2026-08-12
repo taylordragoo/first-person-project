@@ -16,6 +16,53 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
     {
         private const string PrefabPath =
             "Assets/FPSProject/Multiplayer/Prefabs/PassiveTargetBot.prefab";
+        private const string PlayerPrefabPath =
+            "Assets/Integrations/KINEMATION/CAS_Player_Example_FPS_Tactical.prefab";
+
+        [Test]
+        public void PlayerPrefab_UsesFasterPresentationResponseWithoutChangingBotDefaults()
+        {
+            GameObject playerRoot = PrefabUtility.LoadPrefabContents(PlayerPrefabPath);
+            GameObject botRoot = PrefabUtility.LoadPrefabContents(PrefabPath);
+            Assert.That(playerRoot, Is.Not.Null);
+            Assert.That(botRoot, Is.Not.Null);
+
+            try
+            {
+                Component playerBridge = FindPoseBridge(playerRoot);
+                Component botBridge = FindPoseBridge(botRoot);
+                var playerBridgeData = new SerializedObject(playerBridge);
+                var botBridgeData = new SerializedObject(botBridge);
+
+                Assert.That(playerBridgeData.FindProperty("tacticalGaitBlendSpeed").floatValue,
+                    Is.EqualTo(12f));
+                Assert.That(playerBridgeData.FindProperty("tacticalAimSpeedMultiplier").floatValue,
+                    Is.EqualTo(2f));
+                Assert.That(botBridgeData.FindProperty("tacticalGaitBlendSpeed").floatValue,
+                    Is.EqualTo(6f));
+                Assert.That(botBridgeData.FindProperty("tacticalAimSpeedMultiplier").floatValue,
+                    Is.EqualTo(1f));
+
+                Component playerController = playerRoot.GetComponentsInChildren<Component>(true)
+                    .Single(component => component != null && component.GetType().FullName ==
+                        "CAS_Demo.Scripts.FPS.FPSExampleController");
+                var playerControllerData = new SerializedObject(playerController);
+                Assert.That(playerControllerData.FindProperty("sprintGait")
+                    .FindPropertyRelative("deceleration").floatValue, Is.EqualTo(4f));
+
+                MethodInfo mapGait = playerBridge.GetType().GetMethod("MapTacticalGait",
+                    BindingFlags.Static | BindingFlags.NonPublic);
+                Assert.That(mapGait, Is.Not.Null);
+                Assert.That(InvokeGaitMap(mapGait, 3f, false, true), Is.EqualTo(2f));
+                Assert.That(InvokeGaitMap(mapGait, 3f, false, false), Is.EqualTo(1f));
+                Assert.That(InvokeGaitMap(mapGait, 3f, true, true), Is.EqualTo(1f));
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(playerRoot);
+                PrefabUtility.UnloadPrefabContents(botRoot);
+            }
+        }
 
         [Test]
         public void Prefab_PreservesCasTacticalProxyPipelineWithoutPlayerMotor()
@@ -474,6 +521,19 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
             {
                 PrefabUtility.UnloadPrefabContents(root);
             }
+        }
+
+        private static Component FindPoseBridge(GameObject root)
+        {
+            return root.GetComponentsInChildren<Component>(true).Single(component =>
+                component != null && component.GetType().FullName ==
+                "FirstPersonProject.Integrations.Kinemation.CasTacticalPlayerBridge");
+        }
+
+        private static float InvokeGaitMap(MethodInfo method, float gait, bool isAiming,
+            bool isSprinting)
+        {
+            return (float)method.Invoke(null, new object[] { gait, isAiming, isSprinting });
         }
 
         private static void AssertAllComponentReferencesAreLocal(GameObject root,

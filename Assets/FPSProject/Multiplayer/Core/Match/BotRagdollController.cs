@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FPSProject.Combat.Runtime;
+using FPSProject.Multiplayer.Core.Diagnostics;
 using FPSProject.Multiplayer.Core.Health;
 using UnityEngine;
 using UnityEngine.AI;
@@ -112,6 +113,11 @@ namespace FPSProject.Multiplayer.Core.Match
 
             IgnoreSelfCollisions();
             MarkBroadGameplayCapsuleAsRaycastPassthrough();
+            BotHitboxDebugVisualizer visualizer =
+                GetComponent<BotHitboxDebugVisualizer>();
+            if (visualizer == null)
+                visualizer = gameObject.AddComponent<BotHitboxDebugVisualizer>();
+            visualizer.Initialize(_ragdollColliders);
             _initialized = _bodies.Count == 11;
             return IsReady;
         }
@@ -144,7 +150,11 @@ namespace FPSProject.Multiplayer.Core.Match
                 animator.enabled = false;
             foreach (MonoBehaviour behaviour in GetComponentsInChildren<MonoBehaviour>(true))
             {
-                if (behaviour != null && behaviour != this) behaviour.enabled = false;
+                if (behaviour != null && behaviour != this
+                    && !(behaviour is BotHitboxDebugVisualizer))
+                {
+                    behaviour.enabled = false;
+                }
             }
 
             foreach (Collider ragdollCollider in _ragdollColliders)

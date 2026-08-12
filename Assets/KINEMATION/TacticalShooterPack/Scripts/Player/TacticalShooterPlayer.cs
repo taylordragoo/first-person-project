@@ -66,8 +66,12 @@ namespace KINEMATION.TacticalShooterPack.Scripts.Player
         // Optional presentation-only gait source for integrations whose movement is owned by
         // another controller. When enabled, Tactical still performs its normal smoothing and
         // procedural animation update, but it no longer derives gait from Tactical move input.
+        private const float DefaultGaitBlendSpeed = 6f;
+
         private bool _useExternalGait;
         private float _externalGait;
+        private float _externalGaitBlendSpeed = DefaultGaitBlendSpeed;
+        private float _externalAimSpeedMultiplier = 1f;
 
         protected AudioSource _audioSource;
         protected TacticalProceduralAnimation _tacProceduralAnimation;
@@ -90,8 +94,19 @@ namespace KINEMATION.TacticalShooterPack.Scripts.Player
 
         public void SetExternalGait(float gait)
         {
+            SetExternalGait(gait, DefaultGaitBlendSpeed);
+        }
+
+        public void SetExternalGait(float gait, float blendSpeed)
+        {
             _externalGait = Mathf.Clamp(gait, 0f, 2f);
+            _externalGaitBlendSpeed = Mathf.Max(0f, blendSpeed);
             _useExternalGait = true;
+        }
+
+        public void SetExternalAimSpeedMultiplier(float multiplier)
+        {
+            _externalAimSpeedMultiplier = Mathf.Max(0f, multiplier);
         }
 
         public void ReleaseExternalGait()
@@ -217,7 +232,8 @@ namespace KINEMATION.TacticalShooterPack.Scripts.Player
 
         private void Update()
         {
-            float aimingSpeed = GetPrimaryWeapon().AimingSpeed * (_isAiming ? 1f : -1f);
+            float aimingSpeed = GetPrimaryWeapon().AimingSpeed * _externalAimSpeedMultiplier
+                * (_isAiming ? 1f : -1f);
             _tacProceduralAnimation.aimingWeight += Time.deltaTime * aimingSpeed;
             _tacProceduralAnimation.aimingWeight = Mathf.Clamp01(_tacProceduralAnimation.aimingWeight);
             
@@ -243,7 +259,10 @@ namespace KINEMATION.TacticalShooterPack.Scripts.Player
                 8f, Time.deltaTime);
             
             float gait = _animator.GetFloat(TacShooterUtility.Animator_Gait.hash);
-            gait = KMath.FloatInterp(gait, GetDesiredGait(), 6f, Time.deltaTime);
+            float gaitBlendSpeed = _useExternalGait
+                ? _externalGaitBlendSpeed
+                : DefaultGaitBlendSpeed;
+            gait = KMath.FloatInterp(gait, GetDesiredGait(), gaitBlendSpeed, Time.deltaTime);
             _animator.SetFloat(TacShooterUtility.Animator_Gait.hash, gait);
             
             PlayMovementSounds(gait);

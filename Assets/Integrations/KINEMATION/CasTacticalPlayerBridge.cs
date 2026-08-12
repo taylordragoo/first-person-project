@@ -109,6 +109,10 @@ namespace FirstPersonProject.Integrations.Kinemation
         [SerializeField] private TacticalProceduralAnimation tacticalAnimation;
         [SerializeField] private Transform tacticalSkeleton;
 
+        [Header("Presentation response")]
+        [SerializeField, Min(0f)] private float tacticalGaitBlendSpeed = 6f;
+        [SerializeField, Min(0f)] private float tacticalAimSpeedMultiplier = 1f;
+
         [Header("Skeleton comparison debug")]
         [SerializeField] private bool drawSkeletonComparison;
         [SerializeField] private bool drawSkeletonLabels = true;
@@ -284,6 +288,7 @@ namespace FirstPersonProject.Integrations.Kinemation
             if (casController != null && tacticalPlayer != null)
             {
                 bool isSprinting = casController.IsSprinting;
+                tacticalPlayer.SetExternalAimSpeedMultiplier(tacticalAimSpeedMultiplier);
                 if (isSprinting)
                 {
                     SetTacticalAim(false);
@@ -298,15 +303,20 @@ namespace FirstPersonProject.Integrations.Kinemation
                 // desired presentation gait through its external-gait path so only one system
                 // smooths and writes the Animator parameter each frame.
                 tacticalPlayer.SetExternalGait(
-                    MapTacticalGait(casController.Gait, casController.IsAiming && !isSprinting));
+                    MapTacticalGait(casController.Gait,
+                        casController.IsAiming && !isSprinting, isSprinting),
+                    tacticalGaitBlendSpeed);
             }
         }
 
-        private static float MapTacticalGait(float casGait, bool isAiming)
+        private static float MapTacticalGait(float casGait, bool isAiming, bool isSprinting)
         {
             casGait = Mathf.Clamp(casGait, 0f, 3f);
             float tacticalGait = casGait <= 2f ? casGait * 0.5f : casGait - 1f;
-            return isAiming ? Mathf.Min(tacticalGait, 1f) : tacticalGait;
+
+            // Physical velocity still decays through CAS, but Tactical values above one are
+            // presentation-only sprint poses. Exit that pose immediately with sprint intent.
+            return isAiming || !isSprinting ? Mathf.Min(tacticalGait, 1f) : tacticalGait;
         }
 
         private void BuildBoneLinks()

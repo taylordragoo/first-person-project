@@ -1,4 +1,5 @@
 using FPSProject.Combat.Runtime;
+using FPSProject.Multiplayer.Core.Diagnostics;
 using FPSProject.Multiplayer.Core.Health;
 using FPSProject.Multiplayer.Core.Match;
 using NUnit.Framework;
@@ -30,6 +31,14 @@ namespace FPSProject.Multiplayer.Core.EditModeTests
             Assert.IsTrue(broadCapsule.enabled);
             Assert.IsTrue(CombatRaycastPolicy.ShouldSkip(broadCapsule));
             Assert.AreEqual(11, _root.GetComponentsInChildren<BotDamageHitbox>(true).Length);
+            BotHitboxDebugVisualizer visualizer =
+                _root.GetComponent<BotHitboxDebugVisualizer>();
+            Assert.IsNotNull(visualizer);
+            Assert.AreEqual(11, visualizer.VisualCount);
+            BotHitboxDebugVisualizer.SetVisible(true);
+            Assert.AreEqual(11, visualizer.VisibleVisualCount);
+            BotHitboxDebugVisualizer.SetVisible(false);
+            Assert.AreEqual(0, visualizer.VisibleVisualCount);
             foreach (Rigidbody body in _root.GetComponentsInChildren<Rigidbody>(true))
             {
                 Assert.IsTrue(body.isKinematic);
